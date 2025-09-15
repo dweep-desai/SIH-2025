@@ -94,26 +94,28 @@ class MainDrawer extends StatelessWidget {
             title: const Text("Dashboard"),
             onTap: _dashboard,
           ),
-          ListTile(
-            leading: const Icon(Icons.info),
-            title: const Text("Semester Info"),
-            onTap: _semInfo,
-          ),
-          ListTile(
-            leading: const Icon(Icons.grade),
-            title: const Text("Grades"),
-            onTap: _grades,
-          ),
-          ListTile(
-            leading: const Icon(Icons.workspace_premium),
-            title: const Text("Achievements"),
-            onTap: _achievements, // Added onTap for achievements
-          ),
-          ListTile(
-            leading: const Icon(Icons.search),
-            title: const Text("Search Faculty"),
-            onTap: () { /* TODO: Implement Search Faculty */ },
-          ),
+          if (!isFaculty) ...[
+            ListTile(
+              leading: const Icon(Icons.info),
+              title: const Text("Semester Info"),
+              onTap: _semInfo,
+            ),
+            ListTile(
+              leading: const Icon(Icons.grade),
+              title: const Text("Grades"),
+              onTap: _grades,
+            ),
+            ListTile(
+              leading: const Icon(Icons.workspace_premium),
+              title: const Text("Achievements"),
+              onTap: _achievements, // Added onTap for achievements
+            ),
+            ListTile(
+              leading: const Icon(Icons.search),
+              title: const Text("Search Faculty"),
+              onTap: () { /* TODO: Implement Search Faculty */ },
+            ),
+          ],
           if (isFaculty) ...[
             const Divider(),
             ListTile(
