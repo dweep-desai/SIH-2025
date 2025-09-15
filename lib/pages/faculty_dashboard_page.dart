@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../widgets/main_drawer.dart';
-import 'achievements_page.dart'; // Assuming faculty can have achievements
 
 // ---------------- FACULTY DASHBOARD PAGE ----------------
 class FacultyDashboardPage extends StatelessWidget {
@@ -23,15 +22,13 @@ class FacultyDashboardPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                quickButtons(context),
-                const SizedBox(height: 16),
                 personalCard(context),
                 const SizedBox(height: 16),
                 researchPapersCard(context),
                 const SizedBox(height: 16),
                 studentResearchCard(context),
                 const SizedBox(height: 16),
-                achievementsCard(context),
+                approvalAnalyticsCard(context),
                 const SizedBox(height: 16),
               ],
             ),
@@ -141,34 +138,25 @@ class FacultyDashboardPage extends StatelessWidget {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: ExpansionTile(
+        title: Row(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: Row(
-                children: [
-                  Icon(Icons.article, color: colorScheme.primary),
-                  const SizedBox(width: 8),
-                  Text("Research Papers/Projects/Publications", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
-                ],
-              ),
-            ),
-            const Divider(height: 16, indent: 16, endIndent: 16),
-            ...papers.map((paper) => ListTile(
-              dense: true,
-              title: Text(paper, style: textTheme.bodyMedium),
-              trailing: Icon(Icons.arrow_forward_ios, size: 14, color: colorScheme.onSurfaceVariant),
-            )),
-            if (papers.isEmpty)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Center(child: Text("No research papers to display", style: textTheme.bodyMedium)),
-              ),
+            Icon(Icons.article, color: colorScheme.primary),
+            const SizedBox(width: 8),
+            Text("Papers and Publications", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           ],
         ),
+        children: papers.isNotEmpty
+            ? papers.map((paper) => ListTile(
+                dense: true,
+                title: Text(paper, style: textTheme.bodyMedium),
+              )).toList()
+            : [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Center(child: Text("No papers and publications to display", style: textTheme.bodyMedium)),
+                ),
+              ],
       ),
     );
   }
@@ -195,86 +183,64 @@ class FacultyDashboardPage extends StatelessWidget {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      child: ExpansionTile(
+        title: Row(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-              child: Row(
-                children: [
-                  Icon(Icons.group, color: colorScheme.primary),
-                  const SizedBox(width: 8),
-                  Text("Student Research", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
-                ],
-              ),
-            ),
-            const Divider(height: 16, indent: 16, endIndent: 16),
-            ...studentResearches.map((research) => ListTile(
-              dense: true,
-              title: Text("${research['topic']} - ${research['conference']}", style: textTheme.bodyMedium),
-              subtitle: Text("Students: ${research['students']}", style: textTheme.bodySmall),
-              trailing: Icon(Icons.arrow_forward_ios, size: 14, color: colorScheme.onSurfaceVariant),
-            )),
-            if (studentResearches.isEmpty)
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Center(child: Text("No student research to display", style: textTheme.bodyMedium)),
-              ),
+            Icon(Icons.group, color: colorScheme.primary),
+            const SizedBox(width: 8),
+            Text("Student Research", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           ],
         ),
+        children: studentResearches.isNotEmpty
+            ? studentResearches.map((research) => ListTile(
+                dense: true,
+                title: Text("${research['topic']} - ${research['conference']}", style: textTheme.bodyMedium),
+                subtitle: Text("Students: ${research['students']}", style: textTheme.bodySmall),
+              )).toList()
+            : [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Center(child: Text("No student research to display", style: textTheme.bodyMedium)),
+                ),
+              ],
       ),
     );
   }
 
-  Widget achievementsCard(BuildContext context) {
+  Widget approvalAnalyticsCard(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
     final TextTheme textTheme = theme.textTheme;
-    // Dummy data
-    final achievements = ["Best Teacher Award 2023", "Published 10+ Papers"];
+
+    // Dummy data - replace with actual data
+    final approvals = [
+      "Leave Request Approved - 5 days",
+      "Project Proposal Pending - AI Research",
+      "Conference Approval Granted - ICML 2023"
+    ];
 
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AchievementsPage()),
-          );
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                child: Row(
-                  children: [
-                     Icon(Icons.workspace_premium, color: colorScheme.primary),
-                     const SizedBox(width: 8),
-                     Text("Achievements & Awards", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
-                  ],
-                ),
-              ),
-              const Divider(height: 16, indent: 16, endIndent: 16),
-              ...achievements.map((achievement) => ListTile(
+      child: ExpansionTile(
+        title: Row(
+          children: [
+            Icon(Icons.check_circle, color: colorScheme.primary),
+            const SizedBox(width: 8),
+            Text("Approval Analytics", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          ],
+        ),
+        children: approvals.isNotEmpty
+            ? approvals.map((approval) => ListTile(
                 dense: true,
-                title: Text(achievement, style: textTheme.bodyMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
-                trailing: Icon(Icons.arrow_forward_ios, size: 14, color: colorScheme.onSurfaceVariant),
-              )),
-              if (achievements.isEmpty)
+                title: Text(approval, style: textTheme.bodyMedium),
+              )).toList()
+            : [
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Center(child: Text("No achievements to display", style: textTheme.bodyMedium)),
+                  child: Center(child: Text("No approval analytics to display", style: textTheme.bodyMedium)),
                 ),
-            ],
-          ),
-        ),
+              ],
       ),
     );
   }
