@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import '../pages/login_page.dart';
 import '../pages/semester_info_page.dart';
 import '../pages/dashboard_page.dart';
+import '../pages/faculty_dashboard_page.dart';
 import '../pages/grades_page.dart';
 import '../pages/achievements_page.dart';
+import '../pages/faculty_student_search_page.dart';
+import '../pages/faculty_approval_page.dart';
 
 // ---------------- GLOBAL DRAWER ----------------
 class MainDrawer extends StatelessWidget {
   final BuildContext context;
+  final bool isFaculty;
 
-  const MainDrawer({super.key, required this.context});
+  const MainDrawer({super.key, required this.context, this.isFaculty = false});
 
   void _signOut() {
     Navigator.pushReplacement(
@@ -26,9 +30,30 @@ class MainDrawer extends StatelessWidget {
   }
 
   void _dashboard() {
+    if (isFaculty) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const FacultyDashboardPage()),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const DashboardPage()),
+      );
+    }
+  }
+
+  void _studentSearch() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => const DashboardPage()),
+      MaterialPageRoute(builder: (_) => const FacultyStudentSearchPage()),
+    );
+  }
+
+  void _approvalSection() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const FacultyApprovalPage()),
     );
   }
 
@@ -89,6 +114,19 @@ class MainDrawer extends StatelessWidget {
             title: const Text("Search Faculty"),
             onTap: () { /* TODO: Implement Search Faculty */ },
           ),
+          if (isFaculty) ...[
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.search),
+              title: const Text("Student Search"),
+              onTap: _studentSearch,
+            ),
+            ListTile(
+              leading: const Icon(Icons.check_circle),
+              title: const Text("Approval Section"),
+              onTap: _approvalSection,
+            ),
+          ],
           ListTile(
             leading: const Icon(Icons.lock_open),
             title: const Text("Sign Out"),

@@ -14,7 +14,7 @@ class FacultyDashboardPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Faculty Dashboard"),
       ),
-      drawer: MainDrawer(context: context),
+      drawer: MainDrawer(context: context, isFaculty: true),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
