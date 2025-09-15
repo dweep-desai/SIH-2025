@@ -526,7 +526,7 @@ class DashboardPage extends StatelessWidget {
                 const SizedBox(height: 16),
                 gradesCard(context),
                 const SizedBox(height: 16),
-                achievementsCard(),
+                achievementsCard(context),
                 const SizedBox(height: 16),
               ],
             ),
@@ -678,15 +678,16 @@ class DashboardPage extends StatelessWidget {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const Grades(startTabIndex: 3), 
+          builder: (context) => const Grades(startTabIndex: 0), 
         ),
         );
       }
     );
   }
 
-  Widget achievementsCard() {
-    return Card(
+  Widget achievementsCard(BuildContext context) {
+    return GestureDetector(
+      child: Card(
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Column(
@@ -705,8 +706,16 @@ class DashboardPage extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
+    ),
+    onTap: () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => AchievementsPage(),
+        )
+      );
+    },
+  );
+}
 
   Widget quickButtons() {
     return Row(
@@ -985,63 +994,6 @@ class GradesTab extends StatelessWidget {
   }
 }
 
-// Achievements
-class AchievementsCard extends StatelessWidget {
-  final List<String> achievements;
-
-  AchievementsCard({required this.achievements});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Achievements", style: Theme.of(context).textTheme.titleLarge),
-            SizedBox(height: 8),
-            ...achievements.map((a) => ListTile(
-                  leading: Icon(Icons.emoji_events, color: Colors.amber),
-                  title: Text(a),
-                )),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// Certifications
-class CertificationsCard extends StatelessWidget {
-  final List<String> certifications;
-
-  CertificationsCard({required this.certifications});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text("Certifications", style: Theme.of(context).textTheme.titleLarge),
-            ...certifications.map((c) => ListTile(
-                  leading: Icon(Icons.verified, color: Colors.green),
-                  title: Text(c),
-                )),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 // ---------------- GRADES PAGE ----------------
 class Grades extends StatelessWidget {
   final int startTabIndex;
@@ -1050,13 +1002,13 @@ class Grades extends StatelessWidget {
   const Grades({
     super.key,
     this.startTabIndex = 0,
-    this.currentSemester = 4, // example: current sem is 5
+    this.currentSemester = 4,
   });
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: currentSemester, // number of tabs = current semester
+      length: currentSemester,
       initialIndex: startTabIndex,
       child: Scaffold(
         appBar: AppBar(
@@ -1125,6 +1077,87 @@ class SemGradesTab extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+
+// ---------------- ACHIEVEMENTS PAGE ----------------
+
+class AchievementsPage extends StatelessWidget {
+  const AchievementsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text("Achievements"),
+        ),
+        drawer: MainDrawer(context: context),
+        body: Column(
+          children: [
+            AchievementsCard(achievements: ["Won 1st place in competitive programming", "Won 1st place in hackathon"]),
+            CertificationsCard(certifications: ["AWS Course Certificate", "Flutter Course Certificate"])
+          ],
+        )
+        
+    );
+  }
+}
+
+// Achievements
+class AchievementsCard extends StatelessWidget {
+  final List<String> achievements;
+
+  AchievementsCard({required this.achievements});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Achievements", style: Theme.of(context).textTheme.titleLarge),
+            SizedBox(height: 8),
+            ...achievements.map((a) => ListTile(
+                  leading: Icon(Icons.emoji_events, color: Colors.amber),
+                  title: Text(a),
+                )),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// Certifications
+class CertificationsCard extends StatelessWidget {
+  final List<String> certifications;
+
+  CertificationsCard({required this.certifications});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Certifications", style: Theme.of(context).textTheme.titleLarge),
+            ...certifications.map((c) => ListTile(
+                  leading: Icon(Icons.verified, color: Colors.green),
+                  title: Text(c),
+                )),
+          ],
+        ),
+      ),
     );
   }
 }
