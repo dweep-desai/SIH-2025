@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dashboard_page.dart';
+import 'faculty_dashboard_page.dart';
 import 'register_page.dart';
 
 // ---------------- LOGIN PAGE ----------------
@@ -17,9 +18,13 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
 
   void _devLogin() {
+    Widget page = const DashboardPage();
+    if (selectedIndex == 1) {
+      page = const FacultyDashboardPage();
+    }
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => const DashboardPage()),
+      MaterialPageRoute(builder: (_) => page),
     );
   }
 
