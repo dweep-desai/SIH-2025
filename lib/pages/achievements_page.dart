@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/main_drawer.dart';
+import '../widgets/student_drawer.dart';
 import '../widgets/achievement_widgets.dart';
 
 // ---------------- ACHIEVEMENTS PAGE ----------------
