@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/main_drawer.dart';
+import '../widgets/faculty_drawer.dart';
 
 class FacultyStudentSearchPage extends StatefulWidget {
   const FacultyStudentSearchPage({super.key});
