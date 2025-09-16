@@ -4,6 +4,7 @@ import '../pages/semester_info_page.dart';
 import '../pages/dashboard_page.dart';
 import '../pages/grades_page.dart';
 import '../pages/achievements_page.dart';
+import '../pages/faculty_search_page.dart';
 
 // ---------------- GLOBAL DRAWER ----------------
 class MainDrawer extends StatelessWidget {
@@ -21,7 +22,7 @@ class MainDrawer extends StatelessWidget {
   void _semInfo() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => const SemesterInfoPage()), 
+      MaterialPageRoute(builder: (_) => const SemesterInfoPage()),
     );
   }
 
@@ -38,7 +39,7 @@ class MainDrawer extends StatelessWidget {
       MaterialPageRoute(builder: (_) => const GradesPage()),
     );
   }
-  
+
   void _achievements() {
     Navigator.pushReplacement(
       context,
@@ -46,56 +47,125 @@ class MainDrawer extends StatelessWidget {
     );
   }
 
+  void _searchFaculty() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const FacultySearchPage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
+      child: Column(
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(color: Colors.indigo),
-            child: Center(
-              child: Text(
-                "Smart Student Hub",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
+          Container(
+            height: 200,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.indigo, Colors.indigoAccent],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      Icons.person,
+                      size: 40,
+                      color: Colors.indigo,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Smart Student Hub",
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    "Welcome, Student!",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white70,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.dashboard),
-            title: const Text("Dashboard"),
-            onTap: _dashboard,
-          ),
-          ListTile(
-            leading: const Icon(Icons.info),
-            title: const Text("Semester Info"),
-            onTap: _semInfo,
-          ),
-          ListTile(
-            leading: const Icon(Icons.grade),
-            title: const Text("Grades"),
-            onTap: _grades,
-          ),
-          ListTile(
-            leading: const Icon(Icons.workspace_premium),
-            title: const Text("Achievements"),
-            onTap: _achievements, // Added onTap for achievements
-          ),
-          ListTile(
-            leading: const Icon(Icons.search),
-            title: const Text("Search Faculty"),
-            onTap: () { /* TODO: Implement Search Faculty */ },
-          ),
-          ListTile(
-            leading: const Icon(Icons.lock_open),
-            title: const Text("Sign Out"),
-            onTap: _signOut,
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                const SizedBox(height: 10),
+                _buildDrawerItem(
+                  icon: Icons.dashboard,
+                  title: "Dashboard",
+                  onTap: _dashboard,
+                ),
+                _buildDrawerItem(
+                  icon: Icons.info,
+                  title: "Semester Info",
+                  onTap: _semInfo,
+                ),
+                _buildDrawerItem(
+                  icon: Icons.grade,
+                  title: "Grades",
+                  onTap: _grades,
+                ),
+                _buildDrawerItem(
+                  icon: Icons.workspace_premium,
+                  title: "Achievements",
+                  onTap: _achievements,
+                ),
+                _buildDrawerItem(
+                  icon: Icons.search,
+                  title: "Search Faculty",
+                  onTap: _searchFaculty,
+                ),
+                const Divider(),
+                _buildDrawerItem(
+                  icon: Icons.lock_open,
+                  title: "Sign Out",
+                  onTap: _signOut,
+                  color: Colors.red,
+                ),
+              ],
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildDrawerItem({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    Color? color,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: color ?? Colors.indigo),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: color ?? Colors.black87,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      onTap: onTap,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
     );
   }
 }
