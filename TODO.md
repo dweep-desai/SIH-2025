@@ -1,23 +1,9 @@
-# TODO: Modify Faculty Side Navigation
+# Admin Dashboard Implementation TODO
 
-## Task: Remove student-related buttons from faculty side nav
-
-### Current State:
-- Faculty side nav shows both student and faculty options
-- Student options: Semester Info, Grades, Achievements, Search Faculty
-- Faculty options: Dashboard, Student Search, Approval Section, Sign Out
-
-### Desired State:
-- Faculty side nav should only show: Dashboard, Student Search, Approval Section, Sign Out
-- Remove: Semester Info, Grades, Achievements, Search Faculty
-
-### Steps:
-1. ✅ Modify `lib/widgets/main_drawer.dart` to conditionally show student buttons only when `!isFaculty`
-2. ✅ Wrap student-specific ListTiles in `if (!isFaculty) ...[]`
-3. ✅ Test the changes by running the app and verifying faculty drawer
-
-### Files to Edit:
-- ✅ `lib/widgets/main_drawer.dart`
-
-### Followup:
-- ✅ Run the app to verify the faculty drawer only shows faculty-specific options
+- [x] Create lib/pages/admin_dashboard_page.dart with personal card and AdminDrawer
+- [x] Create lib/widgets/admin_drawer.dart with 4 sections
+- [x] Create lib/pages/admin_faculty_search_page.dart (search faculty)
+- [x] Create lib/pages/admin_student_search_page.dart (copy of FacultyStudentSearchPage)
+- [x] Create lib/pages/admin_institute_analytics_page.dart (placeholder)
+- [x] Create lib/pages/admin_department_analytics_page.dart (placeholder)
+- [x] Modify lib/pages/login_page.dart to handle admin login

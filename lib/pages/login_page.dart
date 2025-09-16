@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dashboard_page.dart';
 import 'faculty_dashboard_page.dart';
+import 'admin_dashboard_page.dart';
 import 'register_page.dart';
 
 // ---------------- LOGIN PAGE ----------------
@@ -21,6 +22,8 @@ class _LoginPageState extends State<LoginPage> {
     Widget page = const DashboardPage();
     if (selectedIndex == 1) {
       page = const FacultyDashboardPage();
+    } else if (selectedIndex == 2) {
+      page = const AdminDashboardPage();
     }
     Navigator.pushReplacement(
       context,
