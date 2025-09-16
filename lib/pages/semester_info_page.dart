@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/main_drawer.dart'; // Will be created
+import '../widgets/student_drawer.dart'; // Will be created
 
 // ---------------- SEMESTER INFO PAGE ----------------
 class SemesterInfoPage extends StatelessWidget {
