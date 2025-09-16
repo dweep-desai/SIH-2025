@@ -7,8 +7,7 @@ class FacultyDashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
+    // final ThemeData theme = Theme.of(context); // not used currently
 
     return Scaffold(
       appBar: AppBar(
@@ -29,6 +28,8 @@ class FacultyDashboardPage extends StatelessWidget {
                 studentResearchCard(context),
                 const SizedBox(height: 16),
                 approvalAnalyticsCard(context),
+                const SizedBox(height: 16),
+                approvalHistoryCard(context),
                 const SizedBox(height: 16),
               ],
             ),
@@ -274,6 +275,65 @@ class FacultyDashboardPage extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget approvalHistoryCard(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+    final TextTheme textTheme = theme.textTheme;
+
+    // Placeholder history; in real app, populate from store
+    final List<Map<String, String>> history = [
+      { 'student': 'Alice Johnson', 'action': 'approved', 'title': 'Smart Campus App' },
+      { 'student': 'Bob Smith', 'action': 'rejected', 'title': 'AI in Education', 'reason': 'Insufficient details' },
+    ];
+
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.history, color: colorScheme.primary),
+                const SizedBox(width: 8),
+                Text("Approval History", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              ],
+            ),
+            const SizedBox(height: 8),
+            const Divider(height: 16),
+            ...history.map((item) => ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(item['student'] ?? '', style: textTheme.titleMedium),
+              subtitle: Text('${item['action']?.toUpperCase()} • ${item['title']}', style: textTheme.bodyMedium),
+              trailing: (item['action'] == 'rejected' && item['reason'] != null)
+                ? IconButton(
+                    icon: const Icon(Icons.info, color: Colors.red),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Rejection Reason'),
+                          content: Text(item['reason'] ?? 'No reason provided.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(ctx).pop(),
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  )
+                : null,
+            )),
+          ],
+        ),
+      ),
     );
   }
 }

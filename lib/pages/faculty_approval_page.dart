@@ -13,17 +13,25 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
   final List<Map<String, dynamic>> approvals = [
     {
       'studentName': 'Alice Johnson',
-      'approvalType': 'Project Proposal',
+      'approvalType': 'Projects',
+      'title': 'Smart Campus App',
+      'description': 'Flutter app for student services.',
+      'link': 'https://example.com',
       'status': 'pending',
     },
     {
       'studentName': 'Bob Smith',
-      'approvalType': 'Paper Submission',
+      'approvalType': 'Research papers',
+      'title': 'AI in Education',
+      'description': 'Exploring adaptive learning systems.',
+      'pdfPath': '/path/to/paper.pdf',
       'status': 'pending',
     },
     {
       'studentName': 'Charlie Brown',
-      'approvalType': 'Conference Attendance',
+      'approvalType': 'Workshops',
+      'title': 'Flutter Bootcamp',
+      'description': 'Hands-on basics of Flutter.',
       'status': 'pending',
     },
   ];
@@ -43,9 +51,10 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  for (var approval in approvals) {
+                  for (var approval in approvals.where((a) => a['status'] == 'pending')) {
                     approval['status'] = 'approved';
                   }
+                  approvals.removeWhere((a) => a['status'] != 'pending');
                 });
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -81,6 +90,9 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Approved for ${approvals[index]['studentName']}')),
                 );
+                setState(() {
+                  approvals.removeAt(index);
+                });
               },
               child: const Text('Approve'),
             ),
@@ -127,11 +139,15 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
                 }
                 setState(() {
                   approvals[index]['status'] = 'rejected';
+                  approvals[index]['rejectionReason'] = reasonController.text.trim();
                 });
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text('Rejected for ${approvals[index]['studentName']}')),
                 );
+                setState(() {
+                  approvals.removeAt(index);
+                });
               },
               child: const Text('Reject'),
             ),
@@ -144,7 +160,7 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
+    // final ColorScheme colorScheme = theme.colorScheme; // not used currently
     final TextTheme textTheme = theme.textTheme;
 
     return Scaffold(
@@ -175,9 +191,14 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
                 approval['studentName'],
                 style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
               ),
-              subtitle: Text(
-                approval['approvalType'],
-                style: textTheme.bodyMedium,
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    approval['approvalType'],
+                    style: textTheme.bodyMedium,
+                  ),
+                ],
               ),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -185,9 +206,29 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
                   IconButton(
                     icon: const Icon(Icons.info, color: Colors.blue),
                     onPressed: () {
-                      // TODO: Implement view details
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('View details for ${approval['studentName']}')),
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text('Approval Details'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Category: ${approval['approvalType']}'),
+                              const SizedBox(height: 8),
+                              if (approval['title'] != null) Text('Title: ${approval['title']}'),
+                              if (approval['description'] != null) Text('Description: ${approval['description']}'),
+                              if (approval['link'] != null) Text('Link: ${approval['link']}'),
+                              if (approval['pdfPath'] != null) Text('File: ${approval['pdfPath']}'),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(ctx).pop(),
+                              child: const Text('Close'),
+                            )
+                          ],
+                        ),
                       );
                     },
                   ),
