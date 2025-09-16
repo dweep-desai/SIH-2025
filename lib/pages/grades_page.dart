@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../widgets/main_drawer.dart';
+import '../widgets/student_drawer.dart';
 
 // ---------------- GRADES PAGE ----------------
 class GradesPage extends StatefulWidget {
