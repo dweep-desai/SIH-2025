@@ -133,7 +133,7 @@ class _RequestApprovalPageState extends State<RequestApprovalPage> {
                     DropdownMenuItem(value: 'Club roles', child: Text('Club roles')),
                     DropdownMenuItem(value: 'Jobs', child: Text('Jobs')),
                   ],
-                  value: experienceType,
+                  initialValue: experienceType,
                   onChanged: (val) {
                     setState(() {
                       experienceType = val;
