@@ -10,8 +10,7 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
+    // final ThemeData theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -291,7 +290,7 @@ class DashboardPage extends StatelessWidget {
                   children: [
                      Icon(Icons.workspace_premium, color: colorScheme.primary),
                      const SizedBox(width: 8),
-                     Text("Achievements & Certs", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
+                     Text("Student Record", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
                   ],
                 ),
               ),

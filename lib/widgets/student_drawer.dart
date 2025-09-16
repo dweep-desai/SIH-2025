@@ -5,6 +5,8 @@ import '../pages/dashboard_page.dart';
 import '../pages/grades_page.dart';
 import '../pages/achievements_page.dart';
 import '../pages/faculty_search_page.dart';
+import '../pages/request_approval_page.dart';
+import '../pages/approval_status_page.dart';
 
 // ---------------- GLOBAL DRAWER ----------------
 class MainDrawer extends StatelessWidget {
@@ -51,6 +53,20 @@ class MainDrawer extends StatelessWidget {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const FacultySearchPage()),
+    );
+  }
+
+  void _requestApproval() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const RequestApprovalPage()),
+    );
+  }
+
+  void _approvalStatus() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const ApprovalStatusPage()),
     );
   }
 
@@ -123,13 +139,23 @@ class MainDrawer extends StatelessWidget {
                 ),
                 _buildDrawerItem(
                   icon: Icons.workspace_premium,
-                  title: "Achievements",
+                  title: "Student Record",
                   onTap: _achievements,
                 ),
                 _buildDrawerItem(
                   icon: Icons.search,
                   title: "Search Faculty",
                   onTap: _searchFaculty,
+                ),
+                _buildDrawerItem(
+                  icon: Icons.assignment_turned_in,
+                  title: "Request Approval",
+                  onTap: _requestApproval,
+                ),
+                _buildDrawerItem(
+                  icon: Icons.history,
+                  title: "Approval Status",
+                  onTap: _approvalStatus,
                 ),
                 const Divider(),
                 _buildDrawerItem(

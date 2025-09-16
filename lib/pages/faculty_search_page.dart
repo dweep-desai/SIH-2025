@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sih_project/widgets/student_drawer.dart';
 
 class FacultySearchPage extends StatefulWidget {
-  const FacultySearchPage({Key? key}) : super(key: key);
+  const FacultySearchPage({super.key});
 
   @override
   _FacultySearchPageState createState() => _FacultySearchPageState();
