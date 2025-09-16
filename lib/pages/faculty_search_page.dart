@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sih_project/widgets/main_drawer.dart';
 
 class FacultySearchPage extends StatefulWidget {
   const FacultySearchPage({Key? key}) : super(key: key);
@@ -47,8 +48,8 @@ class _FacultySearchPageState extends State<FacultySearchPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Search Faculty'),
-        backgroundColor: Colors.indigo,
       ),
+      drawer: MainDrawer(context: context),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
