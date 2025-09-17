@@ -108,10 +108,11 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
+                // Search field - takes full width
                 TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
-                    labelText: 'Search by Name or Roll No',
+                    labelText: 'Search by Name, Roll No, or Domain',
                     prefixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -126,73 +127,30 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                   },
                 ),
                 const SizedBox(height: 12),
-                Row(
+                // Responsive filters - use Wrap to prevent overflow on any screen size
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
                   children: [
-                    // Branch filter
-                    Expanded(
-                      child: DropdownButtonFormField<String>(
-                        initialValue: _branchFilter,
-                        decoration: InputDecoration(
-                          labelText: 'Branch',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          filled: true,
-                          fillColor: colorScheme.surfaceContainerHighest,
-                        ),
-                        items: const [
-                          DropdownMenuItem(value: 'All', child: Text('All')),
-                          DropdownMenuItem(value: 'Computer Science', child: Text('Computer Science')),
-                          DropdownMenuItem(value: 'Information Technology', child: Text('Information Technology')),
-                        ],
-                        onChanged: (v) {
-                          setState(() { _branchFilter = v ?? 'All'; });
-                        },
+                    // Branch filter - flexible width with proper constraints
+                    Flexible(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(minWidth: 100, maxWidth: 180),
+                        child: _buildBranchFilter(),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    // Domain filter
-                    Expanded(
-                      child: DropdownButtonFormField<String>(
-                        initialValue: _domainFilter,
-                        decoration: InputDecoration(
-                          labelText: 'Domain',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          filled: true,
-                          fillColor: colorScheme.surfaceContainerHighest,
-                        ),
-                        items: const [
-                          DropdownMenuItem(value: 'All', child: Text('All')),
-                          DropdownMenuItem(value: 'AI/ML', child: Text('AI/ML')),
-                          DropdownMenuItem(value: 'Data Science', child: Text('Data Science')),
-                          DropdownMenuItem(value: 'Cybersecurity', child: Text('Cybersecurity')),
-                          DropdownMenuItem(value: 'Web Development', child: Text('Web Development')),
-                        ],
-                        onChanged: (v) { setState(() { _domainFilter = v ?? 'All'; }); },
+                    // Domain filter - flexible width with proper constraints
+                    Flexible(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(minWidth: 100, maxWidth: 180),
+                        child: _buildDomainFilter(),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    // Sort by
-                    Expanded(
-                      child: DropdownButtonFormField<String>(
-                        initialValue: _sortBy,
-                        decoration: InputDecoration(
-                          labelText: 'Sort By',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          filled: true,
-                          fillColor: colorScheme.surfaceContainerHighest,
-                        ),
-                        items: const [
-                          DropdownMenuItem(value: 'Name', child: Text('Name (A-Z)')),
-                          DropdownMenuItem(value: 'Roll No', child: Text('Roll No (A-Z)')),
-                        ],
-                        onChanged: (v) {
-                          setState(() { _sortBy = v ?? 'Name'; });
-                        },
+                    // Sort filter - flexible width with proper constraints
+                    Flexible(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(minWidth: 100, maxWidth: 180),
+                        child: _buildSortFilter(),
                       ),
                     ),
                   ],
@@ -201,7 +159,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
             ),
           ),
           Expanded(
-            child: _searchQuery.isEmpty && _branchFilter == 'All'
+            child: _searchQuery.isEmpty && _branchFilter == 'All' && _domainFilter == 'All'
                 ? Center(
                     child: Text(
                       'Use the search or filters to find students',
@@ -348,6 +306,80 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
       MaterialPageRoute(
         builder: (_) => FacultyStudentDetailPage(student: student),
       ),
+    );
+  }
+
+  Widget _buildBranchFilter() {
+    final colorScheme = Theme.of(context).colorScheme;
+    return DropdownButtonFormField<String>(
+      value: _branchFilter,
+      isDense: true,
+      decoration: InputDecoration(
+        labelText: 'Branch',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        filled: true,
+        fillColor: colorScheme.surfaceContainerHighest,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
+      items: const [
+        DropdownMenuItem(value: 'All', child: Text('All', overflow: TextOverflow.ellipsis)),
+        DropdownMenuItem(value: 'Computer Science', child: Text('CS', overflow: TextOverflow.ellipsis)),
+        DropdownMenuItem(value: 'Information Technology', child: Text('IT', overflow: TextOverflow.ellipsis)),
+      ],
+      onChanged: (v) {
+        setState(() { _branchFilter = v ?? 'All'; });
+      },
+    );
+  }
+
+  Widget _buildDomainFilter() {
+    final colorScheme = Theme.of(context).colorScheme;
+    return DropdownButtonFormField<String>(
+      value: _domainFilter,
+      isDense: true,
+      decoration: InputDecoration(
+        labelText: 'Domain',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        filled: true,
+        fillColor: colorScheme.surfaceContainerHighest,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
+      items: const [
+        DropdownMenuItem(value: 'All', child: Text('All', overflow: TextOverflow.ellipsis)),
+        DropdownMenuItem(value: 'AI/ML', child: Text('AI/ML', overflow: TextOverflow.ellipsis)),
+        DropdownMenuItem(value: 'Data Science', child: Text('Data Sci', overflow: TextOverflow.ellipsis)),
+        DropdownMenuItem(value: 'Cybersecurity', child: Text('Cyber', overflow: TextOverflow.ellipsis)),
+        DropdownMenuItem(value: 'Web Development', child: Text('Web Dev', overflow: TextOverflow.ellipsis)),
+      ],
+      onChanged: (v) { setState(() { _domainFilter = v ?? 'All'; }); },
+    );
+  }
+
+  Widget _buildSortFilter() {
+    final colorScheme = Theme.of(context).colorScheme;
+    return DropdownButtonFormField<String>(
+      value: _sortBy,
+      isDense: true,
+      decoration: InputDecoration(
+        labelText: 'Sort By',
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        filled: true,
+        fillColor: colorScheme.surfaceContainerHighest,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
+      items: const [
+        DropdownMenuItem(value: 'Name', child: Text('Name A-Z', overflow: TextOverflow.ellipsis)),
+        DropdownMenuItem(value: 'Roll No', child: Text('Roll A-Z', overflow: TextOverflow.ellipsis)),
+      ],
+      onChanged: (v) {
+        setState(() { _sortBy = v ?? 'Name'; });
+      },
     );
   }
 }
