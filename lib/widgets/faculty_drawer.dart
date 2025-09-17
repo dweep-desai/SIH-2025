@@ -155,16 +155,7 @@ class MainDrawer extends StatelessWidget {
                   ),
                 ],
                 if (isFaculty) ...[
-                  _buildDrawerItem(
-                    icon: Icons.edit,
-                    title: "Edit Profile",
-                    onTap: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (_) => const FacultyEditProfilePage()),
-                      );
-                    },
-                  ),
+                  // Removed Edit Profile from drawer as per new design
                   _buildDrawerItem(
                     icon: Icons.search,
                     title: "Student Search",

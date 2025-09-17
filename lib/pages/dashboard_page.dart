@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/student_drawer.dart';
 import '../data/profile_data.dart';
 import 'semester_info_page.dart';
+import 'student_edit_profile_page.dart';
 import 'achievements_page.dart';
 
 // ---------------- DASHBOARD PAGE ----------------
@@ -56,43 +57,78 @@ class DashboardPage extends StatelessWidget {
     return Card(
       elevation: 2, // Softer elevation
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      // color: colorScheme.surfaceVariant, // Optional: for a slightly different card background
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Stack(
           children: [
-            CircleAvatar(
-              radius: 40,
-              backgroundColor: colorScheme.primaryContainer,
-              backgroundImage: ProfileData.getProfileImageProvider(),
-              child: ProfileData.getProfileImageProvider() == null
-                  ? Icon(Icons.person, size: 40, color: colorScheme.onPrimaryContainer)
-                  : null,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              "Tathya Barot", // Replace with dynamic data if available
-              style: textTheme.titleLarge?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              "Student ID: 24BCE294", // Example detail
-              style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
-            ),
-            const SizedBox(height: 8),
-            Divider(color: colorScheme.outline.withOpacity(0.5)),
-            const SizedBox(height: 8),
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start, // Align details to the start
+              mainAxisSize: MainAxisSize.min,
               children: [
-                _buildDetailRow(context, Icons.calendar_today, "DOB: 28 Aug 2006"),
-                _buildDetailRow(context, Icons.school, "Branch: Computer Science"),
-                _buildDetailRow(context, Icons.account_balance, "Institute: Nirma University"),
-                _buildDetailRow(context, Icons.person_outline, "Faculty Advisor: Dr. John Doe"),
-                if (ProfileData.getDomains().isNotEmpty)
-                  _buildDetailRow(context, Icons.work_outline, "Domains: ${ProfileData.getDomains().join(', ')}"),
+                CircleAvatar(
+                  radius: 40,
+                  backgroundColor: colorScheme.primaryContainer,
+                  backgroundImage: ProfileData.getProfileImageProvider(),
+                  child: ProfileData.getProfileImageProvider() == null
+                      ? Icon(Icons.person, size: 40, color: colorScheme.onPrimaryContainer)
+                      : null,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  "Tathya Barot", // Replace with dynamic data if available
+                  style: textTheme.titleLarge?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "Student ID: 24BCE294", // Example detail
+                  style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+                ),
+                const SizedBox(height: 8),
+                Divider(color: colorScheme.outline.withOpacity(0.5)),
+                const SizedBox(height: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start, // Align details to the start
+                  children: [
+                    _buildDetailRow(context, Icons.calendar_today, "DOB: 28 Aug 2006"),
+                    _buildDetailRow(context, Icons.school, "Branch: Computer Science"),
+                    _buildDetailRow(context, Icons.account_balance, "Institute: Nirma University"),
+                    _buildDetailRow(context, Icons.person_outline, "Faculty Advisor: Dr. John Doe"),
+                    if (ProfileData.getDomains().isNotEmpty)
+                      _buildDetailRow(context, Icons.work_outline, "Domains: ${ProfileData.getDomains().join(', ')}"),
+                  ],
+                ),
               ],
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(20),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const StudentEditProfilePage()),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: colorScheme.primary, width: 1),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.edit, size: 18, color: colorScheme.primary),
+                        const SizedBox(width: 4),
+                        Text("Edit", style: textTheme.labelMedium?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.w600)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
