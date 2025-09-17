@@ -57,54 +57,115 @@ class AdminDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: ListView(
+      child: Column(
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(color: Colors.indigo),
-            child: Center(
-              child: Text(
-                "Smart Student Hub - Admin",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
+          Container(
+            height: 200,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.indigo, Colors.indigoAccent],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      Icons.person,
+                      size: 40,
+                      color: Colors.indigo,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Smart Student Hub",
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    "Welcome, Admin!",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white70,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.dashboard),
-            title: const Text("Dashboard"),
-            onTap: _dashboard,
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.analytics),
-            title: const Text("Institute Analytics"),
-            onTap: _instituteAnalytics,
-          ),
-          ListTile(
-            leading: const Icon(Icons.bar_chart),
-            title: const Text("Departmentwise Analytics"),
-            onTap: _departmentAnalytics,
-          ),
-          ListTile(
-            leading: const Icon(Icons.search),
-            title: const Text("Faculty Search"),
-            onTap: _facultySearch,
-          ),
-          ListTile(
-            leading: const Icon(Icons.search),
-            title: const Text("Student Search"),
-            onTap: _studentSearch,
-          ),
-          ListTile(
-            leading: const Icon(Icons.lock_open),
-            title: const Text("Sign Out"),
-            onTap: _signOut,
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                const SizedBox(height: 10),
+                _buildDrawerItem(
+                  icon: Icons.dashboard,
+                  title: "Dashboard",
+                  onTap: _dashboard,
+                ),
+                _buildDrawerItem(
+                  icon: Icons.analytics,
+                  title: "Institute Analytics",
+                  onTap: _instituteAnalytics,
+                ),
+                _buildDrawerItem(
+                  icon: Icons.bar_chart,
+                  title: "Departmentwise Analytics",
+                  onTap: _departmentAnalytics,
+                ),
+                _buildDrawerItem(
+                  icon: Icons.search,
+                  title: "Faculty Search",
+                  onTap: _facultySearch,
+                ),
+                _buildDrawerItem(
+                  icon: Icons.search,
+                  title: "Student Search",
+                  onTap: _studentSearch,
+                ),
+                const Divider(),
+                _buildDrawerItem(
+                  icon: Icons.lock_open,
+                  title: "Sign Out",
+                  onTap: _signOut,
+                  color: Colors.red,
+                ),
+              ],
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildDrawerItem({
+    required IconData icon,
+    required String title,
+    required VoidCallback onTap,
+    Color? color,
+  }) {
+    return ListTile(
+      leading: Icon(icon, color: color ?? Colors.indigo),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: color ?? Colors.black87,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      onTap: onTap,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
     );
   }
 }
