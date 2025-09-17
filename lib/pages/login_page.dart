@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dashboard_page.dart';
 import 'faculty_dashboard_page.dart';
 import 'admin_dashboard_page.dart';
@@ -17,6 +19,13 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+
+  String get _expectedRole {
+    if (selectedIndex == 1) return 'faculty';
+    if (selectedIndex == 2) return 'admin';
+    return 'student';
+  }
 
   void _devLogin() {
     Widget page = const DashboardPage();
@@ -31,13 +40,71 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _login() {
-    if (_formKey.currentState!.validate()) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const DashboardPage()),
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _isLoading = true);
+    try {
+      final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
+      final cred = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
       );
+
+      // Enforce role via Firestore: users/{uid}.role must match selected tab
+      final uid = cred.user!.uid;
+      final snap = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final data = snap.data();
+      final storedRole = data != null ? (data['role'] as String?) : null;
+      if (storedRole == null) {
+        await FirebaseAuth.instance.signOut();
+        _showSnack('Account not configured. Missing role for this user.');
+        return;
+      }
+      if (storedRole != _expectedRole) {
+        await FirebaseAuth.instance.signOut();
+        _showSnack('Role mismatch: Please select "$storedRole" to login with this account.');
+        return;
+      }
+
+      // Route based on role
+      Widget page = const DashboardPage();
+      if (storedRole == 'faculty') {
+        page = const FacultyDashboardPage();
+      } else if (storedRole == 'admin') {
+        page = const AdminDashboardPage();
+      }
+      if (!mounted) return;
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => page));
+    } on FirebaseAuthException catch (e) {
+      final message = _mapAuthError(e.code);
+      _showSnack(message);
+    } catch (_) {
+      _showSnack('Login failed. Please try again.');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
+  }
+
+  String _mapAuthError(String code) {
+    switch (code) {
+      case 'invalid-email':
+        return 'Invalid email format.';
+      case 'user-disabled':
+        return 'This user is disabled.';
+      case 'user-not-found':
+        return 'No user found for that email.';
+      case 'wrong-password':
+        return 'Incorrect password.';
+      case 'too-many-requests':
+        return 'Too many attempts. Try again later.';
+      default:
+        return 'Authentication error: $code';
+    }
+  }
+
+  void _showSnack(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
 
   void _register() {
@@ -58,13 +125,13 @@ class _LoginPageState extends State<LoginPage> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              colorScheme.primary.withOpacity(0.25), // Increased opacity for a stronger start color
-              colorScheme.surface.withOpacity(0.4),  // Adjusted mid-point for a smoother, yet more visible transition
-              colorScheme.surface,                   // End color remains the same
+              colorScheme.primary.withOpacity(0.25),
+              colorScheme.surface.withOpacity(0.4),
+              colorScheme.surface,
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            stops: const [0.0, 0.5, 1.0], // Start color takes up more space, transitions through the middle 50%
+            stops: const [0.0, 0.5, 1.0],
           ),
         ),
         child: SafeArea(
@@ -180,13 +247,13 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             const SizedBox(height: 24),
                             ElevatedButton.icon(
-                              icon: const Icon(Icons.login_rounded),
+                              icon: _isLoading ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.login_rounded),
                               label: const Text("LOGIN", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                               style: ElevatedButton.styleFrom(
                                 minimumSize: const Size(double.infinity, 50),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                               ),
-                              onPressed: _login,
+                              onPressed: _isLoading ? null : _login,
                             ),
                             const SizedBox(height: 12),
                             OutlinedButton(
@@ -195,7 +262,7 @@ class _LoginPageState extends State<LoginPage> {
                                 side: BorderSide(color: colorScheme.outline.withOpacity(0.7)),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                               ),
-                              onPressed: _devLogin,
+                              onPressed: _isLoading ? null : _devLogin,
                               child: Text("Developer Login", style: TextStyle(fontSize: 15, color: colorScheme.primary)),
                             ),
                           ],
@@ -208,11 +275,11 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TextButton(
-                        onPressed: _register,
+                        onPressed: _isLoading ? null : _register,
                         child: Text("Create Account", style: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.w600)),
                       ),
                       TextButton(
-                        onPressed: () { /* TODO: Implement Forgot Password */ },
+                        onPressed: _isLoading ? null : () { /* TODO: Implement Forgot Password */ },
                         child: Text("Forgot Password?", style: TextStyle(color: colorScheme.secondary)),
                       ),
                     ],
