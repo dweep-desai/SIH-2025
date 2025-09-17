@@ -3,6 +3,7 @@ import '../widgets/faculty_drawer.dart';
 import '../data/faculty_profile_data.dart';
 import '../data/approval_data.dart';
 import '../widgets/approval_donut_chart.dart';
+import 'faculty_edit_profile_page.dart';
 
 // ---------------- FACULTY DASHBOARD PAGE ----------------
 class FacultyDashboardPage extends StatelessWidget {
@@ -56,40 +57,76 @@ class FacultyDashboardPage extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
+        child: Stack(
           children: [
-            CircleAvatar(
-              radius: 40,
-              backgroundColor: colorScheme.primaryContainer,
-              backgroundImage: FacultyProfileData.getProfileImageProvider(),
-              child: FacultyProfileData.getProfileImageProvider() == null
-                  ? Icon(Icons.person, size: 40, color: colorScheme.onPrimaryContainer)
-                  : null,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              "Dr. John Doe", // Replace with dynamic data
-              style: textTheme.titleLarge?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              "Faculty ID: FAC001", // Example detail
-              style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
-            ),
-            const SizedBox(height: 8),
-            Divider(color: colorScheme.outline.withOpacity(0.5)),
-            const SizedBox(height: 8),
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                _buildDetailRow(context, Icons.work, "Designation: Professor - Computer Science"),
-                _buildDetailRow(context, Icons.business, "Department: Computer Science"),
-                _buildDetailRow(context, Icons.school, "Educational Qualifications: PhD in Computer Science"),
-                _buildDetailRow(context, Icons.email, "Email: john.doe@nirmauni.ac.in"),
-                if (FacultyProfileData.getDomains().isNotEmpty)
-                  _buildDetailRow(context, Icons.domain, "Domains: ${FacultyProfileData.getDomains().join(', ')}"),
+                CircleAvatar(
+                  radius: 40,
+                  backgroundColor: colorScheme.primaryContainer,
+                  backgroundImage: FacultyProfileData.getProfileImageProvider(),
+                  child: FacultyProfileData.getProfileImageProvider() == null
+                      ? Icon(Icons.person, size: 40, color: colorScheme.onPrimaryContainer)
+                      : null,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  "Dr. John Doe", // Replace with dynamic data
+                  style: textTheme.titleLarge?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "Faculty ID: FAC001", // Example detail
+                  style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+                ),
+                const SizedBox(height: 8),
+                Divider(color: colorScheme.outline.withOpacity(0.5)),
+                const SizedBox(height: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildDetailRow(context, Icons.work, "Designation: Professor - Computer Science"),
+                    _buildDetailRow(context, Icons.business, "Department: Computer Science"),
+                    _buildDetailRow(context, Icons.school, "Educational Qualifications: PhD in Computer Science"),
+                    _buildDetailRow(context, Icons.email, "Email: john.doe@nirmauni.ac.in"),
+                    if (FacultyProfileData.getDomains().isNotEmpty)
+                      _buildDetailRow(context, Icons.domain, "Domains: ${FacultyProfileData.getDomains().join(', ')}"),
+                  ],
+                ),
               ],
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(20),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const FacultyEditProfilePage()),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary.withOpacity(0.12),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: colorScheme.primary, width: 1),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.edit, size: 18, color: colorScheme.primary),
+                        const SizedBox(width: 4),
+                        Text("Edit", style: textTheme.labelMedium?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.w600)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),

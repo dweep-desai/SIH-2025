@@ -2,6 +2,7 @@
 
 ## Steps to Complete
 
+
 - [x] Edit `lib/widgets/student_drawer.dart` to add two new menu items: "Request Approval" and "Approval Status" with appropriate icons and navigation callbacks.
 - [x] Create `lib/pages/request_approval_page.dart`:
   - Implement a page with a dropdown for categories (Certifications, Achievements, Internships, Research papers, Projects, Workshops).
@@ -14,3 +15,4 @@
 - [x] Implement state management for approval requests (e.g., a list of maps with title, description, category, status, reason).
 - [x] Test navigation from drawer to new pages, form submission, and status display.
 - [x] Ensure the app builds and runs without errors.
+

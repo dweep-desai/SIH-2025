@@ -61,14 +61,21 @@ class AdminDrawer extends StatelessWidget {
         children: [
           Container(
             height: 200,
+<<<<<<< HEAD
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 colors: [Colors.indigo, Colors.indigoAccent],
+=======
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.orange.shade700, Colors.orange.shade500],
+>>>>>>> d52f62f54e5850ed1358a9acab690429f95993a4
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
             ),
             child: const Center(
+<<<<<<< HEAD
               child: Text(
                 "Smart Student Hub - Admin",
                 style: TextStyle(
@@ -76,6 +83,37 @@ class AdminDrawer extends StatelessWidget {
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
+=======
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundColor: Colors.white,
+                    child: Icon(
+                      Icons.person,
+                      size: 40,
+                      color: Colors.indigo,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Smart Student Hub",
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    "Welcome, Admin!",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white70,
+                    ),
+                  ),
+                ],
+>>>>>>> d52f62f54e5850ed1358a9acab690429f95993a4
               ),
             ),
           ),
