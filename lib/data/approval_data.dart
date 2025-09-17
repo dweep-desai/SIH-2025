@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import '../models/approval_request.dart';
 
 List<ApprovalRequest> approvalRequests = [
@@ -89,4 +90,54 @@ void logFacultyApproval({
     title: title,
     reason: reason,
   ));
+}
+
+// ---------------- SHARED APPROVAL STATS ----------------
+class ApprovalStats extends ChangeNotifier {
+  int _approvedCount = 0;
+  int _rejectedCount = 0;
+  int _pendingCount = 0;
+
+  int get approvedCount => _approvedCount;
+  int get rejectedCount => _rejectedCount;
+  int get pendingCount => _pendingCount;
+
+  void setPending(int count) {
+    _pendingCount = count < 0 ? 0 : count;
+    notifyListeners();
+  }
+
+  void decrementPending() {
+    if (_pendingCount > 0) {
+      _pendingCount -= 1;
+      notifyListeners();
+    }
+  }
+
+  void incrementApproved({int by = 1}) {
+    if (by <= 0) return;
+    _approvedCount += by;
+    notifyListeners();
+  }
+
+  void incrementRejected({int by = 1}) {
+    if (by <= 0) return;
+    _rejectedCount += by;
+    notifyListeners();
+  }
+
+  double get approvalRatePercent {
+    final totalDecided = _approvedCount + _rejectedCount;
+    if (totalDecided == 0) return 0.0;
+    return (_approvedCount / totalDecided) * 100.0;
+  }
+}
+
+final ApprovalStats approvalStats = ApprovalStats();
+
+double computeAveragePointsAwarded() {
+  final acceptedWithPoints = approvalRequests.where((r) => r.status == 'accepted' && r.points != null).toList();
+  if (acceptedWithPoints.isEmpty) return 0.0;
+  final total = acceptedWithPoints.fold<int>(0, (sum, r) => sum + (r.points ?? 0));
+  return total / acceptedWithPoints.length;
 }

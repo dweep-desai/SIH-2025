@@ -10,6 +10,7 @@ import '../pages/faculty_approval_page.dart';
 import '../pages/faculty_approval_history_page.dart';
 import '../pages/faculty_approval_analytics_page.dart';
 import '../pages/faculty_edit_profile_page.dart';
+import '../data/approval_data.dart';
 
 // ---------------- GLOBAL DRAWER ----------------
 class MainDrawer extends StatelessWidget {
@@ -169,8 +170,7 @@ class MainDrawer extends StatelessWidget {
                     title: "Student Search",
                     onTap: _studentSearch,
                   ),
-                  _buildDrawerItem(
-                    icon: Icons.check_circle,
+                  _buildApprovalWithBadge(
                     title: "Approval Section",
                     onTap: _approvalSection,
                   ),
@@ -230,6 +230,55 @@ class MainDrawer extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+    );
+  }
+
+  Widget _buildApprovalWithBadge({
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return AnimatedBuilder(
+      animation: approvalStats,
+      builder: (context, _) {
+        final int pending = approvalStats.pendingCount;
+        return ListTile(
+          leading: const Icon(Icons.check_circle, color: Colors.indigo),
+          title: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              if (pending > 0)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Text(
+                    '$pending',
+                    style: const TextStyle(
+                      color: Colors.black54,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          onTap: onTap,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        );
+      },
     );
   }
 }

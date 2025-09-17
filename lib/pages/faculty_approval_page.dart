@@ -38,6 +38,13 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
     },
   ];
 
+  @override
+  void initState() {
+    super.initState();
+    final int pendingNow = approvals.where((a) => a['status'] == 'pending').length;
+    approvalStats.setPending(pendingNow);
+  }
+
   void _approveAll() {
     showDialog(
       context: context,
@@ -52,12 +59,20 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
             ),
             TextButton(
               onPressed: () {
+                int approvedNow = 0;
                 setState(() {
                   for (var approval in approvals.where((a) => a['status'] == 'pending')) {
                     approval['status'] = 'approved';
+                    approvedNow += 1;
                   }
                   approvals.removeWhere((a) => a['status'] != 'pending');
                 });
+                if (approvedNow > 0) {
+                  approvalStats.incrementApproved(by: approvedNow);
+                  for (int i = 0; i < approvedNow; i++) {
+                    approvalStats.decrementPending();
+                  }
+                }
                 Navigator.of(context).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('All requests approved')),
@@ -95,6 +110,8 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
                 setState(() {
                   approvals.removeAt(index);
                 });
+                approvalStats.incrementApproved();
+                approvalStats.decrementPending();
                 logFacultyApproval(
                   studentName: approvals[index > approvals.length ? approvals.length - 1 : (index.clamp(0, approvals.length))]['studentName'] ?? 'Student',
                   action: 'approved',
@@ -155,6 +172,8 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
                 setState(() {
                   approvals.removeAt(index);
                 });
+                approvalStats.incrementRejected();
+                approvalStats.decrementPending();
                 logFacultyApproval(
                   studentName: approvals[index > approvals.length ? approvals.length - 1 : (index.clamp(0, approvals.length))]['studentName'] ?? 'Student',
                   action: 'rejected',
