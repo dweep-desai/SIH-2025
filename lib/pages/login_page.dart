@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dashboard_page.dart';
 import 'faculty_dashboard_page.dart';
 import 'admin_dashboard_page.dart';
-import 'register_page.dart';
 
 // ---------------- LOGIN PAGE ----------------
 class LoginPage extends StatefulWidget {
@@ -17,6 +18,13 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+
+  String get _expectedRole {
+    if (selectedIndex == 1) return 'faculty';
+    if (selectedIndex == 2) return 'admin';
+    return 'student';
+  }
 
   void _devLogin() {
     Widget page = const DashboardPage();
@@ -31,40 +39,103 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _login() {
-    if (_formKey.currentState!.validate()) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const DashboardPage()),
+  Future<void> _login() async {
+    if (!_formKey.currentState!.validate()) return;
+    setState(() => _isLoading = true);
+    try {
+      final email = _emailController.text.trim();
+      final password = _passwordController.text.trim();
+      final cred = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
       );
+
+      // Enforce role via Firestore: users/{uid}.role must match selected tab
+      final uid = cred.user!.uid;
+      final snap = await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final data = snap.data();
+      final storedRole = data != null ? (data['role'] as String?) : null;
+      if (storedRole == null) {
+        await FirebaseAuth.instance.signOut();
+        _showSnack('Account not configured. Missing role for this user.');
+        return;
+      }
+      if (storedRole != _expectedRole) {
+        await FirebaseAuth.instance.signOut();
+        _showSnack('Role mismatch: Please select "$storedRole" to login with this account.');
+        return;
+      }
+
+      // Route based on role
+      Widget page = const DashboardPage();
+      if (storedRole == 'faculty') {
+        page = const FacultyDashboardPage();
+      } else if (storedRole == 'admin') {
+        page = const AdminDashboardPage();
+      }
+      if (!mounted) return;
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => page));
+    } on FirebaseAuthException catch (e) {
+      final message = _mapAuthError(e.code);
+      _showSnack(message);
+    } catch (_) {
+      _showSnack('Login failed. Please try again.');
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
-  void _register() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const RegisterPage()),
-    );
+  String _mapAuthError(String code) {
+    switch (code) {
+      case 'invalid-email':
+        return 'Invalid email format.';
+      case 'user-disabled':
+        return 'This user is disabled.';
+      case 'user-not-found':
+        return 'No user found for that email.';
+      case 'wrong-password':
+        return 'Incorrect password.';
+      case 'too-many-requests':
+        return 'Too many attempts. Try again later.';
+      default:
+        return 'Authentication error: $code';
+    }
   }
+
+  void _showSnack(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  }
+
+  // Registration flow removed per requirements
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
+    // Role-themed primary colors
+    final Color rolePrimary = selectedIndex == 0
+        ? Colors.blue.shade800
+        : selectedIndex == 1
+            ? Colors.green.shade700
+            : Colors.orange.shade700;
+    final Color rolePrimaryLight = rolePrimary.withOpacity(0.25);
+    final Color roleSurfaceBlend = colorScheme.surface.withOpacity(0.4);
     final TextTheme textTheme = theme.textTheme;
 
     return Scaffold(
-      body: Container(
+      body: AnimatedContainer(
+        duration: const Duration(milliseconds: 450),
+        curve: Curves.easeInOut,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              colorScheme.primary.withOpacity(0.25), // Increased opacity for a stronger start color
-              colorScheme.surface.withOpacity(0.4),  // Adjusted mid-point for a smoother, yet more visible transition
-              colorScheme.surface,                   // End color remains the same
+              rolePrimaryLight,
+              roleSurfaceBlend,
+              colorScheme.surface,
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            stops: const [0.0, 0.5, 1.0], // Start color takes up more space, transitions through the middle 50%
+            stops: const [0.0, 0.5, 1.0],
           ),
         ),
         child: SafeArea(
@@ -94,11 +165,11 @@ class _LoginPageState extends State<LoginPage> {
                           });
                         },
                         borderRadius: BorderRadius.circular(8),
-                        selectedColor: colorScheme.onPrimary,
-                        color: colorScheme.primary,
-                        fillColor: colorScheme.primary,
-                        borderColor: colorScheme.outline.withOpacity(0.3),
-                        selectedBorderColor: colorScheme.primary,
+                        selectedColor: Colors.white,
+                        color: rolePrimary,
+                        fillColor: rolePrimary,
+                        borderColor: rolePrimary.withOpacity(0.3),
+                        selectedBorderColor: rolePrimary,
                         constraints: const BoxConstraints(minHeight: 38),
                         children: const [
                           Padding(padding: EdgeInsets.symmetric(horizontal: 16.0), child: Text("STUDENT")),
@@ -109,14 +180,24 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  Icon(Icons.school_outlined, size: 60, color: colorScheme.primary),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 350),
+                    switchInCurve: Curves.easeIn,
+                    switchOutCurve: Curves.easeOut,
+                    child: Icon(
+                      Icons.school_outlined,
+                      key: ValueKey<int>(selectedIndex),
+                      size: 60,
+                      color: rolePrimary,
+                    ),
+                  ),
                   const SizedBox(height: 12),
                   Text(
                     "SMART STUDENT HUB",
                     textAlign: TextAlign.center,
                     style: textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: colorScheme.primary,
+                      color: rolePrimary,
                     ),
                   ),
                   const SizedBox(height: 30),
@@ -134,14 +215,14 @@ class _LoginPageState extends State<LoginPage> {
                               controller: _emailController,
                               decoration: InputDecoration(
                                 labelText: "Email Address",
-                                prefixIcon: Icon(Icons.email_outlined, color: colorScheme.primary),
+                                prefixIcon: Icon(Icons.email_outlined, color: rolePrimary),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.5)),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(color: colorScheme.primary, width: 2),
+                                  borderSide: BorderSide(color: rolePrimary, width: 2),
                                 ),
                                 filled: true,
                                 fillColor: colorScheme.surfaceContainerHighest,
@@ -158,14 +239,14 @@ class _LoginPageState extends State<LoginPage> {
                               controller: _passwordController,
                               decoration: InputDecoration(
                                 labelText: "Password",
-                                prefixIcon: Icon(Icons.lock_outlined, color: colorScheme.primary),
+                                prefixIcon: Icon(Icons.lock_outlined, color: rolePrimary),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.5)),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(color: colorScheme.primary, width: 2),
+                                  borderSide: BorderSide(color: rolePrimary, width: 2),
                                 ),
                                 filled: true,
                                 fillColor: colorScheme.surfaceContainerHighest,
@@ -180,42 +261,37 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             const SizedBox(height: 24),
                             ElevatedButton.icon(
-                              icon: const Icon(Icons.login_rounded),
-                              label: const Text("LOGIN", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                              icon: _isLoading ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Icon(Icons.login_rounded, color: Colors.white),
+                              label: const Text("LOGIN", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
                               style: ElevatedButton.styleFrom(
                                 minimumSize: const Size(double.infinity, 50),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                backgroundColor: rolePrimary,
                               ),
-                              onPressed: _login,
+                              onPressed: _isLoading ? null : _login,
                             ),
                             const SizedBox(height: 12),
                             OutlinedButton(
                               style: OutlinedButton.styleFrom(
                                 minimumSize: const Size(double.infinity, 50),
-                                side: BorderSide(color: colorScheme.outline.withOpacity(0.7)),
+                                side: BorderSide(color: rolePrimary.withOpacity(0.7)),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                               ),
-                              onPressed: _devLogin,
-                              child: Text("Developer Login", style: TextStyle(fontSize: 15, color: colorScheme.primary)),
+                              onPressed: _isLoading ? null : _devLogin,
+                              child: Text("Developer Login", style: TextStyle(fontSize: 15, color: rolePrimary)),
                             ),
                           ],
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        onPressed: _register,
-                        child: Text("Create Account", style: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.w600)),
-                      ),
-                      TextButton(
-                        onPressed: () { /* TODO: Implement Forgot Password */ },
-                        child: Text("Forgot Password?", style: TextStyle(color: colorScheme.secondary)),
-                      ),
-                    ],
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: _isLoading ? null : () { /* TODO: Implement Forgot Password */ },
+                      child: Text("Forgot Password?", style: TextStyle(color: rolePrimary.withOpacity(0.9))),
+                    ),
                   ),
                 ],
               ),

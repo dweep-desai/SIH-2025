@@ -196,11 +196,13 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
     final TextTheme textTheme = theme.textTheme;
 
     final colors = Theme.of(context).colorScheme;
+    // Faculty theme: green
+    final Color facultyPrimary = Colors.green.shade700;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Approval Section'),
-        backgroundColor: colors.primary,
-        foregroundColor: colors.onPrimary,
+        backgroundColor: facultyPrimary,
+        foregroundColor: Colors.white,
         actions: [
           ElevatedButton.icon(
             onPressed: _approveAll,

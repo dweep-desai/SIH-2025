@@ -59,9 +59,15 @@ class AdminDrawer extends StatelessWidget {
     return Drawer(
       child: ListView(
         children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(color: Colors.indigo),
-            child: Center(
+          DrawerHeader(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.orange.shade700, Colors.orange.shade500],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: const Center(
               child: Text(
                 "Smart Student Hub - Admin",
                 style: TextStyle(

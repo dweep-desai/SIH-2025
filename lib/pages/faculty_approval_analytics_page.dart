@@ -11,12 +11,14 @@ class FacultyApprovalAnalyticsPage extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final texts = theme.textTheme;
+    // Faculty theme: green
+    final Color facultyPrimary = Colors.green.shade700;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Approval Analytics'),
-        backgroundColor: colors.primary,
-        foregroundColor: colors.onPrimary,
+        backgroundColor: facultyPrimary,
+        foregroundColor: Colors.white,
       ),
       drawer: MainDrawer(context: context, isFaculty: true),
       body: SingleChildScrollView(
