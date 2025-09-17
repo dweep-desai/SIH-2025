@@ -9,10 +9,14 @@ class AdminDashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
+    // Admin theme: orange
+    final Color adminPrimary = Colors.orange.shade700;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Admin Dashboard"),
+        backgroundColor: adminPrimary,
+        foregroundColor: Colors.white,
       ),
       drawer: AdminDrawer(context: context),
       body: LayoutBuilder(
