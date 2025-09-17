@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/faculty_drawer.dart';
 import '../data/faculty_profile_data.dart';
+import '../data/approval_data.dart';
+import '../widgets/approval_donut_chart.dart';
 
 // ---------------- FACULTY DASHBOARD PAGE ----------------
 class FacultyDashboardPage extends StatelessWidget {
@@ -199,44 +201,88 @@ class FacultyDashboardPage extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+        child: AnimatedBuilder(
+          animation: approvalStats,
+          builder: (context, _) {
+            final totalApproved = approvalStats.approvedCount;
+            final totalRejected = approvalStats.rejectedCount;
+            final approvalRate = approvalStats.approvalRatePercent;
+            final avgPoints = computeAveragePointsAwarded();
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(Icons.analytics_outlined, color: colorScheme.primary),
-                const SizedBox(width: 8),
-                Text("Approval Analytics", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                Row(
+                  children: [
+                    Icon(Icons.analytics_outlined, color: colorScheme.primary),
+                    const SizedBox(width: 8),
+                    Text("Approval Analytics", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(child: _metricTile(context, 'Total Approved', '$totalApproved', Icons.check_circle, Colors.green)),
+                    const SizedBox(width: 12),
+                    Expanded(child: _metricTile(context, 'Total Rejected', '$totalRejected', Icons.cancel, Colors.red)),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(child: _metricTile(context, 'Approval Rate', approvalRate.toStringAsFixed(1), Icons.percent, colorScheme.primary)),
+                    const SizedBox(width: 12),
+                    Expanded(child: _metricTile(context, 'Avg. Points Awarded', avgPoints.toStringAsFixed(1), Icons.star_rate, colorScheme.tertiary)),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 280),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: ApprovalDonutChart(
+                        approved: totalApproved,
+                        rejected: totalRejected,
+                        pending: 0,
+                        includePending: false,
+                        showLegend: true,
+                        thicknessMultiplier: 1.5,
+                      ),
+                    ),
+                  ),
+                ),
               ],
-            ),
-            const SizedBox(height: 16),
-            Center(
-              child: Column(
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _metricTile(BuildContext context, String title, String value, IconData icon, Color color) {
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    final ColorScheme colors = Theme.of(context).colorScheme;
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: colors.outline.withOpacity(0.2))),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 100),
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Icon(
-                    Icons.bar_chart_outlined,
-                    size: 48,
-                    color: colorScheme.outline.withOpacity(0.5),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    "No analytics data available",
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    "Analytics will appear here once approval data is available",
-                    style: textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant.withOpacity(0.7),
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
+                  Icon(icon, color: color, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(title, style: textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant), maxLines: 2, softWrap: true)),
                 ],
               ),
-            ),
-          ],
+              const SizedBox(height: 8),
+              Text(value, style: textTheme.titleLarge?.copyWith(color: color, fontWeight: FontWeight.bold)),
+            ],
+          ),
         ),
       ),
     );
