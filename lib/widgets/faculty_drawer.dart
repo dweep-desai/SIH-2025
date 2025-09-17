@@ -81,9 +81,9 @@ class MainDrawer extends StatelessWidget {
         children: [
           Container(
             height: 200,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Colors.indigo, Colors.indigoAccent],
+                colors: [Colors.green.shade700, Colors.green.shade500],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),

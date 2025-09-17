@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dashboard_page.dart';
 import 'faculty_dashboard_page.dart';
 import 'admin_dashboard_page.dart';
-import 'register_page.dart';
 
 // ---------------- LOGIN PAGE ----------------
 class LoginPage extends StatefulWidget {
@@ -107,26 +106,31 @@ class _LoginPageState extends State<LoginPage> {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
 
-  void _register() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const RegisterPage()),
-    );
-  }
+  // Registration flow removed per requirements
 
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
+    // Role-themed primary colors
+    final Color rolePrimary = selectedIndex == 0
+        ? Colors.blue.shade800
+        : selectedIndex == 1
+            ? Colors.green.shade700
+            : Colors.orange.shade700;
+    final Color rolePrimaryLight = rolePrimary.withOpacity(0.25);
+    final Color roleSurfaceBlend = colorScheme.surface.withOpacity(0.4);
     final TextTheme textTheme = theme.textTheme;
 
     return Scaffold(
-      body: Container(
+      body: AnimatedContainer(
+        duration: const Duration(milliseconds: 450),
+        curve: Curves.easeInOut,
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              colorScheme.primary.withOpacity(0.25),
-              colorScheme.surface.withOpacity(0.4),
+              rolePrimaryLight,
+              roleSurfaceBlend,
               colorScheme.surface,
             ],
             begin: Alignment.topCenter,
@@ -161,11 +165,11 @@ class _LoginPageState extends State<LoginPage> {
                           });
                         },
                         borderRadius: BorderRadius.circular(8),
-                        selectedColor: colorScheme.onPrimary,
-                        color: colorScheme.primary,
-                        fillColor: colorScheme.primary,
-                        borderColor: colorScheme.outline.withOpacity(0.3),
-                        selectedBorderColor: colorScheme.primary,
+                        selectedColor: Colors.white,
+                        color: rolePrimary,
+                        fillColor: rolePrimary,
+                        borderColor: rolePrimary.withOpacity(0.3),
+                        selectedBorderColor: rolePrimary,
                         constraints: const BoxConstraints(minHeight: 38),
                         children: const [
                           Padding(padding: EdgeInsets.symmetric(horizontal: 16.0), child: Text("STUDENT")),
@@ -176,14 +180,24 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  Icon(Icons.school_outlined, size: 60, color: colorScheme.primary),
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 350),
+                    switchInCurve: Curves.easeIn,
+                    switchOutCurve: Curves.easeOut,
+                    child: Icon(
+                      Icons.school_outlined,
+                      key: ValueKey<int>(selectedIndex),
+                      size: 60,
+                      color: rolePrimary,
+                    ),
+                  ),
                   const SizedBox(height: 12),
                   Text(
                     "SMART STUDENT HUB",
                     textAlign: TextAlign.center,
                     style: textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: colorScheme.primary,
+                      color: rolePrimary,
                     ),
                   ),
                   const SizedBox(height: 30),
@@ -201,14 +215,14 @@ class _LoginPageState extends State<LoginPage> {
                               controller: _emailController,
                               decoration: InputDecoration(
                                 labelText: "Email Address",
-                                prefixIcon: Icon(Icons.email_outlined, color: colorScheme.primary),
+                                prefixIcon: Icon(Icons.email_outlined, color: rolePrimary),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.5)),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(color: colorScheme.primary, width: 2),
+                                  borderSide: BorderSide(color: rolePrimary, width: 2),
                                 ),
                                 filled: true,
                                 fillColor: colorScheme.surfaceContainerHighest,
@@ -225,14 +239,14 @@ class _LoginPageState extends State<LoginPage> {
                               controller: _passwordController,
                               decoration: InputDecoration(
                                 labelText: "Password",
-                                prefixIcon: Icon(Icons.lock_outlined, color: colorScheme.primary),
+                                prefixIcon: Icon(Icons.lock_outlined, color: rolePrimary),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
                                   borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.5)),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(color: colorScheme.primary, width: 2),
+                                  borderSide: BorderSide(color: rolePrimary, width: 2),
                                 ),
                                 filled: true,
                                 fillColor: colorScheme.surfaceContainerHighest,
@@ -247,11 +261,12 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             const SizedBox(height: 24),
                             ElevatedButton.icon(
-                              icon: _isLoading ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)) : const Icon(Icons.login_rounded),
-                              label: const Text("LOGIN", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                              icon: _isLoading ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white)) : const Icon(Icons.login_rounded, color: Colors.white),
+                              label: const Text("LOGIN", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
                               style: ElevatedButton.styleFrom(
                                 minimumSize: const Size(double.infinity, 50),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                backgroundColor: rolePrimary,
                               ),
                               onPressed: _isLoading ? null : _login,
                             ),
@@ -259,30 +274,24 @@ class _LoginPageState extends State<LoginPage> {
                             OutlinedButton(
                               style: OutlinedButton.styleFrom(
                                 minimumSize: const Size(double.infinity, 50),
-                                side: BorderSide(color: colorScheme.outline.withOpacity(0.7)),
+                                side: BorderSide(color: rolePrimary.withOpacity(0.7)),
                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                               ),
                               onPressed: _isLoading ? null : _devLogin,
-                              child: Text("Developer Login", style: TextStyle(fontSize: 15, color: colorScheme.primary)),
+                              child: Text("Developer Login", style: TextStyle(fontSize: 15, color: rolePrimary)),
                             ),
                           ],
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        onPressed: _isLoading ? null : _register,
-                        child: Text("Create Account", style: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.w600)),
-                      ),
-                      TextButton(
-                        onPressed: _isLoading ? null : () { /* TODO: Implement Forgot Password */ },
-                        child: Text("Forgot Password?", style: TextStyle(color: colorScheme.secondary)),
-                      ),
-                    ],
+                  const SizedBox(height: 8),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: _isLoading ? null : () { /* TODO: Implement Forgot Password */ },
+                      child: Text("Forgot Password?", style: TextStyle(color: rolePrimary.withOpacity(0.9))),
+                    ),
                   ),
                 ],
               ),

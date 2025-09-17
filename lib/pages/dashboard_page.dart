@@ -10,13 +10,16 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final ThemeData theme = Theme.of(context);
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+    // Student theme: blue
+    final Color studentPrimary = Colors.blue.shade800;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Dashboard"),
-        // backgroundColor: colorScheme.surface, // Or primary for a colored AppBar
-        // elevation: 0, // For a flatter look
+        backgroundColor: studentPrimary,
+        foregroundColor: Colors.white,
       ),
       drawer: MainDrawer(context: context),
       body: LayoutBuilder(
