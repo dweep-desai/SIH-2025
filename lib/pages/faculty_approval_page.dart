@@ -176,16 +176,19 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
     // final ColorScheme colorScheme = theme.colorScheme; // not used currently
     final TextTheme textTheme = theme.textTheme;
 
+    final colors = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Approval Section'),
+        backgroundColor: colors.primary,
+        foregroundColor: colors.onPrimary,
         actions: [
           ElevatedButton.icon(
             onPressed: _approveAll,
             icon: const Icon(Icons.check_circle),
             label: const Text('Approve All'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
+              backgroundColor: Colors.green.shade600,
               foregroundColor: Colors.white,
             ),
           ),
@@ -197,19 +200,23 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
         itemCount: approvals.length,
         itemBuilder: (context, index) {
           final approval = approvals[index];
+          final isPending = approval['status'] == 'pending';
           return Card(
+            color: isPending ? colors.surfaceContainerLow : colors.surface,
+            elevation: 2,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             margin: const EdgeInsets.only(bottom: 12.0),
             child: ListTile(
               title: Text(
                 approval['studentName'],
-                style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colors.onSurface),
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     approval['approvalType'],
-                    style: textTheme.bodyMedium,
+                    style: textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -217,12 +224,18 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.info, color: Colors.blue),
+                    icon: Icon(Icons.info, color: colors.primary),
                     onPressed: () {
                       showDialog(
                         context: context,
                         builder: (ctx) => AlertDialog(
-                          title: const Text('Approval Details'),
+                          title: Row(
+                            children: [
+                              Icon(Icons.info, color: colors.primary),
+                              const SizedBox(width: 8),
+                              const Text('Approval Details'),
+                            ],
+                          ),
                           content: Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -295,19 +308,21 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
                       );
                     },
                   ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.check,
-                      color: approval['status'] == 'approved' ? Colors.green : Colors.grey,
+                  Tooltip(
+                    message: 'Approve',
+                    child: IconButton(
+                      icon: const Icon(Icons.check_circle),
+                      color: isPending ? Colors.green.shade600 : colors.outline,
+                      onPressed: isPending ? () => _approveSingle(index) : null,
                     ),
-                    onPressed: approval['status'] == 'pending' ? () => _approveSingle(index) : null,
                   ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.close,
-                      color: approval['status'] == 'rejected' ? Colors.red : Colors.grey,
+                  Tooltip(
+                    message: 'Reject',
+                    child: IconButton(
+                      icon: const Icon(Icons.cancel),
+                      color: isPending ? Colors.red.shade600 : colors.outline,
+                      onPressed: isPending ? () => _rejectSingle(index) : null,
                     ),
-                    onPressed: approval['status'] == 'pending' ? () => _rejectSingle(index) : null,
                   ),
                 ],
               ),

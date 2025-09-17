@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "977763811180",
+    "project_id": "hackproj-190",
+    "storage_bucket": "hackproj-190.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:977763811180:android:2f41ea271fe5b63e77fd49",
+        "android_client_info": {
+          "package_name": "com.example.app2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaPzYC3LwXYkIERgo8YT8Zkz7Vm7ERD8U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:977763811180:android:ab3e04b54b77afd377fd49",
+        "android_client_info": {
+          "package_name": "com.example.hackaproj190"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaPzYC3LwXYkIERgo8YT8Zkz7Vm7ERD8U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

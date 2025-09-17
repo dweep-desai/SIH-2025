@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../widgets/faculty_drawer.dart';
 import '../data/approval_data.dart';
+import '../models/student.dart';
+import '../data/students_data.dart';
 
 class FacultyStudentSearchPage extends StatefulWidget {
   const FacultyStudentSearchPage({super.key});
@@ -16,76 +18,38 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
   String _domainFilter = 'All';
   String _sortBy = 'Name'; // Name or Roll No
 
-  // Dummy data for students
-  final List<Map<String, dynamic>> allStudents = [
-    {
-      'name': 'Alice Johnson',
-      'id': '24BCE001',
-      'department': 'Computer Science',
-      'domain': 'AI/ML',
-      'email': 'alice@nirmauni.ac.in',
-    },
-    {
-      'name': 'Bob Smith',
-      'id': '24BCE010',
-      'department': 'Computer Science',
-      'domain': 'Data Science',
-      'email': 'bob@nirmauni.ac.in',
-    },
-    {
-      'name': 'Charlie Brown',
-      'id': '24BIT003',
-      'department': 'Information Technology',
-      'domain': 'Cybersecurity',
-      'email': 'charlie@nirmauni.ac.in',
-    },
-    {
-      'name': 'Diana Prince',
-      'id': '24BCE005',
-      'department': 'Computer Science',
-      'domain': 'Web Development',
-      'email': 'diana@nirmauni.ac.in',
-    },
-  ];
+  // Shared student dataset used across student and faculty sections
+  final List<StudentModel> allStudents = sampleStudents;
 
-  List<Map<String, dynamic>> get filteredStudents {
-    List<Map<String, dynamic>> result = allStudents;
+  List<StudentModel> get filteredStudents {
+    List<StudentModel> result = List<StudentModel>.from(allStudents);
 
     // Branch filter
     if (_branchFilter != 'All') {
-      result = result.where((s) => (s['department'] as String) == _branchFilter).toList();
+      result = result.where((s) => s.department == _branchFilter).toList();
     }
 
     // Domain filter
     if (_domainFilter != 'All') {
-      result = result.where((s) {
-        final dynamic raw = s['domain'];
-        if (raw == null) return false;
-        if (raw is String) {
-          return raw == _domainFilter || raw.split(',').map((e) => e.trim()).contains(_domainFilter);
-        }
-        if (raw is List) {
-          return raw.map((e) => e.toString()).contains(_domainFilter);
-        }
-        return false;
-    }).toList();
+      result = result.where((s) => s.domains.contains(_domainFilter)).toList();
     }
 
     // Search by name, roll no, or domain
     if (_searchQuery.isNotEmpty) {
       final q = _searchQuery.toLowerCase();
       result = result.where((s) =>
-        (s['name'] as String).toLowerCase().contains(q) ||
-        (s['id'] as String).toLowerCase().contains(q) ||
-        ((s['domain'] as String?)?.toLowerCase().contains(q) ?? false)
+        s.name.toLowerCase().contains(q) ||
+        s.id.toLowerCase().contains(q) ||
+        s.department.toLowerCase().contains(q) ||
+        s.domains.any((d) => d.toLowerCase().contains(q))
       ).toList();
     }
 
     // Lexicographic sort
     if (_sortBy == 'Name') {
-      result.sort((a, b) => (a['name'] as String).toLowerCase().compareTo((b['name'] as String).toLowerCase()));
+      result.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
     } else {
-      result.sort((a, b) => (a['id'] as String).toLowerCase().compareTo((b['id'] as String).toLowerCase()));
+      result.sort((a, b) => a.id.toLowerCase().compareTo(b.id.toLowerCase()));
     }
 
     return result;
@@ -221,7 +185,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                             child: ListTile(
                               isThreeLine: true,
                               title: Text(
-                                student['name'],
+                                student.name,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
@@ -230,29 +194,28 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Roll No: ${student['id']}',
+                                    'Roll No: ${student.id}',
                                     style: textTheme.bodyMedium,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     softWrap: false,
                                   ),
                                   Text(
-                                    'Branch: ${student['department']}',
+                                    'Branch: ${student.department}',
                                     style: textTheme.bodyMedium,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     softWrap: false,
                                   ),
-                                  if (student['domain'] != null)
-                                    Text(
-                                      'Domain: ${student['domain']}',
-                                      style: textTheme.bodyMedium,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      softWrap: false,
-                                    ),
                                   Text(
-                                    'Email: ${student['email']}',
+                                    'Domains: ${student.domains.join(', ')}',
+                                    style: textTheme.bodyMedium,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    softWrap: false,
+                                  ),
+                                  Text(
+                                    'Email: ${student.email}',
                                     style: textTheme.bodyMedium,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -272,7 +235,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
     );
   }
 
-  void _showStudentQuickView(Map<String, dynamic> student) {
+  void _showStudentQuickView(StudentModel student) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -300,9 +263,9 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(student['name'], style: texts.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                        Text('Roll No: ${student['id']}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
-                        Text('Branch: ${student['department']}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
+                        Text(student.name, style: texts.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                        Text('Roll No: ${student.id}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
+                        Text('Branch: ${student.department}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
                       ],
                     ),
                   )
@@ -338,7 +301,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
     );
   }
 
-  void _openFacultyStudentDetail(Map<String, dynamic> student) {
+  void _openFacultyStudentDetail(StudentModel student) {
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -468,7 +431,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
 }
 
 class FacultyStudentDetailPage extends StatelessWidget {
-  final Map<String, dynamic> student;
+  final StudentModel student;
 
   const FacultyStudentDetailPage({super.key, required this.student});
 
@@ -501,11 +464,11 @@ class FacultyStudentDetailPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(student['name'], style: texts.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+                          Text(student.name, style: texts.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
                           const SizedBox(height: 4),
-                          Text('Roll No: ${student['id']}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
-                          Text('Branch: ${student['department']}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
-                          Text('Email: ${student['email']}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
+                          Text('Roll No: ${student.id}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
+                          Text('Branch: ${student.department}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
+                          Text('Email: ${student.email}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
                         ],
                       ),
                     ),
@@ -771,7 +734,7 @@ class FacultyStudentDetailPage extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (ctx) {
-        return const _GradesBottomSheet();
+        return _GradesBottomSheet(currentSemester: student.currentSemester);
       },
     );
   }
@@ -848,7 +811,8 @@ class _RecordCategoryCard extends StatelessWidget {
 }
 
 class _GradesBottomSheet extends StatefulWidget {
-  const _GradesBottomSheet();
+  const _GradesBottomSheet({required this.currentSemester});
+  final int currentSemester;
 
   @override
   State<_GradesBottomSheet> createState() => _GradesBottomSheetState();
@@ -856,13 +820,14 @@ class _GradesBottomSheet extends StatefulWidget {
 
 class _GradesBottomSheetState extends State<_GradesBottomSheet> {
   int _selectedSemester = 1;
-  final int _totalSemesters = 7;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     final texts = theme.textTheme;
+
+    final int totalSemesters = (widget.currentSemester - 1).clamp(1, 8);
 
     // Mock data mirroring Grades page style
     final List<Map<String, dynamic>> grades = [
@@ -904,7 +869,7 @@ class _GradesBottomSheetState extends State<_GradesBottomSheet> {
                   icon: Icon(Icons.arrow_drop_down_rounded, color: colors.primary, size: 30),
                   dropdownColor: colors.surfaceContainerHighest,
                   style: texts.titleMedium?.copyWith(color: colors.onSurface),
-                  items: List.generate(_totalSemesters, (index) {
+                  items: List.generate(totalSemesters, (index) {
                     return DropdownMenuItem<int>(
                       value: index + 1,
                       child: Text("Semester ${index + 1}"),

@@ -9,6 +9,7 @@ import '../pages/faculty_student_search_page.dart';
 import '../pages/faculty_approval_page.dart';
 import '../pages/faculty_approval_history_page.dart';
 import '../pages/faculty_approval_analytics_page.dart';
+import '../pages/faculty_edit_profile_page.dart';
 
 // ---------------- GLOBAL DRAWER ----------------
 class MainDrawer extends StatelessWidget {
@@ -153,6 +154,16 @@ class MainDrawer extends StatelessWidget {
                   ),
                 ],
                 if (isFaculty) ...[
+                  _buildDrawerItem(
+                    icon: Icons.edit,
+                    title: "Edit Profile",
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const FacultyEditProfilePage()),
+                      );
+                    },
+                  ),
                   _buildDrawerItem(
                     icon: Icons.search,
                     title: "Student Search",
