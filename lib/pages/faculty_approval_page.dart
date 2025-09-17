@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../widgets/faculty_drawer.dart';
+import '../data/approval_data.dart';
 
 class FacultyApprovalPage extends StatefulWidget {
   const FacultyApprovalPage({super.key});
@@ -93,6 +95,11 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
                 setState(() {
                   approvals.removeAt(index);
                 });
+                logFacultyApproval(
+                  studentName: approvals[index > approvals.length ? approvals.length - 1 : (index.clamp(0, approvals.length))]['studentName'] ?? 'Student',
+                  action: 'approved',
+                  title: approvals.isNotEmpty ? approvals.first['title'] ?? 'Request' : 'Request',
+                );
               },
               child: const Text('Approve'),
             ),
@@ -148,6 +155,12 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
                 setState(() {
                   approvals.removeAt(index);
                 });
+                logFacultyApproval(
+                  studentName: approvals[index > approvals.length ? approvals.length - 1 : (index.clamp(0, approvals.length))]['studentName'] ?? 'Student',
+                  action: 'rejected',
+                  title: approvals.isNotEmpty ? approvals.first['title'] ?? 'Request' : 'Request',
+                  reason: reasonController.text.trim(),
+                );
               },
               child: const Text('Reject'),
             ),
@@ -218,8 +231,37 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
                               const SizedBox(height: 8),
                               if (approval['title'] != null) Text('Title: ${approval['title']}'),
                               if (approval['description'] != null) Text('Description: ${approval['description']}'),
-                              if (approval['link'] != null) Text('Link: ${approval['link']}'),
-                              if (approval['pdfPath'] != null) Text('File: ${approval['pdfPath']}'),
+                              if (approval['link'] != null)
+                                InkWell(
+                                  onTap: () async {
+                                    final uri = Uri.parse(approval['link']);
+                                    if (await canLaunchUrl(uri)) {
+                                      await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                    }
+                                  },
+                                  child: Text('Open Link', style: TextStyle(color: Colors.blue.shade700, decoration: TextDecoration.underline)),
+                                ),
+                              if (approval['pdfPath'] != null)
+                                Row(
+                                  children: [
+                                    Text('PDF: ${approval['pdfPath']}', overflow: TextOverflow.ellipsis),
+                                    const SizedBox(width: 8),
+                                    TextButton.icon(
+                                      onPressed: () async {
+                                        // Attempt to open PDF via url_launcher if path is URL; otherwise, rely on platform viewer
+                                        final path = approval['pdfPath'] as String;
+                                        try {
+                                          final uri = Uri.parse(path);
+                                          if (await canLaunchUrl(uri)) {
+                                            await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                          }
+                                        } catch (_) {}
+                                      },
+                                      icon: const Icon(Icons.picture_as_pdf),
+                                      label: const Text('View PDF'),
+                                    ),
+                                  ],
+                                ),
                             ],
                           ),
                           actions: [

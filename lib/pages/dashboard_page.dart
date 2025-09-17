@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/student_drawer.dart';
 import 'semester_info_page.dart';
-import 'grades_page.dart';
 import 'achievements_page.dart';
 
 // ---------------- DASHBOARD PAGE ----------------
@@ -33,8 +32,6 @@ class DashboardPage extends StatelessWidget {
                 gpaCard(context),
                 const SizedBox(height: 16),
                 attendanceCard(context),
-                const SizedBox(height: 16),
-                gradesCard(context),
                 const SizedBox(height: 16),
                 achievementsCard(context),
                 const SizedBox(height: 16),
@@ -85,6 +82,7 @@ class DashboardPage extends StatelessWidget {
                 _buildDetailRow(context, Icons.calendar_today, "DOB: 28 Aug 2006"),
                 _buildDetailRow(context, Icons.school, "Branch: Computer Science"),
                 _buildDetailRow(context, Icons.account_balance, "Institute: Nirma University"),
+                _buildDetailRow(context, Icons.person_outline, "Faculty Advisor: Dr. John Doe"),
               ],
             ),
           ],
@@ -207,59 +205,7 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
-  Widget gradesCard(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
-    final TextTheme textTheme = theme.textTheme;
-
-    // Dummy data - replace with actual data
-    final grades = ["Data Structures - A", "Object Oriented - B+", "Digital Electronics - A-"];
-
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const GradesPage(initialSemester: 1), // Corrected this line
-            ),
-          );
-        },
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0), // Adjust padding for ListTile
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                child: Row(
-                  children: [
-                    Icon(Icons.grade, color: colorScheme.primary),
-                    const SizedBox(width: 8),
-                    Text("Recent Grades", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
-                  ],
-                ),
-              ),
-              const Divider(height: 16, indent: 16, endIndent: 16),
-              ...grades.map((grade) => ListTile(
-                dense: true,
-                title: Text(grade, style: textTheme.bodyMedium),
-                trailing: Icon(Icons.arrow_forward_ios, size: 14, color: colorScheme.onSurfaceVariant),
-              )),
-               if (grades.isEmpty)
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Center(child: Text("No recent grades to display", style: textTheme.bodyMedium)),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  // Removed Recent Grades card from dashboard per requirement
 
   Widget achievementsCard(BuildContext context) {
     final ThemeData theme = Theme.of(context);

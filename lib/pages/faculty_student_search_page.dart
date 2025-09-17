@@ -13,6 +13,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
   String _branchFilter = 'All';
+  String _domainFilter = 'All';
   String _sortBy = 'Name'; // Name or Roll No
 
   // Dummy data for students
@@ -21,24 +22,28 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
       'name': 'Alice Johnson',
       'id': '24BCE001',
       'department': 'Computer Science',
+      'domain': 'AI/ML',
       'email': 'alice@nirmauni.ac.in',
     },
     {
       'name': 'Bob Smith',
       'id': '24BCE010',
       'department': 'Computer Science',
+      'domain': 'Data Science',
       'email': 'bob@nirmauni.ac.in',
     },
     {
       'name': 'Charlie Brown',
       'id': '24BIT003',
       'department': 'Information Technology',
+      'domain': 'Cybersecurity',
       'email': 'charlie@nirmauni.ac.in',
     },
     {
       'name': 'Diana Prince',
       'id': '24BCE005',
       'department': 'Computer Science',
+      'domain': 'Web Development',
       'email': 'diana@nirmauni.ac.in',
     },
   ];
@@ -51,12 +56,28 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
       result = result.where((s) => (s['department'] as String) == _branchFilter).toList();
     }
 
-    // Search by name or roll no
+    // Domain filter
+    if (_domainFilter != 'All') {
+      result = result.where((s) {
+        final dynamic raw = s['domain'];
+        if (raw == null) return false;
+        if (raw is String) {
+          return raw == _domainFilter || raw.split(',').map((e) => e.trim()).contains(_domainFilter);
+        }
+        if (raw is List) {
+          return raw.map((e) => e.toString()).contains(_domainFilter);
+        }
+        return false;
+      }).toList();
+    }
+
+    // Search by name, roll no, or domain
     if (_searchQuery.isNotEmpty) {
       final q = _searchQuery.toLowerCase();
       result = result.where((s) =>
         (s['name'] as String).toLowerCase().contains(q) ||
-        (s['id'] as String).toLowerCase().contains(q)
+        (s['id'] as String).toLowerCase().contains(q) ||
+        ((s['domain'] as String?)?.toLowerCase().contains(q) ?? false)
       ).toList();
     }
 
@@ -110,7 +131,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                     // Branch filter
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        value: _branchFilter,
+                        initialValue: _branchFilter,
                         decoration: InputDecoration(
                           labelText: 'Branch',
                           border: OutlineInputBorder(
@@ -130,10 +151,33 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                       ),
                     ),
                     const SizedBox(width: 12),
+                    // Domain filter
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        initialValue: _domainFilter,
+                        decoration: InputDecoration(
+                          labelText: 'Domain',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          filled: true,
+                          fillColor: colorScheme.surfaceContainerHighest,
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: 'All', child: Text('All')),
+                          DropdownMenuItem(value: 'AI/ML', child: Text('AI/ML')),
+                          DropdownMenuItem(value: 'Data Science', child: Text('Data Science')),
+                          DropdownMenuItem(value: 'Cybersecurity', child: Text('Cybersecurity')),
+                          DropdownMenuItem(value: 'Web Development', child: Text('Web Development')),
+                        ],
+                        onChanged: (v) { setState(() { _domainFilter = v ?? 'All'; }); },
+                      ),
+                    ),
+                    const SizedBox(width: 12),
                     // Sort by
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        value: _sortBy,
+                        initialValue: _sortBy,
                         decoration: InputDecoration(
                           labelText: 'Sort By',
                           border: OutlineInputBorder(
@@ -203,6 +247,14 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                                     overflow: TextOverflow.ellipsis,
                                     softWrap: false,
                                   ),
+                                  if (student['domain'] != null)
+                                    Text(
+                                      'Domain: ${student['domain']}',
+                                      style: textTheme.bodyMedium,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      softWrap: false,
+                                    ),
                                   Text(
                                     'Email: ${student['email']}',
                                     style: textTheme.bodyMedium,
@@ -621,7 +673,7 @@ class _RecordCategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final texts = Theme.of(context).textTheme;
-    IconData _iconForCategory(String category) {
+    IconData iconForCategory(String category) {
       switch (category) {
         case 'Certifications':
           return Icons.verified_outlined;
@@ -651,7 +703,7 @@ class _RecordCategoryCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(_iconForCategory(title), color: colors.primary),
+                Icon(iconForCategory(title), color: colors.primary),
                 const SizedBox(width: 8),
                 Text(title, style: texts.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
               ],

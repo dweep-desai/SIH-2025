@@ -17,6 +17,7 @@ class GradesPage extends StatefulWidget {
 class _GradesPageState extends State<GradesPage> {
   late int _selectedSemester;
   final int totalSemesters = 7;
+  final int currentSemester = 3; // TODO: replace with real current semester
 
   @override
   void initState() {
@@ -55,7 +56,7 @@ class _GradesPageState extends State<GradesPage> {
                   icon: Icon(Icons.arrow_drop_down_rounded, color: colorScheme.primary, size: 30),
                   dropdownColor: colorScheme.surfaceContainerHighest,
                   style: textTheme.titleMedium?.copyWith(color: colorScheme.onSurface),
-                  items: List.generate(totalSemesters, (index) {
+                  items: List.generate(currentSemester - 1, (index) {
                     return DropdownMenuItem<int>(
                       value: index + 1,
                       child: Text("Semester ${index + 1}"),

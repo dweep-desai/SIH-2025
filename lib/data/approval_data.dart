@@ -57,3 +57,36 @@ void updateApprovalStatus(int index, String status, {String? reason}) {
     approvalRequests[index].rejectionReason = reason;
   }
 }
+
+// ---------------- FACULTY APPROVAL HISTORY ----------------
+class FacultyApprovalAction {
+  final String studentName;
+  final String action; // approved|rejected
+  final String title;
+  final String? reason; // for rejected
+  final DateTime at;
+
+  FacultyApprovalAction({
+    required this.studentName,
+    required this.action,
+    required this.title,
+    this.reason,
+    DateTime? at,
+  }) : at = at ?? DateTime.now();
+}
+
+final List<FacultyApprovalAction> facultyApprovalHistory = [];
+
+void logFacultyApproval({
+  required String studentName,
+  required String action,
+  required String title,
+  String? reason,
+}) {
+  facultyApprovalHistory.insert(0, FacultyApprovalAction(
+    studentName: studentName,
+    action: action,
+    title: title,
+    reason: reason,
+  ));
+}

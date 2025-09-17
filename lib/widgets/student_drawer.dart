@@ -7,6 +7,7 @@ import '../pages/achievements_page.dart';
 import '../pages/faculty_search_page.dart';
 import '../pages/request_approval_page.dart';
 import '../pages/approval_status_page.dart';
+import '../pages/student_edit_profile_page.dart';
 
 // ---------------- GLOBAL DRAWER ----------------
 class MainDrawer extends StatelessWidget {
@@ -141,6 +142,16 @@ class MainDrawer extends StatelessWidget {
                   icon: Icons.workspace_premium,
                   title: "Student Record",
                   onTap: _achievements,
+                ),
+                _buildDrawerItem(
+                  icon: Icons.edit,
+                  title: "Edit Profile",
+                  onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const StudentEditProfilePage()),
+                    );
+                  },
                 ),
                 _buildDrawerItem(
                   icon: Icons.search,

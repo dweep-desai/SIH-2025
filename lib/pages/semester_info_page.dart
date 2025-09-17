@@ -19,7 +19,6 @@ class SemesterInfoPage extends StatelessWidget {
             tabs: [
               Tab(icon: Icon(Icons.book), text: "Courses"),
               Tab(icon: Icon(Icons.check_circle), text: "Attendance"),
-              Tab(icon: Icon(Icons.grade), text: "Grades"), // Assuming GradesTab will be here or imported
             ],
           ),
         ),
@@ -28,7 +27,6 @@ class SemesterInfoPage extends StatelessWidget {
           children: [
             CoursesTab(),
             AttendanceTab(),
-            GradesTab(), // Placeholder for now, might need its own file or be defined here
           ],
         ),
       ),
