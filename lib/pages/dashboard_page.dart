@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/student_drawer.dart';
+import '../data/profile_data.dart';
 import 'semester_info_page.dart';
 import 'achievements_page.dart';
 
@@ -61,7 +62,10 @@ class DashboardPage extends StatelessWidget {
             CircleAvatar(
               radius: 40,
               backgroundColor: colorScheme.primaryContainer,
-              child: Icon(Icons.person, size: 40, color: colorScheme.onPrimaryContainer),
+              backgroundImage: ProfileData.getProfileImageProvider(),
+              child: ProfileData.getProfileImageProvider() == null
+                  ? Icon(Icons.person, size: 40, color: colorScheme.onPrimaryContainer)
+                  : null,
             ),
             const SizedBox(height: 12),
             Text(
@@ -83,6 +87,8 @@ class DashboardPage extends StatelessWidget {
                 _buildDetailRow(context, Icons.school, "Branch: Computer Science"),
                 _buildDetailRow(context, Icons.account_balance, "Institute: Nirma University"),
                 _buildDetailRow(context, Icons.person_outline, "Faculty Advisor: Dr. John Doe"),
+                if (ProfileData.getDomains().isNotEmpty)
+                  _buildDetailRow(context, Icons.work_outline, "Domains: ${ProfileData.getDomains().join(', ')}"),
               ],
             ),
           ],

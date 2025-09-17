@@ -110,13 +110,13 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
               children: [
                 // Search field - takes full width with consistent styling
                 TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
+              controller: _searchController,
+              decoration: InputDecoration(
                     labelText: 'Search by Name, Roll No, or Domain',
                     hintText: 'Enter search terms...',
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
                     ),
                     enabledBorder: OutlineInputBorder(
@@ -126,19 +126,19 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide(color: colorScheme.primary, width: 2),
-                    ),
-                    filled: true,
-                    fillColor: colorScheme.surfaceContainerHighest,
+                ),
+                filled: true,
+                fillColor: colorScheme.surfaceContainerHighest,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
                     isDense: true,
-                  ),
+              ),
                   style: TextStyle(color: colorScheme.onSurface, fontSize: 14),
-                  onChanged: (value) {
-                    setState(() {
-                      _searchQuery = value;
-                    });
-                  },
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
                 ),
                 const SizedBox(height: 12),
                 // Responsive filters - guaranteed no overflow with proper constraints
@@ -350,7 +350,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
   Widget _buildBranchFilter() {
     final colorScheme = Theme.of(context).colorScheme;
     return DropdownButtonFormField<String>(
-      value: _branchFilter,
+      initialValue: _branchFilter,
       isDense: true,
       decoration: InputDecoration(
         labelText: 'Branch',
@@ -390,7 +390,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
   Widget _buildDomainFilter() {
     final colorScheme = Theme.of(context).colorScheme;
     return DropdownButtonFormField<String>(
-      value: _domainFilter,
+      initialValue: _domainFilter,
       isDense: true,
       decoration: InputDecoration(
         labelText: 'Domain',
@@ -430,7 +430,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
   Widget _buildSortFilter() {
     final colorScheme = Theme.of(context).colorScheme;
     return DropdownButtonFormField<String>(
-      value: _sortBy,
+      initialValue: _sortBy,
       isDense: true,
       decoration: InputDecoration(
         labelText: 'Sort By',
