@@ -68,7 +68,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
           return raw.map((e) => e.toString()).contains(_domainFilter);
         }
         return false;
-      }).toList();
+    }).toList();
     }
 
     // Search by name, roll no, or domain
@@ -108,18 +108,32 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
-                // Search field - takes full width
+                // Search field - takes full width with consistent styling
                 TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
                     labelText: 'Search by Name, Roll No, or Domain',
+                    hintText: 'Enter search terms...',
                     prefixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: colorScheme.primary, width: 2),
                     ),
                     filled: true,
                     fillColor: colorScheme.surfaceContainerHighest,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+                    isDense: true,
                   ),
+                  style: TextStyle(color: colorScheme.onSurface, fontSize: 14),
                   onChanged: (value) {
                     setState(() {
                       _searchQuery = value;
@@ -127,33 +141,57 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                   },
                 ),
                 const SizedBox(height: 12),
-                // Responsive filters - use Wrap to prevent overflow on any screen size
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    // Branch filter - flexible width with proper constraints
-                    Flexible(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(minWidth: 100, maxWidth: 180),
-                        child: _buildBranchFilter(),
-                      ),
-                    ),
-                    // Domain filter - flexible width with proper constraints
-                    Flexible(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(minWidth: 100, maxWidth: 180),
-                        child: _buildDomainFilter(),
-                      ),
-                    ),
-                    // Sort filter - flexible width with proper constraints
-                    Flexible(
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(minWidth: 100, maxWidth: 180),
-                        child: _buildSortFilter(),
-                      ),
-                    ),
-                  ],
+                // Responsive filters - guaranteed no overflow with proper constraints
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    if (constraints.maxWidth > 700) {
+                      // Very wide screens: show all filters in a row
+                      return Row(
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: _buildBranchFilter(),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            flex: 2,
+                            child: _buildDomainFilter(),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            flex: 1,
+                            child: _buildSortFilter(),
+                          ),
+                        ],
+                      );
+                    } else if (constraints.maxWidth > 500) {
+                      // Medium screens: two filters on top, one below
+                      return Column(
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(child: _buildBranchFilter()),
+                              const SizedBox(width: 8),
+                              Expanded(child: _buildDomainFilter()),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          _buildSortFilter(),
+                        ],
+                      );
+                    } else {
+                      // Narrow screens: all filters stacked vertically
+                      return Column(
+                        children: [
+                          _buildBranchFilter(),
+                          const SizedBox(height: 8),
+                          _buildDomainFilter(),
+                          const SizedBox(height: 8),
+                          _buildSortFilter(),
+                        ],
+                      );
+                    }
+                  },
                 ),
               ],
             ),
@@ -316,17 +354,32 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
       isDense: true,
       decoration: InputDecoration(
         labelText: 'Branch',
+        hintText: 'Select Branch',
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
         filled: true,
         fillColor: colorScheme.surfaceContainerHighest,
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+        isDense: true,
       ),
+      dropdownColor: colorScheme.surfaceContainerHighest,
+      style: TextStyle(color: colorScheme.onSurface, fontSize: 14),
+      icon: Icon(Icons.keyboard_arrow_down_rounded, color: colorScheme.primary, size: 20),
       items: const [
-        DropdownMenuItem(value: 'All', child: Text('All', overflow: TextOverflow.ellipsis)),
-        DropdownMenuItem(value: 'Computer Science', child: Text('CS', overflow: TextOverflow.ellipsis)),
-        DropdownMenuItem(value: 'Information Technology', child: Text('IT', overflow: TextOverflow.ellipsis)),
+        DropdownMenuItem(value: 'All', child: Text('All Branches', style: TextStyle(fontSize: 14))),
+        DropdownMenuItem(value: 'Computer Science', child: Text('Computer Science', style: TextStyle(fontSize: 14))),
+        DropdownMenuItem(value: 'Information Technology', child: Text('Information Technology', style: TextStyle(fontSize: 14))),
       ],
       onChanged: (v) {
         setState(() { _branchFilter = v ?? 'All'; });
@@ -341,19 +394,34 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
       isDense: true,
       decoration: InputDecoration(
         labelText: 'Domain',
+        hintText: 'Select Domain',
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
         filled: true,
         fillColor: colorScheme.surfaceContainerHighest,
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+        isDense: true,
       ),
+      dropdownColor: colorScheme.surfaceContainerHighest,
+      style: TextStyle(color: colorScheme.onSurface, fontSize: 14),
+      icon: Icon(Icons.keyboard_arrow_down_rounded, color: colorScheme.primary, size: 20),
       items: const [
-        DropdownMenuItem(value: 'All', child: Text('All', overflow: TextOverflow.ellipsis)),
-        DropdownMenuItem(value: 'AI/ML', child: Text('AI/ML', overflow: TextOverflow.ellipsis)),
-        DropdownMenuItem(value: 'Data Science', child: Text('Data Sci', overflow: TextOverflow.ellipsis)),
-        DropdownMenuItem(value: 'Cybersecurity', child: Text('Cyber', overflow: TextOverflow.ellipsis)),
-        DropdownMenuItem(value: 'Web Development', child: Text('Web Dev', overflow: TextOverflow.ellipsis)),
+        DropdownMenuItem(value: 'All', child: Text('All Domains', style: TextStyle(fontSize: 14))),
+        DropdownMenuItem(value: 'AI/ML', child: Text('AI/ML', style: TextStyle(fontSize: 14))),
+        DropdownMenuItem(value: 'Data Science', child: Text('Data Science', style: TextStyle(fontSize: 14))),
+        DropdownMenuItem(value: 'Cybersecurity', child: Text('Cybersecurity', style: TextStyle(fontSize: 14))),
+        DropdownMenuItem(value: 'Web Development', child: Text('Web Development', style: TextStyle(fontSize: 14))),
       ],
       onChanged: (v) { setState(() { _domainFilter = v ?? 'All'; }); },
     );
@@ -366,16 +434,31 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
       isDense: true,
       decoration: InputDecoration(
         labelText: 'Sort By',
+        hintText: 'Sort Order',
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
         filled: true,
         fillColor: colorScheme.surfaceContainerHighest,
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
+        isDense: true,
       ),
+      dropdownColor: colorScheme.surfaceContainerHighest,
+      style: TextStyle(color: colorScheme.onSurface, fontSize: 14),
+      icon: Icon(Icons.keyboard_arrow_down_rounded, color: colorScheme.primary, size: 20),
       items: const [
-        DropdownMenuItem(value: 'Name', child: Text('Name A-Z', overflow: TextOverflow.ellipsis)),
-        DropdownMenuItem(value: 'Roll No', child: Text('Roll A-Z', overflow: TextOverflow.ellipsis)),
+        DropdownMenuItem(value: 'Name', child: Text('Name (A-Z)', style: TextStyle(fontSize: 14))),
+        DropdownMenuItem(value: 'Roll No', child: Text('Roll No (A-Z)', style: TextStyle(fontSize: 14))),
       ],
       onChanged: (v) {
         setState(() { _sortBy = v ?? 'Name'; });

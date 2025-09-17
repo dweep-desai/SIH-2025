@@ -8,6 +8,7 @@ import '../pages/achievements_page.dart';
 import '../pages/faculty_student_search_page.dart';
 import '../pages/faculty_approval_page.dart';
 import '../pages/faculty_approval_history_page.dart';
+import '../pages/faculty_approval_analytics_page.dart';
 
 // ---------------- GLOBAL DRAWER ----------------
 class MainDrawer extends StatelessWidget {
@@ -169,6 +170,16 @@ class MainDrawer extends StatelessWidget {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (_) => const FacultyApprovalHistoryPage()),
+                      );
+                    },
+                  ),
+                  _buildDrawerItem(
+                    icon: Icons.analytics_outlined,
+                    title: "Approval Analytics",
+                    onTap: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const FacultyApprovalAnalyticsPage()),
                       );
                     },
                   ),

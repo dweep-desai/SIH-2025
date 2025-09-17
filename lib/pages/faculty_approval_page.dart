@@ -231,7 +231,10 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
                               const SizedBox(height: 8),
                               if (approval['title'] != null) Text('Title: ${approval['title']}'),
                               if (approval['description'] != null) Text('Description: ${approval['description']}'),
-                              if (approval['link'] != null)
+                              if (approval['link'] != null) ...[
+                                const SizedBox(height: 8),
+                                Text('Link:', style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                                const SizedBox(height: 4),
                                 InkWell(
                                   onTap: () async {
                                     final uri = Uri.parse(approval['link']);
@@ -239,29 +242,47 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
                                       await launchUrl(uri, mode: LaunchMode.externalApplication);
                                     }
                                   },
-                                  child: Text('Open Link', style: TextStyle(color: Colors.blue.shade700, decoration: TextDecoration.underline)),
-                                ),
-                              if (approval['pdfPath'] != null)
-                                Row(
-                                  children: [
-                                    Text('PDF: ${approval['pdfPath']}', overflow: TextOverflow.ellipsis),
-                                    const SizedBox(width: 8),
-                                    TextButton.icon(
-                                      onPressed: () async {
-                                        // Attempt to open PDF via url_launcher if path is URL; otherwise, rely on platform viewer
-                                        final path = approval['pdfPath'] as String;
-                                        try {
-                                          final uri = Uri.parse(path);
-                                          if (await canLaunchUrl(uri)) {
-                                            await launchUrl(uri, mode: LaunchMode.externalApplication);
-                                          }
-                                        } catch (_) {}
-                                      },
-                                      icon: const Icon(Icons.picture_as_pdf),
-                                      label: const Text('View PDF'),
+                                  child: Text(
+                                    approval['link'],
+                                    style: TextStyle(
+                                      color: Colors.blue.shade700, 
+                                      decoration: TextDecoration.underline,
+                                      fontSize: 14,
                                     ),
-                                  ],
+                                  ),
                                 ),
+                              ],
+                              if (approval['pdfPath'] != null) ...[
+                                const SizedBox(height: 8),
+                                Text('PDF Document:', style: textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold)),
+                                const SizedBox(height: 4),
+                                InkWell(
+                                  onTap: () async {
+                                    final path = approval['pdfPath'] as String;
+                                    try {
+                                      final uri = Uri.parse(path);
+                                      if (await canLaunchUrl(uri)) {
+                                        await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                      }
+                                    } catch (_) {}
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.picture_as_pdf, color: Colors.red.shade600, size: 20),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        'Open PDF Document',
+                                        style: TextStyle(
+                                          color: Colors.red.shade600,
+                                          decoration: TextDecoration.underline,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                           actions: [

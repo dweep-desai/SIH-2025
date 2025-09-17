@@ -76,29 +76,7 @@ class FacultyDashboardPage extends StatelessWidget {
                 _buildDetailRow(context, Icons.business, "Department: Computer Science"),
                 _buildDetailRow(context, Icons.school, "Educational Qualifications: PhD in Computer Science"),
                 _buildDetailRow(context, Icons.email, "Email: john.doe@nirmauni.ac.in"),
-                Row(
-                  children: [
-                    Icon(Icons.domain, size: 18, color: colorScheme.secondary),
-                    const SizedBox(width: 8),
-                    Text("Domain: ", style: textTheme.bodyMedium),
-                    Expanded(
-                      child: DropdownButton<String>(
-                        value: "Machine Learning", // Default value
-                        items: ["Machine Learning", "Data Science", "AI", "Cybersecurity"].map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (String? newValue) {
-                          // TODO: Handle domain change
-                        },
-                        style: textTheme.bodyMedium,
-                        underline: Container(),
-                      ),
-                    ),
-                  ],
-                ),
+                _buildDetailRow(context, Icons.domain, "Domain: Machine Learning"),
               ],
             ),
           ],
@@ -211,35 +189,50 @@ class FacultyDashboardPage extends StatelessWidget {
     final ColorScheme colorScheme = theme.colorScheme;
     final TextTheme textTheme = theme.textTheme;
 
-    // Dummy data - replace with actual data
-    final approvals = [
-      "Leave Request Approved - 5 days",
-      "Project Proposal Pending - AI Research",
-      "Conference Approval Granted - ICML 2023"
-    ];
-
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ExpansionTile(
-        title: Row(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.check_circle, color: colorScheme.primary),
-            const SizedBox(width: 8),
-            Text("Approval Analytics", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+            Row(
+              children: [
+                Icon(Icons.analytics_outlined, color: colorScheme.primary),
+                const SizedBox(width: 8),
+                Text("Approval Analytics", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Center(
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.bar_chart_outlined,
+                    size: 48,
+                    color: colorScheme.outline.withOpacity(0.5),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "No analytics data available",
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    "Analytics will appear here once approval data is available",
+                    style: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant.withOpacity(0.7),
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
-        children: approvals.isNotEmpty
-            ? approvals.map((approval) => ListTile(
-                dense: true,
-                title: Text(approval, style: textTheme.bodyMedium),
-              )).toList()
-            : [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Center(child: Text("No approval analytics to display", style: textTheme.bodyMedium)),
-                ),
-              ],
       ),
     );
   }
