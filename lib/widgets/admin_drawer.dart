@@ -59,24 +59,16 @@ class AdminDrawer extends StatelessWidget {
     return Drawer(
       child: Column(
         children: [
-<<<<<<< HEAD
           Container(
             height: 200,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.indigo, Colors.indigoAccent],
-=======
-          DrawerHeader(
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [Colors.orange.shade700, Colors.orange.shade500],
->>>>>>> main
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
             ),
             child: const Center(
-<<<<<<< HEAD
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -106,15 +98,6 @@ class AdminDrawer extends StatelessWidget {
                     ),
                   ),
                 ],
-=======
-              child: Text(
-                "Smart Student Hub - Admin",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
->>>>>>> main
               ),
             ),
           ),
