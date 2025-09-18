@@ -1,0 +1,4000 @@
+{
+  "students": {
+    "S20250001": {
+      "name": "Ananya Rao",
+      "student_id": "S20250001",
+      "email": "ananya.rao65@student.univ.edu",
+      "password": "MbJmTPSIAo",
+      "dob": "2001-03-24",
+      "branch": "Mechanical Engineering",
+      "division": "A",
+      "faculty_advisor": "Vikram Rao",
+      "current_sem": 2,
+      "attendance": 85.7,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B",
+          "Physics": "O",
+          "Engineering Drawing": "A",
+          "Mechanics": "O",
+          "Chemistry": "A+"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2025,
+      "end_year": 2029,
+      "course_name": "BTECH - me 2025-29",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250002": {
+      "name": "Kunal Bhatt",
+      "student_id": "S20250002",
+      "email": "kunal.bhatt74@student.univ.edu",
+      "password": "mTecQoXsf2",
+      "dob": "2005-07-11",
+      "branch": "Computer Science and Engineering",
+      "division": "A",
+      "faculty_advisor": "Kiran Iyer",
+      "current_sem": 4,
+      "attendance": 65.9,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "C",
+          "Physics": "A",
+          "Engineering Mechanics": "O",
+          "Programming 101": "O",
+          "Chemistry": "B"
+        },
+        "2": {
+          "Mathematics II": "B+",
+          "Basic Electrical Engineering": "B",
+          "Data Structures": "B+",
+          "Digital Logic": "B+",
+          "Environment Studies": "C"
+        },
+        "3": {
+          "Discrete Mathematics": "A",
+          "Computer Organization": "B+",
+          "Algorithms": "B",
+          "Object Oriented Programming": "B+",
+          "Signals & Systems": "B"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2024,
+      "end_year": 2028,
+      "course_name": "BTECH - cse 2024-28",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250003": {
+      "name": "Rohan Chopra",
+      "student_id": "S20250003",
+      "email": "rohan.chopra5@student.univ.edu",
+      "password": "Zuzren68K4",
+      "dob": "2005-06-06",
+      "branch": "Mechanical Engineering",
+      "division": "B",
+      "faculty_advisor": "Kavya Chopra",
+      "current_sem": 4,
+      "attendance": 73.5,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B+",
+          "Physics": "B+",
+          "Engineering Drawing": "B+",
+          "Mechanics": "O",
+          "Chemistry": "B+"
+        },
+        "2": {
+          "Mathematics II": "B+",
+          "Material Science": "A+",
+          "Thermodynamics I": "A",
+          "Workshop Practice": "A+",
+          "Basic Electronics": "B"
+        },
+        "3": {
+          "Dynamics": "B+",
+          "Strength of Materials": "A+",
+          "Manufacturing Processes": "A",
+          "Fluid Mechanics": "B",
+          "Machine Drawing": "O"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2024,
+      "end_year": 2028,
+      "course_name": "BTECH - me 2024-28",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250004": {
+      "name": "Meera Gupta",
+      "student_id": "S20250004",
+      "email": "meera.gupta50@student.univ.edu",
+      "password": "yMDHqJ38aR",
+      "dob": "2005-08-05",
+      "branch": "Civil Engineering",
+      "division": "B",
+      "faculty_advisor": "Kunal Kapoor",
+      "current_sem": 4,
+      "attendance": 65.3,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B+",
+          "Physics": "B+",
+          "Engineering Graphics": "B+",
+          "Basic Civil Engg": "A",
+          "Chemistry": "B+"
+        },
+        "2": {
+          "Mathematics II": "A",
+          "Building Materials": "C",
+          "Surveying": "A+",
+          "Strength of Materials": "A",
+          "Workshop Practice": "B"
+        },
+        "3": {
+          "Structural Analysis I": "B",
+          "Fluid Mechanics": "A+",
+          "Geotechnical Engineering I": "A+",
+          "Concrete Technology": "B+",
+          "Hydraulics": "B+"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2024,
+      "end_year": 2028,
+      "course_name": "BTECH - ce 2024-28",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250005": {
+      "name": "Kiran Bhatt",
+      "student_id": "S20250005",
+      "email": "kiran.bhatt40@student.univ.edu",
+      "password": "pdp4K8ffUF",
+      "dob": "2002-02-10",
+      "branch": "Mechanical Engineering",
+      "division": "C",
+      "faculty_advisor": "Sameer Nair",
+      "current_sem": 5,
+      "attendance": 66.0,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "O",
+          "Physics": "B+",
+          "Engineering Drawing": "B+",
+          "Mechanics": "C",
+          "Chemistry": "B"
+        },
+        "2": {
+          "Mathematics II": "B+",
+          "Material Science": "A+",
+          "Thermodynamics I": "B+",
+          "Workshop Practice": "B",
+          "Basic Electronics": "B+"
+        },
+        "3": {
+          "Dynamics": "A+",
+          "Strength of Materials": "A",
+          "Manufacturing Processes": "A+",
+          "Fluid Mechanics": "C",
+          "Machine Drawing": "B"
+        },
+        "4": {
+          "Thermodynamics II": "B",
+          "Heat Transfer": "B+",
+          "Design of Machine Elements": "A",
+          "Kinematics": "A+",
+          "Mechanics of Solids": "A"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2023,
+      "end_year": 2027,
+      "course_name": "BTECH - me 2023-27",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250006": {
+      "name": "Kiran Bhatt",
+      "student_id": "S20250006",
+      "email": "kiran.bhatt67@student.univ.edu",
+      "password": "ChpoevbLJo",
+      "dob": "2005-08-18",
+      "branch": "Electronics and Communication Engineering",
+      "division": "A",
+      "faculty_advisor": "Vivaan Mehta",
+      "current_sem": 3,
+      "attendance": 70.1,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B",
+          "Physics": "A",
+          "Basic Electrical Engineering": "A+",
+          "Engineering Drawing": "B+",
+          "Chemistry": "B+"
+        },
+        "2": {
+          "Mathematics II": "A+",
+          "Circuit Theory": "A",
+          "Digital Electronics": "C",
+          "Programming 101": "B+",
+          "Workshop Practice": "A"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2024,
+      "end_year": 2028,
+      "course_name": "BTECH - ece 2024-28",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250007": {
+      "name": "Ananya Patel",
+      "student_id": "S20250007",
+      "email": "ananya.patel87@student.univ.edu",
+      "password": "PPgdzUvZ3g",
+      "dob": "2000-01-28",
+      "branch": "Computer Science and Engineering",
+      "division": "A",
+      "faculty_advisor": "Kiran Iyer",
+      "current_sem": 4,
+      "attendance": 62.7,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "A+",
+          "Physics": "B+",
+          "Engineering Mechanics": "A+",
+          "Programming 101": "A+",
+          "Chemistry": "B"
+        },
+        "2": {
+          "Mathematics II": "B+",
+          "Basic Electrical Engineering": "A",
+          "Data Structures": "B",
+          "Digital Logic": "B",
+          "Environment Studies": "A+"
+        },
+        "3": {
+          "Discrete Mathematics": "O",
+          "Computer Organization": "A",
+          "Algorithms": "A",
+          "Object Oriented Programming": "A",
+          "Signals & Systems": "B+"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2024,
+      "end_year": 2028,
+      "course_name": "BTECH - cse 2024-28",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250008": {
+      "name": "Ishaan Nair",
+      "student_id": "S20250008",
+      "email": "ishaan.nair55@student.univ.edu",
+      "password": "S9UYJQTFjm",
+      "dob": "2003-03-09",
+      "branch": "Civil Engineering",
+      "division": "A",
+      "faculty_advisor": "Nandini Reddy",
+      "current_sem": 5,
+      "attendance": 69.5,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B",
+          "Physics": "A",
+          "Engineering Graphics": "B",
+          "Basic Civil Engg": "B+",
+          "Chemistry": "O"
+        },
+        "2": {
+          "Mathematics II": "C",
+          "Building Materials": "B",
+          "Surveying": "C",
+          "Strength of Materials": "B",
+          "Workshop Practice": "B"
+        },
+        "3": {
+          "Structural Analysis I": "A+",
+          "Fluid Mechanics": "A",
+          "Geotechnical Engineering I": "A+",
+          "Concrete Technology": "A",
+          "Hydraulics": "O"
+        },
+        "4": {
+          "Structural Analysis II": "A",
+          "Design of Concrete Structures": "C",
+          "Transportation Engineering I": "A+",
+          "Environmental Engineering": "B",
+          "Elective I": "A"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2023,
+      "end_year": 2027,
+      "course_name": "BTECH - ce 2023-27",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250009": {
+      "name": "Vivaan Singh",
+      "student_id": "S20250009",
+      "email": "vivaan.singh24@student.univ.edu",
+      "password": "eMeR3pzh84",
+      "dob": "2005-06-02",
+      "branch": "Information Technology",
+      "division": "A",
+      "faculty_advisor": "Nandini Reddy",
+      "current_sem": 2,
+      "attendance": 82.2,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B+",
+          "Physics": "B",
+          "Programming 101": "A+",
+          "Basic Electronics": "C",
+          "Chemistry": "O"
+        }
+      },
+      "category": "student",
+      "research_projects": [
+        {
+          "project_id": "RP27438",
+          "title": "NLP for Sentiment Analysis",
+          "year": 2020,
+          "status": "Ongoing",
+          "supervisor": "F20250011"
+        },
+        {
+          "project_id": "RP20528",
+          "title": "NLP for Sentiment Analysis",
+          "year": 2022,
+          "status": "Under Review",
+          "supervisor": "F20250014"
+        }
+      ],
+      "start_year": 2025,
+      "end_year": 2029,
+      "course_name": "BTECH - it 2025-29",
+      "certifications": [
+        "IBM Data Science Professional Certificate"
+      ],
+      "achievements": [
+        "Won Intercollege Coding Contest",
+        "Top 1% in National Aptitude Test"
+      ],
+      "experience": [
+        {
+          "role": "Freelance Developer",
+          "organization": "Self",
+          "duration_months": 8,
+          "year": 2024
+        },
+        {
+          "role": "TA",
+          "organization": "Dept. of CSE",
+          "duration_months": 12,
+          "year": 2022
+        },
+        {
+          "role": "Intern",
+          "organization": "Innotech Solutions",
+          "duration_months": 3,
+          "year": 2024
+        }
+      ],
+      "projects": [
+        {
+          "project_id": "SP57447",
+          "title": "Concrete Strength Analyzer",
+          "description": "A student project on Concrete Strength Analyzer.",
+          "year": 2024,
+          "role": "Lead"
+        },
+        {
+          "project_id": "SP61337",
+          "title": "Real-time Chat Application",
+          "description": "A student project on Real-time Chat Application.",
+          "year": 2020,
+          "role": "Contributor"
+        }
+      ]
+    },
+    "S20250010": {
+      "name": "Jyoti Singh",
+      "student_id": "S20250010",
+      "email": "jyoti.singh84@student.univ.edu",
+      "password": "HaQ0Jt7Qg8",
+      "dob": "2000-07-22",
+      "branch": "Computer Science and Engineering",
+      "division": "C",
+      "faculty_advisor": "Nikhil Iyer",
+      "current_sem": 6,
+      "attendance": 81.5,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "A",
+          "Physics": "A+",
+          "Engineering Mechanics": "B+",
+          "Programming 101": "A",
+          "Chemistry": "A+"
+        },
+        "2": {
+          "Mathematics II": "A+",
+          "Basic Electrical Engineering": "B+",
+          "Data Structures": "A",
+          "Digital Logic": "B",
+          "Environment Studies": "B"
+        },
+        "3": {
+          "Discrete Mathematics": "O",
+          "Computer Organization": "B+",
+          "Algorithms": "B+",
+          "Object Oriented Programming": "O",
+          "Signals & Systems": "B+"
+        },
+        "4": {
+          "Theory of Computation": "B+",
+          "Operating Systems": "A+",
+          "Database Systems": "A",
+          "Computer Networks": "O",
+          "Software Engineering": "A+"
+        },
+        "5": {
+          "Design and Analysis of Algorithms": "A+",
+          "Machine Learning": "A",
+          "Compiler Design": "B+",
+          "Web Technologies": "A",
+          "Elective I": "C"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2023,
+      "end_year": 2027,
+      "course_name": "BTECH - cse 2023-27",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250011": {
+      "name": "Shruti Patel",
+      "student_id": "S20250011",
+      "email": "shruti.patel71@student.univ.edu",
+      "password": "TBJahe84S5",
+      "dob": "2004-03-09",
+      "branch": "Computer Science and Engineering",
+      "division": "C",
+      "faculty_advisor": "Nikhil Iyer",
+      "current_sem": 4,
+      "attendance": 83.0,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B+",
+          "Physics": "A+",
+          "Engineering Mechanics": "B+",
+          "Programming 101": "A+",
+          "Chemistry": "A"
+        },
+        "2": {
+          "Mathematics II": "B",
+          "Basic Electrical Engineering": "B",
+          "Data Structures": "O",
+          "Digital Logic": "A",
+          "Environment Studies": "A+"
+        },
+        "3": {
+          "Discrete Mathematics": "O",
+          "Computer Organization": "B",
+          "Algorithms": "B+",
+          "Object Oriented Programming": "A+",
+          "Signals & Systems": "B+"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2024,
+      "end_year": 2028,
+      "course_name": "BTECH - cse 2024-28",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250012": {
+      "name": "Vivaan Khan",
+      "student_id": "S20250012",
+      "email": "vivaan.khan80@student.univ.edu",
+      "password": "Vj77p3kZZl",
+      "dob": "2004-03-14",
+      "branch": "Mechanical Engineering",
+      "division": "C",
+      "faculty_advisor": "Sameer Nair",
+      "current_sem": 3,
+      "attendance": 61.6,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "A",
+          "Physics": "B",
+          "Engineering Drawing": "C",
+          "Mechanics": "O",
+          "Chemistry": "A"
+        },
+        "2": {
+          "Mathematics II": "B+",
+          "Material Science": "B+",
+          "Thermodynamics I": "A",
+          "Workshop Practice": "B+",
+          "Basic Electronics": "B"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2024,
+      "end_year": 2028,
+      "course_name": "BTECH - me 2024-28",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250013": {
+      "name": "Ananya Mehta",
+      "student_id": "S20250013",
+      "email": "ananya.mehta41@student.univ.edu",
+      "password": "BMGhy5Kmqc",
+      "dob": "2006-11-28",
+      "branch": "Mechanical Engineering",
+      "division": "B",
+      "faculty_advisor": "Kavya Chopra",
+      "current_sem": 7,
+      "attendance": 90.8,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "A+",
+          "Physics": "B",
+          "Engineering Drawing": "A+",
+          "Mechanics": "B",
+          "Chemistry": "B"
+        },
+        "2": {
+          "Mathematics II": "A+",
+          "Material Science": "B",
+          "Thermodynamics I": "A",
+          "Workshop Practice": "A",
+          "Basic Electronics": "B"
+        },
+        "3": {
+          "Dynamics": "A+",
+          "Strength of Materials": "O",
+          "Manufacturing Processes": "A+",
+          "Fluid Mechanics": "A",
+          "Machine Drawing": "B"
+        },
+        "4": {
+          "Thermodynamics II": "C",
+          "Heat Transfer": "A+",
+          "Design of Machine Elements": "B+",
+          "Kinematics": "A",
+          "Mechanics of Solids": "C"
+        },
+        "5": {
+          "CAD_CAM": "B+",
+          "Automobile Engineering": "B",
+          "Control Systems": "A+",
+          "Elective I": "C",
+          "Project Phase I": "A+"
+        },
+        "6": {
+          "Robotics": "C",
+          "Finite Element Analysis": "A+",
+          "Elective II": "A+",
+          "Project Phase II": "A",
+          "Industrial Training": "B+"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2022,
+      "end_year": 2026,
+      "course_name": "BTECH - me 2022-26",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250014": {
+      "name": "Ananya Nair",
+      "student_id": "S20250014",
+      "email": "ananya.nair95@student.univ.edu",
+      "password": "kQfsGQONvf",
+      "dob": "2005-12-24",
+      "branch": "Information Technology",
+      "division": "C",
+      "faculty_advisor": "Siddharth Kapoor",
+      "current_sem": 7,
+      "attendance": 67.5,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "A",
+          "Physics": "B",
+          "Programming 101": "B",
+          "Basic Electronics": "B+",
+          "Chemistry": "B+"
+        },
+        "2": {
+          "Mathematics II": "A+",
+          "Data Structures": "B",
+          "Digital Logic": "B+",
+          "Computer Organization": "B+",
+          "Workshop Practice": "A"
+        },
+        "3": {
+          "Database Systems": "B+",
+          "Operating Systems": "B+",
+          "Web Technologies": "A+",
+          "Discrete Mathematics": "B+",
+          "Signals & Systems": "A"
+        },
+        "4": {
+          "Software Engineering": "B+",
+          "Computer Networks": "A+",
+          "Algorithms": "B+",
+          "Elective I": "A",
+          "Probability & Statistics": "B"
+        },
+        "5": {
+          "Mobile Computing": "A",
+          "Cloud Computing": "A+",
+          "Machine Learning Basics": "B",
+          "Project Phase I": "B+",
+          "Elective II": "A"
+        },
+        "6": {
+          "Cyber Security": "A",
+          "Big Data": "B+",
+          "Elective III": "B+",
+          "Project Phase II": "B",
+          "Industrial Training": "C"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2022,
+      "end_year": 2026,
+      "course_name": "BTECH - it 2022-26",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250015": {
+      "name": "Riya Gupta",
+      "student_id": "S20250015",
+      "email": "riya.gupta74@student.univ.edu",
+      "password": "mTSyFzpjPS",
+      "dob": "2006-04-05",
+      "branch": "Mechanical Engineering",
+      "division": "A",
+      "faculty_advisor": "Vikram Rao",
+      "current_sem": 2,
+      "attendance": 61.8,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "C",
+          "Physics": "B+",
+          "Engineering Drawing": "B",
+          "Mechanics": "A",
+          "Chemistry": "B"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2025,
+      "end_year": 2029,
+      "course_name": "BTECH - me 2025-29",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250016": {
+      "name": "Rohan Bhatt",
+      "student_id": "S20250016",
+      "email": "rohan.bhatt99@student.univ.edu",
+      "password": "XHFOprCeTs",
+      "dob": "2001-12-17",
+      "branch": "Civil Engineering",
+      "division": "A",
+      "faculty_advisor": "Nandini Reddy",
+      "current_sem": 5,
+      "attendance": 61.9,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "A+",
+          "Physics": "B",
+          "Engineering Graphics": "A",
+          "Basic Civil Engg": "B",
+          "Chemistry": "B+"
+        },
+        "2": {
+          "Mathematics II": "C",
+          "Building Materials": "B+",
+          "Surveying": "C",
+          "Strength of Materials": "B",
+          "Workshop Practice": "B+"
+        },
+        "3": {
+          "Structural Analysis I": "B+",
+          "Fluid Mechanics": "B+",
+          "Geotechnical Engineering I": "B",
+          "Concrete Technology": "B+",
+          "Hydraulics": "B"
+        },
+        "4": {
+          "Structural Analysis II": "B+",
+          "Design of Concrete Structures": "A",
+          "Transportation Engineering I": "A+",
+          "Environmental Engineering": "A+",
+          "Elective I": "B+"
+        }
+      },
+      "category": "student",
+      "research_projects": [
+        {
+          "project_id": "RP23081",
+          "title": "Blockchain in Supply Chain",
+          "year": 2022,
+          "status": "Published",
+          "supervisor": "F20250008"
+        }
+      ],
+      "start_year": 2023,
+      "end_year": 2027,
+      "course_name": "BTECH - ce 2023-27",
+      "certifications": [
+        "Autodesk AutoCAD Certification",
+        "TensorFlow Developer Certificate",
+        "Cisco CCNA"
+      ],
+      "achievements": [
+        "Best Project Award - Robotics"
+      ],
+      "experience": [
+        {
+          "role": "Research Intern",
+          "organization": "University Lab",
+          "duration_months": 6,
+          "year": 2023
+        }
+      ],
+      "projects": [
+        {
+          "project_id": "SP65334",
+          "title": "Real-time Chat Application",
+          "description": "A student project on Real-time Chat Application.",
+          "year": 2024,
+          "role": "Lead"
+        },
+        {
+          "project_id": "SP50245",
+          "title": "Robotic Arm with Haptic Feedback",
+          "description": "A student project on Robotic Arm with Haptic Feedback.",
+          "year": 2020,
+          "role": "Contributor"
+        }
+      ]
+    },
+    "S20250017": {
+      "name": "Vikram Das",
+      "student_id": "S20250017",
+      "email": "vikram.das70@student.univ.edu",
+      "password": "ZM5oForBFb",
+      "dob": "2001-03-08",
+      "branch": "Information Technology",
+      "division": "A",
+      "faculty_advisor": "Nandini Reddy",
+      "current_sem": 5,
+      "attendance": 86.4,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B+",
+          "Physics": "O",
+          "Programming 101": "A",
+          "Basic Electronics": "B+",
+          "Chemistry": "A"
+        },
+        "2": {
+          "Mathematics II": "A+",
+          "Data Structures": "A",
+          "Digital Logic": "B",
+          "Computer Organization": "B+",
+          "Workshop Practice": "B+"
+        },
+        "3": {
+          "Database Systems": "B",
+          "Operating Systems": "B",
+          "Web Technologies": "A",
+          "Discrete Mathematics": "O",
+          "Signals & Systems": "A"
+        },
+        "4": {
+          "Software Engineering": "B",
+          "Computer Networks": "B",
+          "Algorithms": "C",
+          "Elective I": "A",
+          "Probability & Statistics": "B+"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2023,
+      "end_year": 2027,
+      "course_name": "BTECH - it 2023-27",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250018": {
+      "name": "Nikhil Rao",
+      "student_id": "S20250018",
+      "email": "nikhil.rao24@student.univ.edu",
+      "password": "dqyunDuvW4",
+      "dob": "2001-10-18",
+      "branch": "Electronics and Communication Engineering",
+      "division": "B",
+      "faculty_advisor": "Manav Kapoor",
+      "current_sem": 2,
+      "attendance": 94.5,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B+",
+          "Physics": "B+",
+          "Basic Electrical Engineering": "O",
+          "Engineering Drawing": "A",
+          "Chemistry": "B"
+        }
+      },
+      "category": "student",
+      "research_projects": [
+        {
+          "project_id": "RP28964",
+          "title": "Deep Learning for Traffic Prediction",
+          "year": 2021,
+          "status": "Under Review",
+          "supervisor": "F20250026"
+        }
+      ],
+      "start_year": 2025,
+      "end_year": 2029,
+      "course_name": "BTECH - ece 2025-29",
+      "certifications": [
+        "Autodesk AutoCAD Certification",
+        "Kaggle Competitions Expert",
+        "Udemy - Python Bootcamp",
+        "IBM Data Science Professional Certificate"
+      ],
+      "achievements": [
+        "Volunteer of the Year 2022",
+        "Scholarship Recipient - Merit"
+      ],
+      "experience": [
+        {
+          "role": "Intern",
+          "organization": "Innotech Solutions",
+          "duration_months": 3,
+          "year": 2024
+        },
+        {
+          "role": "Research Intern",
+          "organization": "University Lab",
+          "duration_months": 6,
+          "year": 2023
+        }
+      ],
+      "projects": [
+        {
+          "project_id": "SP47156",
+          "title": "Concrete Strength Analyzer",
+          "description": "A student project on Concrete Strength Analyzer.",
+          "year": 2019,
+          "role": "Lead"
+        },
+        {
+          "project_id": "SP84885",
+          "title": "Solar-Powered Water Purifier",
+          "description": "A student project on Solar-Powered Water Purifier.",
+          "year": 2020,
+          "role": "Contributor"
+        }
+      ]
+    },
+    "S20250019": {
+      "name": "Ankit Iyer",
+      "student_id": "S20250019",
+      "email": "ankit.iyer32@student.univ.edu",
+      "password": "m1bNjpiEQh",
+      "dob": "2000-12-18",
+      "branch": "Computer Science and Engineering",
+      "division": "B",
+      "faculty_advisor": "Tanvi Kapoor",
+      "current_sem": 2,
+      "attendance": 98.0,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "A",
+          "Physics": "B+",
+          "Engineering Mechanics": "B",
+          "Programming 101": "B+",
+          "Chemistry": "B"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2025,
+      "end_year": 2029,
+      "course_name": "BTECH - cse 2025-29",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250020": {
+      "name": "Meera Kapoor",
+      "student_id": "S20250020",
+      "email": "meera.kapoor59@student.univ.edu",
+      "password": "TjBlUH9PrN",
+      "dob": "2001-10-20",
+      "branch": "Mechanical Engineering",
+      "division": "B",
+      "faculty_advisor": "Kavya Chopra",
+      "current_sem": 7,
+      "attendance": 87.3,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B",
+          "Physics": "A+",
+          "Engineering Drawing": "A",
+          "Mechanics": "B+",
+          "Chemistry": "B"
+        },
+        "2": {
+          "Mathematics II": "B+",
+          "Material Science": "B",
+          "Thermodynamics I": "A",
+          "Workshop Practice": "B",
+          "Basic Electronics": "A+"
+        },
+        "3": {
+          "Dynamics": "B+",
+          "Strength of Materials": "B",
+          "Manufacturing Processes": "A+",
+          "Fluid Mechanics": "B+",
+          "Machine Drawing": "A"
+        },
+        "4": {
+          "Thermodynamics II": "B+",
+          "Heat Transfer": "B",
+          "Design of Machine Elements": "B",
+          "Kinematics": "B+",
+          "Mechanics of Solids": "O"
+        },
+        "5": {
+          "CAD_CAM": "B+",
+          "Automobile Engineering": "B+",
+          "Control Systems": "O",
+          "Elective I": "B+",
+          "Project Phase I": "O"
+        },
+        "6": {
+          "Robotics": "A",
+          "Finite Element Analysis": "A",
+          "Elective II": "A",
+          "Project Phase II": "A",
+          "Industrial Training": "B"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2022,
+      "end_year": 2026,
+      "course_name": "BTECH - me 2022-26",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250021": {
+      "name": "Kiran Bhatt",
+      "student_id": "S20250021",
+      "email": "kiran.bhatt36@student.univ.edu",
+      "password": "JaH8mfpUAF",
+      "dob": "2003-12-19",
+      "branch": "Civil Engineering",
+      "division": "B",
+      "faculty_advisor": "Kunal Kapoor",
+      "current_sem": 4,
+      "attendance": 72.2,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "A+",
+          "Physics": "B",
+          "Engineering Graphics": "A+",
+          "Basic Civil Engg": "A",
+          "Chemistry": "B"
+        },
+        "2": {
+          "Mathematics II": "B+",
+          "Building Materials": "B+",
+          "Surveying": "A",
+          "Strength of Materials": "A",
+          "Workshop Practice": "A"
+        },
+        "3": {
+          "Structural Analysis I": "A",
+          "Fluid Mechanics": "A",
+          "Geotechnical Engineering I": "A+",
+          "Concrete Technology": "A+",
+          "Hydraulics": "B+"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2024,
+      "end_year": 2028,
+      "course_name": "BTECH - ce 2024-28",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250022": {
+      "name": "Riya Rao",
+      "student_id": "S20250022",
+      "email": "riya.rao17@student.univ.edu",
+      "password": "O3WFg3aKsE",
+      "dob": "2005-08-15",
+      "branch": "Civil Engineering",
+      "division": "C",
+      "faculty_advisor": "Rohan Sharma",
+      "current_sem": 8,
+      "attendance": 60.7,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "A+",
+          "Physics": "A",
+          "Engineering Graphics": "A+",
+          "Basic Civil Engg": "B+",
+          "Chemistry": "A"
+        },
+        "2": {
+          "Mathematics II": "B+",
+          "Building Materials": "A",
+          "Surveying": "C",
+          "Strength of Materials": "B+",
+          "Workshop Practice": "A"
+        },
+        "3": {
+          "Structural Analysis I": "A",
+          "Fluid Mechanics": "A",
+          "Geotechnical Engineering I": "A+",
+          "Concrete Technology": "B+",
+          "Hydraulics": "A"
+        },
+        "4": {
+          "Structural Analysis II": "B+",
+          "Design of Concrete Structures": "C",
+          "Transportation Engineering I": "B+",
+          "Environmental Engineering": "A+",
+          "Elective I": "B+"
+        },
+        "5": {
+          "Design of Steel Structures": "A+",
+          "Geotechnical Engineering II": "B+",
+          "Transportation Engineering II": "B",
+          "Project Phase I": "B+",
+          "Elective II": "C"
+        },
+        "6": {
+          "Water Resources": "B",
+          "Construction Management": "A+",
+          "Elective III": "A",
+          "Project Phase II": "A",
+          "Industrial Training": "B+"
+        },
+        "7": {
+          "Advanced Structural Design": "A+",
+          "Earthquake Engineering": "O",
+          "Major Project": "O",
+          "Seminar": "A+"
+        }
+      },
+      "category": "student",
+      "research_projects": [
+        {
+          "project_id": "RP28504",
+          "title": "Reinforcement Learning for Robotic Control",
+          "year": 2023,
+          "status": "Published",
+          "supervisor": "F20250008"
+        },
+        {
+          "project_id": "RP24866",
+          "title": "Cloud-Native Microservices Performance",
+          "year": 2025,
+          "status": "Completed",
+          "supervisor": "F20250008"
+        },
+        {
+          "project_id": "RP29076",
+          "title": "Low-Power VLSI Design Techniques",
+          "year": 2025,
+          "status": "Published",
+          "supervisor": "F20250011"
+        }
+      ],
+      "start_year": 2022,
+      "end_year": 2026,
+      "course_name": "BTECH - ce 2022-26",
+      "certifications": [
+        "Autodesk AutoCAD Certification",
+        "AWS Cloud Practitioner",
+        "IBM Data Science Professional Certificate",
+        "TensorFlow Developer Certificate",
+        "Udemy - Python Bootcamp"
+      ],
+      "achievements": [
+        "Won Intercollege Coding Contest",
+        "Sports Captain - College Football",
+        "Volunteer of the Year 2022"
+      ],
+      "experience": [
+        {
+          "role": "Freelance Developer",
+          "organization": "Self",
+          "duration_months": 8,
+          "year": 2024
+        }
+      ],
+      "projects": [
+        {
+          "project_id": "SP29633",
+          "title": "Database Optimizer Tool",
+          "description": "A student project on Database Optimizer Tool.",
+          "year": 2024,
+          "role": "Lead"
+        },
+        {
+          "project_id": "SP50427",
+          "title": "Smart Traffic Light System",
+          "description": "A student project on Smart Traffic Light System.",
+          "year": 2024,
+          "role": "Contributor"
+        },
+        {
+          "project_id": "SP87340",
+          "title": "Robotic Arm with Haptic Feedback",
+          "description": "A student project on Robotic Arm with Haptic Feedback.",
+          "year": 2025,
+          "role": "Contributor"
+        }
+      ]
+    },
+    "S20250023": {
+      "name": "Vikram Mehta",
+      "student_id": "S20250023",
+      "email": "vikram.mehta59@student.univ.edu",
+      "password": "eRo7qYYOLQ",
+      "dob": "2006-08-04",
+      "branch": "Computer Science and Engineering",
+      "division": "B",
+      "faculty_advisor": "Tanvi Kapoor",
+      "current_sem": 8,
+      "attendance": 62.5,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "A",
+          "Physics": "B+",
+          "Engineering Mechanics": "B+",
+          "Programming 101": "A+",
+          "Chemistry": "B"
+        },
+        "2": {
+          "Mathematics II": "B",
+          "Basic Electrical Engineering": "O",
+          "Data Structures": "A+",
+          "Digital Logic": "B+",
+          "Environment Studies": "A"
+        },
+        "3": {
+          "Discrete Mathematics": "B+",
+          "Computer Organization": "B+",
+          "Algorithms": "B",
+          "Object Oriented Programming": "A",
+          "Signals & Systems": "B"
+        },
+        "4": {
+          "Theory of Computation": "A+",
+          "Operating Systems": "B+",
+          "Database Systems": "A",
+          "Computer Networks": "B+",
+          "Software Engineering": "O"
+        },
+        "5": {
+          "Design and Analysis of Algorithms": "C",
+          "Machine Learning": "O",
+          "Compiler Design": "B",
+          "Web Technologies": "B+",
+          "Elective I": "A+"
+        },
+        "6": {
+          "Artificial Intelligence": "O",
+          "Computer Graphics": "A+",
+          "Distributed Systems": "B+",
+          "Elective II": "A+",
+          "Project Phase I": "A"
+        },
+        "7": {
+          "Cloud Computing": "B+",
+          "Security and Privacy": "A",
+          "Elective III": "O",
+          "Project Phase II": "A+",
+          "Internship": "A+"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2022,
+      "end_year": 2026,
+      "course_name": "BTECH - cse 2022-26",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250024": {
+      "name": "Meera Chopra",
+      "student_id": "S20250024",
+      "email": "meera.chopra42@student.univ.edu",
+      "password": "Mqbfo9R13K",
+      "dob": "2001-11-05",
+      "branch": "Computer Science and Engineering",
+      "division": "C",
+      "faculty_advisor": "Nikhil Iyer",
+      "current_sem": 4,
+      "attendance": 91.4,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "O",
+          "Physics": "A+",
+          "Engineering Mechanics": "A",
+          "Programming 101": "B+",
+          "Chemistry": "B+"
+        },
+        "2": {
+          "Mathematics II": "A+",
+          "Basic Electrical Engineering": "A+",
+          "Data Structures": "B+",
+          "Digital Logic": "B+",
+          "Environment Studies": "B"
+        },
+        "3": {
+          "Discrete Mathematics": "B+",
+          "Computer Organization": "A",
+          "Algorithms": "O",
+          "Object Oriented Programming": "O",
+          "Signals & Systems": "A"
+        }
+      },
+      "category": "student",
+      "research_projects": [
+        {
+          "project_id": "RP28037",
+          "title": "Cloud-Native Microservices Performance",
+          "year": 2022,
+          "status": "Published",
+          "supervisor": "F20250026"
+        },
+        {
+          "project_id": "RP23725",
+          "title": "Low-Power VLSI Design Techniques",
+          "year": 2020,
+          "status": "Ongoing",
+          "supervisor": "F20250011"
+        },
+        {
+          "project_id": "RP24876",
+          "title": "Reinforcement Learning for Robotic Control",
+          "year": 2020,
+          "status": "Ongoing",
+          "supervisor": "F20250008"
+        }
+      ],
+      "start_year": 2024,
+      "end_year": 2028,
+      "course_name": "BTECH - cse 2024-28",
+      "certifications": [
+        "Cisco CCNA",
+        "AWS Cloud Practitioner"
+      ],
+      "achievements": [
+        "Best Project Award - Robotics",
+        "Sports Captain - College Football",
+        "Paper accepted at ABC Conference 2024",
+        "Dean's List 2023",
+        "Patent Filed - IoT Sensor"
+      ],
+      "experience": [
+        {
+          "role": "Research Intern",
+          "organization": "University Lab",
+          "duration_months": 6,
+          "year": 2023
+        },
+        {
+          "role": "Freelance Developer",
+          "organization": "Self",
+          "duration_months": 8,
+          "year": 2024
+        },
+        {
+          "role": "TA",
+          "organization": "Dept. of CSE",
+          "duration_months": 12,
+          "year": 2022
+        }
+      ],
+      "projects": [
+        {
+          "project_id": "SP59313",
+          "title": "Real-time Chat Application",
+          "description": "A student project on Real-time Chat Application.",
+          "year": 2021,
+          "role": "Member"
+        },
+        {
+          "project_id": "SP10012",
+          "title": "AI-based Plagiarism Detector",
+          "description": "A student project on AI-based Plagiarism Detector.",
+          "year": 2022,
+          "role": "Lead"
+        },
+        {
+          "project_id": "SP78150",
+          "title": "AI-based Plagiarism Detector",
+          "description": "A student project on AI-based Plagiarism Detector.",
+          "year": 2021,
+          "role": "Lead"
+        }
+      ]
+    },
+    "S20250025": {
+      "name": "Ananya Bhatt",
+      "student_id": "S20250025",
+      "email": "ananya.bhatt53@student.univ.edu",
+      "password": "dmHxNWFOCW",
+      "dob": "2000-03-16",
+      "branch": "Mechanical Engineering",
+      "division": "C",
+      "faculty_advisor": "Sameer Nair",
+      "current_sem": 6,
+      "attendance": 84.8,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B",
+          "Physics": "A+",
+          "Engineering Drawing": "B+",
+          "Mechanics": "B+",
+          "Chemistry": "A"
+        },
+        "2": {
+          "Mathematics II": "O",
+          "Material Science": "A",
+          "Thermodynamics I": "A",
+          "Workshop Practice": "B+",
+          "Basic Electronics": "B"
+        },
+        "3": {
+          "Dynamics": "A",
+          "Strength of Materials": "B+",
+          "Manufacturing Processes": "A+",
+          "Fluid Mechanics": "B",
+          "Machine Drawing": "B"
+        },
+        "4": {
+          "Thermodynamics II": "B+",
+          "Heat Transfer": "A",
+          "Design of Machine Elements": "A",
+          "Kinematics": "A",
+          "Mechanics of Solids": "C"
+        },
+        "5": {
+          "CAD_CAM": "A",
+          "Automobile Engineering": "B+",
+          "Control Systems": "C",
+          "Elective I": "B+",
+          "Project Phase I": "B+"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2023,
+      "end_year": 2027,
+      "course_name": "BTECH - me 2023-27",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250026": {
+      "name": "Kunal Nair",
+      "student_id": "S20250026",
+      "email": "kunal.nair53@student.univ.edu",
+      "password": "fo16hD8hP1",
+      "dob": "2003-12-16",
+      "branch": "Electronics and Communication Engineering",
+      "division": "B",
+      "faculty_advisor": "Manav Kapoor",
+      "current_sem": 2,
+      "attendance": 61.1,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B+",
+          "Physics": "B",
+          "Basic Electrical Engineering": "B+",
+          "Engineering Drawing": "A",
+          "Chemistry": "O"
+        }
+      },
+      "category": "student",
+      "research_projects": [
+        {
+          "project_id": "RP22225",
+          "title": "Sensor Fusion for Autonomous Vehicles",
+          "year": 2023,
+          "status": "Completed",
+          "supervisor": "F20250014"
+        },
+        {
+          "project_id": "RP26629",
+          "title": "Low-Power VLSI Design Techniques",
+          "year": 2023,
+          "status": "Ongoing",
+          "supervisor": "F20250011"
+        }
+      ],
+      "start_year": 2025,
+      "end_year": 2029,
+      "course_name": "BTECH - ece 2025-29",
+      "certifications": [
+        "Autodesk AutoCAD Certification",
+        "IBM Data Science Professional Certificate",
+        "Kaggle Competitions Expert",
+        "TensorFlow Developer Certificate"
+      ],
+      "achievements": [
+        "Won Intercollege Coding Contest",
+        "Best Project Award - Robotics",
+        "Paper accepted at ABC Conference 2024",
+        "Dean's List 2023",
+        "1st Prize - Hackathon 2024"
+      ],
+      "experience": [
+        {
+          "role": "Research Intern",
+          "organization": "University Lab",
+          "duration_months": 6,
+          "year": 2023
+        },
+        {
+          "role": "Intern",
+          "organization": "Innotech Solutions",
+          "duration_months": 3,
+          "year": 2024
+        },
+        {
+          "role": "Freelance Developer",
+          "organization": "Self",
+          "duration_months": 8,
+          "year": 2024
+        }
+      ],
+      "projects": [
+        {
+          "project_id": "SP55084",
+          "title": "Solar-Powered Water Purifier",
+          "description": "A student project on Solar-Powered Water Purifier.",
+          "year": 2024,
+          "role": "Contributor"
+        },
+        {
+          "project_id": "SP31623",
+          "title": "Concrete Strength Analyzer",
+          "description": "A student project on Concrete Strength Analyzer.",
+          "year": 2025,
+          "role": "Member"
+        }
+      ]
+    },
+    "S20250027": {
+      "name": "Siddharth Nair",
+      "student_id": "S20250027",
+      "email": "siddharth.nair35@student.univ.edu",
+      "password": "0asUt1LLQF",
+      "dob": "2006-08-16",
+      "branch": "Mechanical Engineering",
+      "division": "B",
+      "faculty_advisor": "Kavya Chopra",
+      "current_sem": 3,
+      "attendance": 77.4,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "A+",
+          "Physics": "A+",
+          "Engineering Drawing": "B+",
+          "Mechanics": "B+",
+          "Chemistry": "A+"
+        },
+        "2": {
+          "Mathematics II": "O",
+          "Material Science": "B",
+          "Thermodynamics I": "B",
+          "Workshop Practice": "A",
+          "Basic Electronics": "B"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2024,
+      "end_year": 2028,
+      "course_name": "BTECH - me 2024-28",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250028": {
+      "name": "Neha Nair",
+      "student_id": "S20250028",
+      "email": "neha.nair84@student.univ.edu",
+      "password": "jeEYqvNSzP",
+      "dob": "2002-09-25",
+      "branch": "Civil Engineering",
+      "division": "B",
+      "faculty_advisor": "Kunal Kapoor",
+      "current_sem": 6,
+      "attendance": 74.3,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B",
+          "Physics": "B",
+          "Engineering Graphics": "C",
+          "Basic Civil Engg": "A+",
+          "Chemistry": "A"
+        },
+        "2": {
+          "Mathematics II": "B",
+          "Building Materials": "A",
+          "Surveying": "A",
+          "Strength of Materials": "A",
+          "Workshop Practice": "B"
+        },
+        "3": {
+          "Structural Analysis I": "A",
+          "Fluid Mechanics": "C",
+          "Geotechnical Engineering I": "B",
+          "Concrete Technology": "B+",
+          "Hydraulics": "A+"
+        },
+        "4": {
+          "Structural Analysis II": "C",
+          "Design of Concrete Structures": "A+",
+          "Transportation Engineering I": "C",
+          "Environmental Engineering": "A",
+          "Elective I": "A+"
+        },
+        "5": {
+          "Design of Steel Structures": "B",
+          "Geotechnical Engineering II": "O",
+          "Transportation Engineering II": "B",
+          "Project Phase I": "O",
+          "Elective II": "A+"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2023,
+      "end_year": 2027,
+      "course_name": "BTECH - ce 2023-27",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250029": {
+      "name": "Vikram Khan",
+      "student_id": "S20250029",
+      "email": "vikram.khan37@student.univ.edu",
+      "password": "RIkeC8wLtO",
+      "dob": "2002-11-23",
+      "branch": "Information Technology",
+      "division": "B",
+      "faculty_advisor": "Lakshmi Nair",
+      "current_sem": 8,
+      "attendance": 78.5,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B+",
+          "Physics": "B+",
+          "Programming 101": "A+",
+          "Basic Electronics": "B+",
+          "Chemistry": "A+"
+        },
+        "2": {
+          "Mathematics II": "A+",
+          "Data Structures": "O",
+          "Digital Logic": "C",
+          "Computer Organization": "B",
+          "Workshop Practice": "B+"
+        },
+        "3": {
+          "Database Systems": "A+",
+          "Operating Systems": "A+",
+          "Web Technologies": "A+",
+          "Discrete Mathematics": "O",
+          "Signals & Systems": "A"
+        },
+        "4": {
+          "Software Engineering": "O",
+          "Computer Networks": "A",
+          "Algorithms": "A",
+          "Elective I": "A+",
+          "Probability & Statistics": "A"
+        },
+        "5": {
+          "Mobile Computing": "B+",
+          "Cloud Computing": "A+",
+          "Machine Learning Basics": "A+",
+          "Project Phase I": "B+",
+          "Elective II": "A"
+        },
+        "6": {
+          "Cyber Security": "B+",
+          "Big Data": "A",
+          "Elective III": "B+",
+          "Project Phase II": "A+",
+          "Industrial Training": "B+"
+        },
+        "7": {
+          "Artificial Intelligence": "A",
+          "IoT": "B+",
+          "Major Project": "B",
+          "Seminar": "A"
+        }
+      },
+      "category": "student",
+      "research_projects": [
+        {
+          "project_id": "RP26315",
+          "title": "Optimization of Heat Transfer in Microchannels",
+          "year": 2019,
+          "status": "Completed",
+          "supervisor": "F20250014"
+        }
+      ],
+      "start_year": 2022,
+      "end_year": 2026,
+      "course_name": "BTECH - it 2022-26",
+      "certifications": [
+        "TensorFlow Developer Certificate",
+        "Google Data Analytics Certificate",
+        "IBM Data Science Professional Certificate",
+        "Coursera - Machine Learning"
+      ],
+      "achievements": [
+        "Dean's List 2023",
+        "Top 1% in National Aptitude Test",
+        "Best Project Award - Robotics",
+        "1st Prize - Hackathon 2024"
+      ],
+      "experience": [
+        {
+          "role": "Summer Intern",
+          "organization": "BuildRight Pvt Ltd",
+          "duration_months": 2,
+          "year": 2021
+        },
+        {
+          "role": "TA",
+          "organization": "Dept. of CSE",
+          "duration_months": 12,
+          "year": 2022
+        }
+      ],
+      "projects": [
+        {
+          "project_id": "SP68261",
+          "title": "Solar-Powered Water Purifier",
+          "description": "A student project on Solar-Powered Water Purifier.",
+          "year": 2025,
+          "role": "Contributor"
+        },
+        {
+          "project_id": "SP56762",
+          "title": "Wearable Health Monitor",
+          "description": "A student project on Wearable Health Monitor.",
+          "year": 2019,
+          "role": "Member"
+        },
+        {
+          "project_id": "SP75086",
+          "title": "Robotic Arm with Haptic Feedback",
+          "description": "A student project on Robotic Arm with Haptic Feedback.",
+          "year": 2025,
+          "role": "Lead"
+        }
+      ]
+    },
+    "S20250030": {
+      "name": "Shruti Kapoor",
+      "student_id": "S20250030",
+      "email": "shruti.kapoor78@student.univ.edu",
+      "password": "VF155sXZoM",
+      "dob": "2003-08-04",
+      "branch": "Mechanical Engineering",
+      "division": "A",
+      "faculty_advisor": "Vikram Rao",
+      "current_sem": 3,
+      "attendance": 74.5,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "A",
+          "Physics": "A+",
+          "Engineering Drawing": "B+",
+          "Mechanics": "O",
+          "Chemistry": "B"
+        },
+        "2": {
+          "Mathematics II": "A",
+          "Material Science": "O",
+          "Thermodynamics I": "B",
+          "Workshop Practice": "B",
+          "Basic Electronics": "C"
+        }
+      },
+      "category": "student",
+      "research_projects": [
+        {
+          "project_id": "RP23337",
+          "title": "Surveying Modern Geotechnical Methods",
+          "year": 2022,
+          "status": "Under Review",
+          "supervisor": "F20250014"
+        }
+      ],
+      "start_year": 2024,
+      "end_year": 2028,
+      "course_name": "BTECH - me 2024-28",
+      "certifications": [
+        "Kaggle Competitions Expert",
+        "IBM Data Science Professional Certificate"
+      ],
+      "achievements": [
+        "Dean's List 2023",
+        "Patent Filed - IoT Sensor",
+        "1st Prize - Hackathon 2024",
+        "Scholarship Recipient - Merit"
+      ],
+      "experience": [
+        {
+          "role": "TA",
+          "organization": "Dept. of CSE",
+          "duration_months": 12,
+          "year": 2022
+        },
+        {
+          "role": "Freelance Developer",
+          "organization": "Self",
+          "duration_months": 8,
+          "year": 2024
+        },
+        {
+          "role": "Research Intern",
+          "organization": "University Lab",
+          "duration_months": 6,
+          "year": 2023
+        }
+      ],
+      "projects": [
+        {
+          "project_id": "SP74308",
+          "title": "Solar-Powered Water Purifier",
+          "description": "A student project on Solar-Powered Water Purifier.",
+          "year": 2024,
+          "role": "Lead"
+        },
+        {
+          "project_id": "SP93461",
+          "title": "Wearable Health Monitor",
+          "description": "A student project on Wearable Health Monitor.",
+          "year": 2020,
+          "role": "Lead"
+        }
+      ]
+    },
+    "S20250031": {
+      "name": "Riya Gupta",
+      "student_id": "S20250031",
+      "email": "riya.gupta87@student.univ.edu",
+      "password": "z92ZJxfYza",
+      "dob": "2002-11-25",
+      "branch": "Electronics and Communication Engineering",
+      "division": "C",
+      "faculty_advisor": "Rajat Mehta",
+      "current_sem": 7,
+      "attendance": 89.2,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B+",
+          "Physics": "A+",
+          "Basic Electrical Engineering": "O",
+          "Engineering Drawing": "B+",
+          "Chemistry": "O"
+        },
+        "2": {
+          "Mathematics II": "B",
+          "Circuit Theory": "O",
+          "Digital Electronics": "A",
+          "Programming 101": "A+",
+          "Workshop Practice": "B"
+        },
+        "3": {
+          "Signals and Systems": "A",
+          "Electronic Devices": "A",
+          "Electromagnetics": "A+",
+          "Analog Circuits": "B",
+          "Network Theory": "B"
+        },
+        "4": {
+          "Microprocessors": "A",
+          "Communication Systems": "B+",
+          "Control Systems": "A+",
+          "Digital Signal Processing": "A+",
+          "Probability & Statistics": "B"
+        },
+        "5": {
+          "VLSI Design": "B",
+          "Microwave Engineering": "C",
+          "Antenna Theory": "A+",
+          "Elective I": "B",
+          "Project Phase I": "B"
+        },
+        "6": {
+          "Embedded Systems": "A",
+          "Optical Communication": "O",
+          "Elective II": "B",
+          "Project Phase II": "A+",
+          "Industrial Training": "B+"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2022,
+      "end_year": 2026,
+      "course_name": "BTECH - ece 2022-26",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250032": {
+      "name": "Rohan Kapoor",
+      "student_id": "S20250032",
+      "email": "rohan.kapoor76@student.univ.edu",
+      "password": "VUj4APg1FN",
+      "dob": "2005-11-09",
+      "branch": "Mechanical Engineering",
+      "division": "C",
+      "faculty_advisor": "Sameer Nair",
+      "current_sem": 6,
+      "attendance": 74.5,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B+",
+          "Physics": "A",
+          "Engineering Drawing": "B+",
+          "Mechanics": "A",
+          "Chemistry": "B+"
+        },
+        "2": {
+          "Mathematics II": "B",
+          "Material Science": "A",
+          "Thermodynamics I": "B+",
+          "Workshop Practice": "B+",
+          "Basic Electronics": "B+"
+        },
+        "3": {
+          "Dynamics": "A",
+          "Strength of Materials": "B+",
+          "Manufacturing Processes": "B+",
+          "Fluid Mechanics": "A+",
+          "Machine Drawing": "O"
+        },
+        "4": {
+          "Thermodynamics II": "O",
+          "Heat Transfer": "C",
+          "Design of Machine Elements": "A+",
+          "Kinematics": "A+",
+          "Mechanics of Solids": "B+"
+        },
+        "5": {
+          "CAD_CAM": "A",
+          "Automobile Engineering": "A",
+          "Control Systems": "B",
+          "Elective I": "B+",
+          "Project Phase I": "B+"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2023,
+      "end_year": 2027,
+      "course_name": "BTECH - me 2023-27",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250033": {
+      "name": "Kunal Sharma",
+      "student_id": "S20250033",
+      "email": "kunal.sharma31@student.univ.edu",
+      "password": "LublqdiVAH",
+      "dob": "2003-08-08",
+      "branch": "Mechanical Engineering",
+      "division": "A",
+      "faculty_advisor": "Vikram Rao",
+      "current_sem": 8,
+      "attendance": 73.8,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "C",
+          "Physics": "A",
+          "Engineering Drawing": "B",
+          "Mechanics": "B+",
+          "Chemistry": "O"
+        },
+        "2": {
+          "Mathematics II": "A+",
+          "Material Science": "C",
+          "Thermodynamics I": "B",
+          "Workshop Practice": "B",
+          "Basic Electronics": "O"
+        },
+        "3": {
+          "Dynamics": "A+",
+          "Strength of Materials": "B+",
+          "Manufacturing Processes": "C",
+          "Fluid Mechanics": "O",
+          "Machine Drawing": "A"
+        },
+        "4": {
+          "Thermodynamics II": "C",
+          "Heat Transfer": "B",
+          "Design of Machine Elements": "A+",
+          "Kinematics": "B",
+          "Mechanics of Solids": "B+"
+        },
+        "5": {
+          "CAD_CAM": "B+",
+          "Automobile Engineering": "B",
+          "Control Systems": "A+",
+          "Elective I": "B",
+          "Project Phase I": "B"
+        },
+        "6": {
+          "Robotics": "B+",
+          "Finite Element Analysis": "A+",
+          "Elective II": "C",
+          "Project Phase II": "C",
+          "Industrial Training": "B+"
+        },
+        "7": {
+          "Advanced Manufacturing": "B",
+          "Energy Systems": "A+",
+          "Elective III": "B",
+          "Major Project": "A+",
+          "Seminar": "A"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2022,
+      "end_year": 2026,
+      "course_name": "BTECH - me 2022-26",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250034": {
+      "name": "Aditya Kapoor",
+      "student_id": "S20250034",
+      "email": "aditya.kapoor42@student.univ.edu",
+      "password": "yMHsDGMBgY",
+      "dob": "2004-10-04",
+      "branch": "Civil Engineering",
+      "division": "B",
+      "faculty_advisor": "Kunal Kapoor",
+      "current_sem": 5,
+      "attendance": 79.1,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B",
+          "Physics": "O",
+          "Engineering Graphics": "B",
+          "Basic Civil Engg": "B",
+          "Chemistry": "B+"
+        },
+        "2": {
+          "Mathematics II": "A",
+          "Building Materials": "C",
+          "Surveying": "O",
+          "Strength of Materials": "A",
+          "Workshop Practice": "A"
+        },
+        "3": {
+          "Structural Analysis I": "B+",
+          "Fluid Mechanics": "A",
+          "Geotechnical Engineering I": "B",
+          "Concrete Technology": "O",
+          "Hydraulics": "O"
+        },
+        "4": {
+          "Structural Analysis II": "B+",
+          "Design of Concrete Structures": "O",
+          "Transportation Engineering I": "A+",
+          "Environmental Engineering": "B+",
+          "Elective I": "B+"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2023,
+      "end_year": 2027,
+      "course_name": "BTECH - ce 2023-27",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250035": {
+      "name": "Kiran Rao",
+      "student_id": "S20250035",
+      "email": "kiran.rao72@student.univ.edu",
+      "password": "JvQhAw3Q8W",
+      "dob": "2003-04-14",
+      "branch": "Electronics and Communication Engineering",
+      "division": "B",
+      "faculty_advisor": "Manav Kapoor",
+      "current_sem": 4,
+      "attendance": 91.4,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "A",
+          "Physics": "B+",
+          "Basic Electrical Engineering": "A",
+          "Engineering Drawing": "A",
+          "Chemistry": "A+"
+        },
+        "2": {
+          "Mathematics II": "C",
+          "Circuit Theory": "B+",
+          "Digital Electronics": "A",
+          "Programming 101": "O",
+          "Workshop Practice": "O"
+        },
+        "3": {
+          "Signals and Systems": "A",
+          "Electronic Devices": "B+",
+          "Electromagnetics": "A",
+          "Analog Circuits": "A+",
+          "Network Theory": "O"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2024,
+      "end_year": 2028,
+      "course_name": "BTECH - ece 2024-28",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250036": {
+      "name": "Vivaan Iyer",
+      "student_id": "S20250036",
+      "email": "vivaan.iyer19@student.univ.edu",
+      "password": "VObfVHnyAD",
+      "dob": "2002-02-19",
+      "branch": "Information Technology",
+      "division": "B",
+      "faculty_advisor": "Lakshmi Nair",
+      "current_sem": 6,
+      "attendance": 68.1,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B+",
+          "Physics": "A+",
+          "Programming 101": "A+",
+          "Basic Electronics": "B",
+          "Chemistry": "A"
+        },
+        "2": {
+          "Mathematics II": "B",
+          "Data Structures": "B+",
+          "Digital Logic": "B",
+          "Computer Organization": "B",
+          "Workshop Practice": "C"
+        },
+        "3": {
+          "Database Systems": "B",
+          "Operating Systems": "B+",
+          "Web Technologies": "B+",
+          "Discrete Mathematics": "O",
+          "Signals & Systems": "B"
+        },
+        "4": {
+          "Software Engineering": "B",
+          "Computer Networks": "A+",
+          "Algorithms": "A+",
+          "Elective I": "B+",
+          "Probability & Statistics": "A"
+        },
+        "5": {
+          "Mobile Computing": "A",
+          "Cloud Computing": "O",
+          "Machine Learning Basics": "B",
+          "Project Phase I": "B+",
+          "Elective II": "A"
+        }
+      },
+      "category": "student",
+      "research_projects": [
+        {
+          "project_id": "RP24796",
+          "title": "Cloud-Native Microservices Performance",
+          "year": 2024,
+          "status": "Ongoing",
+          "supervisor": "F20250014"
+        }
+      ],
+      "start_year": 2023,
+      "end_year": 2027,
+      "course_name": "BTECH - it 2023-27",
+      "certifications": [
+        "IBM Data Science Professional Certificate",
+        "Cisco CCNA",
+        "TensorFlow Developer Certificate",
+        "Kaggle Competitions Expert"
+      ],
+      "achievements": [
+        "Volunteer of the Year 2022",
+        "Won Intercollege Coding Contest"
+      ],
+      "experience": [
+        {
+          "role": "TA",
+          "organization": "Dept. of CSE",
+          "duration_months": 12,
+          "year": 2022
+        },
+        {
+          "role": "Intern",
+          "organization": "Innotech Solutions",
+          "duration_months": 3,
+          "year": 2024
+        },
+        {
+          "role": "Summer Intern",
+          "organization": "BuildRight Pvt Ltd",
+          "duration_months": 2,
+          "year": 2021
+        }
+      ],
+      "projects": [
+        {
+          "project_id": "SP49579",
+          "title": "Autonomous Drone for Aerial Mapping",
+          "description": "A student project on Autonomous Drone for Aerial Mapping.",
+          "year": 2023,
+          "role": "Lead"
+        },
+        {
+          "project_id": "SP29043",
+          "title": "Wearable Health Monitor",
+          "description": "A student project on Wearable Health Monitor.",
+          "year": 2019,
+          "role": "Contributor"
+        },
+        {
+          "project_id": "SP55461",
+          "title": "Smart Traffic Light System",
+          "description": "A student project on Smart Traffic Light System.",
+          "year": 2025,
+          "role": "Contributor"
+        }
+      ]
+    },
+    "S20250037": {
+      "name": "Sameer Iyer",
+      "student_id": "S20250037",
+      "email": "sameer.iyer37@student.univ.edu",
+      "password": "RRLFHQtcoz",
+      "dob": "2004-02-02",
+      "branch": "Mechanical Engineering",
+      "division": "C",
+      "faculty_advisor": "Sameer Nair",
+      "current_sem": 3,
+      "attendance": 66.0,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B+",
+          "Physics": "B+",
+          "Engineering Drawing": "A+",
+          "Mechanics": "B+",
+          "Chemistry": "A"
+        },
+        "2": {
+          "Mathematics II": "A",
+          "Material Science": "A+",
+          "Thermodynamics I": "B",
+          "Workshop Practice": "A+",
+          "Basic Electronics": "A"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2024,
+      "end_year": 2028,
+      "course_name": "BTECH - me 2024-28",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250038": {
+      "name": "Diya Sharma",
+      "student_id": "S20250038",
+      "email": "diya.sharma55@student.univ.edu",
+      "password": "KzTOAshzb9",
+      "dob": "2001-03-25",
+      "branch": "Electronics and Communication Engineering",
+      "division": "B",
+      "faculty_advisor": "Manav Kapoor",
+      "current_sem": 4,
+      "attendance": 71.0,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "A+",
+          "Physics": "A",
+          "Basic Electrical Engineering": "A",
+          "Engineering Drawing": "A+",
+          "Chemistry": "B+"
+        },
+        "2": {
+          "Mathematics II": "A+",
+          "Circuit Theory": "B+",
+          "Digital Electronics": "B+",
+          "Programming 101": "A",
+          "Workshop Practice": "A"
+        },
+        "3": {
+          "Signals and Systems": "B+",
+          "Electronic Devices": "A",
+          "Electromagnetics": "A",
+          "Analog Circuits": "O",
+          "Network Theory": "A"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2024,
+      "end_year": 2028,
+      "course_name": "BTECH - ece 2024-28",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250039": {
+      "name": "Rajat Kapoor",
+      "student_id": "S20250039",
+      "email": "rajat.kapoor23@student.univ.edu",
+      "password": "8XOFDWKWLC",
+      "dob": "2003-02-08",
+      "branch": "Mechanical Engineering",
+      "division": "A",
+      "faculty_advisor": "Vikram Rao",
+      "current_sem": 5,
+      "attendance": 82.4,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B+",
+          "Physics": "A",
+          "Engineering Drawing": "A",
+          "Mechanics": "A",
+          "Chemistry": "A"
+        },
+        "2": {
+          "Mathematics II": "A+",
+          "Material Science": "B+",
+          "Thermodynamics I": "A+",
+          "Workshop Practice": "B+",
+          "Basic Electronics": "B"
+        },
+        "3": {
+          "Dynamics": "A",
+          "Strength of Materials": "B+",
+          "Manufacturing Processes": "B",
+          "Fluid Mechanics": "B",
+          "Machine Drawing": "A+"
+        },
+        "4": {
+          "Thermodynamics II": "A+",
+          "Heat Transfer": "A+",
+          "Design of Machine Elements": "B+",
+          "Kinematics": "B",
+          "Mechanics of Solids": "B+"
+        }
+      },
+      "category": "student",
+      "research_projects": [
+        {
+          "project_id": "RP27398",
+          "title": "Surveying Modern Geotechnical Methods",
+          "year": 2025,
+          "status": "Ongoing",
+          "supervisor": "F20250014"
+        },
+        {
+          "project_id": "RP22449",
+          "title": "Blockchain in Supply Chain",
+          "year": 2023,
+          "status": "Ongoing",
+          "supervisor": "F20250026"
+        },
+        {
+          "project_id": "RP26809",
+          "title": "Low-Power VLSI Design Techniques",
+          "year": 2022,
+          "status": "Completed",
+          "supervisor": "F20250014"
+        }
+      ],
+      "start_year": 2023,
+      "end_year": 2027,
+      "course_name": "BTECH - me 2023-27",
+      "certifications": [
+        "Cisco CCNA",
+        "Coursera - Machine Learning"
+      ],
+      "achievements": [
+        "Patent Filed - IoT Sensor",
+        "Best Project Award - Robotics",
+        "Paper accepted at ABC Conference 2024"
+      ],
+      "experience": [
+        {
+          "role": "Research Intern",
+          "organization": "University Lab",
+          "duration_months": 6,
+          "year": 2023
+        },
+        {
+          "role": "Freelance Developer",
+          "organization": "Self",
+          "duration_months": 8,
+          "year": 2024
+        }
+      ],
+      "projects": [
+        {
+          "project_id": "SP83717",
+          "title": "AI-based Plagiarism Detector",
+          "description": "A student project on AI-based Plagiarism Detector.",
+          "year": 2023,
+          "role": "Contributor"
+        },
+        {
+          "project_id": "SP87940",
+          "title": "Real-time Chat Application",
+          "description": "A student project on Real-time Chat Application.",
+          "year": 2019,
+          "role": "Member"
+        }
+      ]
+    },
+    "S20250040": {
+      "name": "Jyoti Gupta",
+      "student_id": "S20250040",
+      "email": "jyoti.gupta83@student.univ.edu",
+      "password": "32fNMGyDLJ",
+      "dob": "2006-11-11",
+      "branch": "Information Technology",
+      "division": "B",
+      "faculty_advisor": "Lakshmi Nair",
+      "current_sem": 3,
+      "attendance": 76.7,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "A",
+          "Physics": "B+",
+          "Programming 101": "B",
+          "Basic Electronics": "B+",
+          "Chemistry": "A"
+        },
+        "2": {
+          "Mathematics II": "O",
+          "Data Structures": "A",
+          "Digital Logic": "O",
+          "Computer Organization": "A",
+          "Workshop Practice": "A+"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2024,
+      "end_year": 2028,
+      "course_name": "BTECH - it 2024-28",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250041": {
+      "name": "Diya Kapoor",
+      "student_id": "S20250041",
+      "email": "diya.kapoor43@student.univ.edu",
+      "password": "gJRysqU2Q9",
+      "dob": "2001-06-20",
+      "branch": "Information Technology",
+      "division": "C",
+      "faculty_advisor": "Siddharth Kapoor",
+      "current_sem": 5,
+      "attendance": 79.1,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "C",
+          "Physics": "A",
+          "Programming 101": "B",
+          "Basic Electronics": "B",
+          "Chemistry": "C"
+        },
+        "2": {
+          "Mathematics II": "O",
+          "Data Structures": "B+",
+          "Digital Logic": "O",
+          "Computer Organization": "B+",
+          "Workshop Practice": "C"
+        },
+        "3": {
+          "Database Systems": "B+",
+          "Operating Systems": "B+",
+          "Web Technologies": "A",
+          "Discrete Mathematics": "B",
+          "Signals & Systems": "A"
+        },
+        "4": {
+          "Software Engineering": "B",
+          "Computer Networks": "B+",
+          "Algorithms": "O",
+          "Elective I": "B+",
+          "Probability & Statistics": "A"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2023,
+      "end_year": 2027,
+      "course_name": "BTECH - it 2023-27",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250042": {
+      "name": "Saanvi Das",
+      "student_id": "S20250042",
+      "email": "saanvi.das47@student.univ.edu",
+      "password": "bxtl8nv8XF",
+      "dob": "2005-03-12",
+      "branch": "Computer Science and Engineering",
+      "division": "C",
+      "faculty_advisor": "Nikhil Iyer",
+      "current_sem": 4,
+      "attendance": 96.8,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B+",
+          "Physics": "A",
+          "Engineering Mechanics": "B+",
+          "Programming 101": "B",
+          "Chemistry": "A"
+        },
+        "2": {
+          "Mathematics II": "A",
+          "Basic Electrical Engineering": "B",
+          "Data Structures": "B",
+          "Digital Logic": "B+",
+          "Environment Studies": "B"
+        },
+        "3": {
+          "Discrete Mathematics": "B+",
+          "Computer Organization": "B+",
+          "Algorithms": "B+",
+          "Object Oriented Programming": "B+",
+          "Signals & Systems": "A"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2024,
+      "end_year": 2028,
+      "course_name": "BTECH - cse 2024-28",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250043": {
+      "name": "Arjun Mehta",
+      "student_id": "S20250043",
+      "email": "arjun.mehta33@student.univ.edu",
+      "password": "dPE3xJ7gT2",
+      "dob": "2006-02-17",
+      "branch": "Computer Science and Engineering",
+      "division": "B",
+      "faculty_advisor": "Tanvi Kapoor",
+      "current_sem": 8,
+      "attendance": 80.5,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B+",
+          "Physics": "B+",
+          "Engineering Mechanics": "B+",
+          "Programming 101": "B",
+          "Chemistry": "B+"
+        },
+        "2": {
+          "Mathematics II": "B+",
+          "Basic Electrical Engineering": "A+",
+          "Data Structures": "A+",
+          "Digital Logic": "B+",
+          "Environment Studies": "B+"
+        },
+        "3": {
+          "Discrete Mathematics": "B",
+          "Computer Organization": "B+",
+          "Algorithms": "O",
+          "Object Oriented Programming": "A",
+          "Signals & Systems": "B+"
+        },
+        "4": {
+          "Theory of Computation": "C",
+          "Operating Systems": "B+",
+          "Database Systems": "B",
+          "Computer Networks": "B",
+          "Software Engineering": "A+"
+        },
+        "5": {
+          "Design and Analysis of Algorithms": "A+",
+          "Machine Learning": "C",
+          "Compiler Design": "B",
+          "Web Technologies": "B",
+          "Elective I": "A+"
+        },
+        "6": {
+          "Artificial Intelligence": "B+",
+          "Computer Graphics": "B+",
+          "Distributed Systems": "A",
+          "Elective II": "B",
+          "Project Phase I": "B"
+        },
+        "7": {
+          "Cloud Computing": "B+",
+          "Security and Privacy": "A",
+          "Elective III": "A+",
+          "Project Phase II": "A+",
+          "Internship": "B+"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2022,
+      "end_year": 2026,
+      "course_name": "BTECH - cse 2022-26",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250044": {
+      "name": "Priya Iyer",
+      "student_id": "S20250044",
+      "email": "priya.iyer29@student.univ.edu",
+      "password": "bu7g1TPvYj",
+      "dob": "2002-08-17",
+      "branch": "Computer Science and Engineering",
+      "division": "A",
+      "faculty_advisor": "Kiran Iyer",
+      "current_sem": 3,
+      "attendance": 91.6,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "O",
+          "Physics": "B",
+          "Engineering Mechanics": "B",
+          "Programming 101": "B",
+          "Chemistry": "B"
+        },
+        "2": {
+          "Mathematics II": "A",
+          "Basic Electrical Engineering": "A",
+          "Data Structures": "A",
+          "Digital Logic": "A",
+          "Environment Studies": "O"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2024,
+      "end_year": 2028,
+      "course_name": "BTECH - cse 2024-28",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250045": {
+      "name": "Siddharth Saxena",
+      "student_id": "S20250045",
+      "email": "siddharth.saxena70@student.univ.edu",
+      "password": "GYGJby3EcO",
+      "dob": "2006-03-25",
+      "branch": "Civil Engineering",
+      "division": "C",
+      "faculty_advisor": "Rohan Sharma",
+      "current_sem": 7,
+      "attendance": 77.8,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B+",
+          "Physics": "B",
+          "Engineering Graphics": "O",
+          "Basic Civil Engg": "A+",
+          "Chemistry": "A+"
+        },
+        "2": {
+          "Mathematics II": "B",
+          "Building Materials": "B+",
+          "Surveying": "A",
+          "Strength of Materials": "B",
+          "Workshop Practice": "A+"
+        },
+        "3": {
+          "Structural Analysis I": "A+",
+          "Fluid Mechanics": "A+",
+          "Geotechnical Engineering I": "B+",
+          "Concrete Technology": "B+",
+          "Hydraulics": "O"
+        },
+        "4": {
+          "Structural Analysis II": "B",
+          "Design of Concrete Structures": "A",
+          "Transportation Engineering I": "B+",
+          "Environmental Engineering": "B+",
+          "Elective I": "B+"
+        },
+        "5": {
+          "Design of Steel Structures": "B+",
+          "Geotechnical Engineering II": "A+",
+          "Transportation Engineering II": "O",
+          "Project Phase I": "A",
+          "Elective II": "B+"
+        },
+        "6": {
+          "Water Resources": "A+",
+          "Construction Management": "B+",
+          "Elective III": "B+",
+          "Project Phase II": "A",
+          "Industrial Training": "C"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2022,
+      "end_year": 2026,
+      "course_name": "BTECH - ce 2022-26",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250046": {
+      "name": "Sameer Iyer",
+      "student_id": "S20250046",
+      "email": "sameer.iyer90@student.univ.edu",
+      "password": "EOlZieTX8D",
+      "dob": "2006-02-12",
+      "branch": "Computer Science and Engineering",
+      "division": "B",
+      "faculty_advisor": "Tanvi Kapoor",
+      "current_sem": 3,
+      "attendance": 87.9,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B+",
+          "Physics": "B",
+          "Engineering Mechanics": "B+",
+          "Programming 101": "A",
+          "Chemistry": "O"
+        },
+        "2": {
+          "Mathematics II": "B+",
+          "Basic Electrical Engineering": "B",
+          "Data Structures": "A+",
+          "Digital Logic": "B",
+          "Environment Studies": "A"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2024,
+      "end_year": 2028,
+      "course_name": "BTECH - cse 2024-28",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250047": {
+      "name": "Ishaan Sharma",
+      "student_id": "S20250047",
+      "email": "ishaan.sharma94@student.univ.edu",
+      "password": "BfBM0lIsug",
+      "dob": "2002-05-17",
+      "branch": "Electronics and Communication Engineering",
+      "division": "A",
+      "faculty_advisor": "Vivaan Mehta",
+      "current_sem": 5,
+      "attendance": 97.6,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B+",
+          "Physics": "A+",
+          "Basic Electrical Engineering": "B",
+          "Engineering Drawing": "A+",
+          "Chemistry": "A"
+        },
+        "2": {
+          "Mathematics II": "B",
+          "Circuit Theory": "B",
+          "Digital Electronics": "A",
+          "Programming 101": "A+",
+          "Workshop Practice": "A"
+        },
+        "3": {
+          "Signals and Systems": "B",
+          "Electronic Devices": "B+",
+          "Electromagnetics": "B",
+          "Analog Circuits": "A",
+          "Network Theory": "C"
+        },
+        "4": {
+          "Microprocessors": "A",
+          "Communication Systems": "A",
+          "Control Systems": "B",
+          "Digital Signal Processing": "B+",
+          "Probability & Statistics": "B"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2023,
+      "end_year": 2027,
+      "course_name": "BTECH - ece 2023-27",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250048": {
+      "name": "Siddharth Iyer",
+      "student_id": "S20250048",
+      "email": "siddharth.iyer41@student.univ.edu",
+      "password": "Prp9hbVlFH",
+      "dob": "2005-07-06",
+      "branch": "Civil Engineering",
+      "division": "C",
+      "faculty_advisor": "Rohan Sharma",
+      "current_sem": 7,
+      "attendance": 76.9,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "A",
+          "Physics": "B+",
+          "Engineering Graphics": "B",
+          "Basic Civil Engg": "B+",
+          "Chemistry": "A"
+        },
+        "2": {
+          "Mathematics II": "B+",
+          "Building Materials": "B",
+          "Surveying": "O",
+          "Strength of Materials": "B+",
+          "Workshop Practice": "A"
+        },
+        "3": {
+          "Structural Analysis I": "B+",
+          "Fluid Mechanics": "B+",
+          "Geotechnical Engineering I": "A+",
+          "Concrete Technology": "O",
+          "Hydraulics": "B"
+        },
+        "4": {
+          "Structural Analysis II": "B+",
+          "Design of Concrete Structures": "A",
+          "Transportation Engineering I": "A+",
+          "Environmental Engineering": "A+",
+          "Elective I": "B+"
+        },
+        "5": {
+          "Design of Steel Structures": "A",
+          "Geotechnical Engineering II": "B",
+          "Transportation Engineering II": "O",
+          "Project Phase I": "A+",
+          "Elective II": "A"
+        },
+        "6": {
+          "Water Resources": "A",
+          "Construction Management": "A",
+          "Elective III": "O",
+          "Project Phase II": "A+",
+          "Industrial Training": "A"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2022,
+      "end_year": 2026,
+      "course_name": "BTECH - ce 2022-26",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250049": {
+      "name": "Harsh Patel",
+      "student_id": "S20250049",
+      "email": "harsh.patel4@student.univ.edu",
+      "password": "xJKxDZJiN4",
+      "dob": "2005-08-07",
+      "branch": "Mechanical Engineering",
+      "division": "B",
+      "faculty_advisor": "Kavya Chopra",
+      "current_sem": 6,
+      "attendance": 70.9,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "B",
+          "Physics": "A",
+          "Engineering Drawing": "A+",
+          "Mechanics": "B",
+          "Chemistry": "A"
+        },
+        "2": {
+          "Mathematics II": "B",
+          "Material Science": "A",
+          "Thermodynamics I": "O",
+          "Workshop Practice": "B+",
+          "Basic Electronics": "B"
+        },
+        "3": {
+          "Dynamics": "A",
+          "Strength of Materials": "A",
+          "Manufacturing Processes": "O",
+          "Fluid Mechanics": "B+",
+          "Machine Drawing": "B"
+        },
+        "4": {
+          "Thermodynamics II": "B",
+          "Heat Transfer": "B+",
+          "Design of Machine Elements": "B",
+          "Kinematics": "B+",
+          "Mechanics of Solids": "B"
+        },
+        "5": {
+          "CAD_CAM": "B+",
+          "Automobile Engineering": "A+",
+          "Control Systems": "A+",
+          "Elective I": "A+",
+          "Project Phase I": "B"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2023,
+      "end_year": 2027,
+      "course_name": "BTECH - me 2023-27",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    },
+    "S20250050": {
+      "name": "Siddharth Chopra",
+      "student_id": "S20250050",
+      "email": "siddharth.chopra17@student.univ.edu",
+      "password": "OtNIfGPkL8",
+      "dob": "2003-07-27",
+      "branch": "Civil Engineering",
+      "division": "C",
+      "faculty_advisor": "Rohan Sharma",
+      "current_sem": 6,
+      "attendance": 62.8,
+      "grades_till_previous_sem": {
+        "1": {
+          "Mathematics I": "C",
+          "Physics": "B+",
+          "Engineering Graphics": "A",
+          "Basic Civil Engg": "B+",
+          "Chemistry": "A"
+        },
+        "2": {
+          "Mathematics II": "B",
+          "Building Materials": "B",
+          "Surveying": "B+",
+          "Strength of Materials": "A+",
+          "Workshop Practice": "C"
+        },
+        "3": {
+          "Structural Analysis I": "A",
+          "Fluid Mechanics": "B",
+          "Geotechnical Engineering I": "O",
+          "Concrete Technology": "A+",
+          "Hydraulics": "A+"
+        },
+        "4": {
+          "Structural Analysis II": "A+",
+          "Design of Concrete Structures": "A",
+          "Transportation Engineering I": "B+",
+          "Environmental Engineering": "A",
+          "Elective I": "B"
+        },
+        "5": {
+          "Design of Steel Structures": "B",
+          "Geotechnical Engineering II": "B",
+          "Transportation Engineering II": "A+",
+          "Project Phase I": "B+",
+          "Elective II": "B+"
+        }
+      },
+      "category": "student",
+      "research_projects": [],
+      "start_year": 2023,
+      "end_year": 2027,
+      "course_name": "BTECH - ce 2023-27",
+      "certifications": [],
+      "achievements": [],
+      "experience": [],
+      "projects": []
+    }
+  },
+  "faculty": {
+    "F20250001": {
+      "name": "Aditi Gupta",
+      "faculty_id": "F20250001",
+      "email": "aditi.gupta69@faculty.univ.edu",
+      "password": "a2gBi4qUxW",
+      "designation": "Dean",
+      "department": "Administration",
+      "educational_qualification": "PhD",
+      "papers_publications": [
+        "University Governance and Academic Leadership (2023)"
+      ],
+      "student_research": [
+        {
+          "project_id": "P20250001",
+          "title": "Study on Administration - Design",
+          "year": 2025,
+          "students": [
+            {
+              "student_id": "S20250036",
+              "name": "Vivaan Iyer"
+            },
+            {
+              "student_id": "S20250031",
+              "name": "Riya Gupta"
+            },
+            {
+              "student_id": "S20250049",
+              "name": "Harsh Patel"
+            }
+          ]
+        },
+        {
+          "project_id": "P20250002",
+          "title": "Study on Administration - Optimization",
+          "year": 2024,
+          "students": [
+            {
+              "student_id": "S20250049",
+              "name": "Harsh Patel"
+            }
+          ]
+        }
+      ],
+      "category": "faculty"
+    },
+    "F20250002": {
+      "name": "Rhea Das",
+      "faculty_id": "F20250002",
+      "email": "rhea.das52@faculty.univ.edu",
+      "password": "xczdKJmxJs",
+      "designation": "HOD",
+      "department": "Computer Science and Engineering",
+      "educational_qualification": "PhD",
+      "papers_publications": [
+        "Advances in Computer - Paper 1",
+        "Computer Science and Engineering Curriculum Update 2022"
+      ],
+      "student_research": [],
+      "category": "faculty"
+    },
+    "F20250003": {
+      "name": "Jyoti Sharma",
+      "faculty_id": "F20250003",
+      "email": "jyoti.sharma50@faculty.univ.edu",
+      "password": "GCWJr0NRNh",
+      "designation": "HOD",
+      "department": "Electronics and Communication Engineering",
+      "educational_qualification": "PhD",
+      "papers_publications": [
+        "Advances in Electronics - Paper 2",
+        "Electronics and Communication Engineering Curriculum Update 2022"
+      ],
+      "student_research": [],
+      "category": "faculty"
+    },
+    "F20250004": {
+      "name": "Ananya Patel",
+      "faculty_id": "F20250004",
+      "email": "ananya.patel13@faculty.univ.edu",
+      "password": "zxYvJ8xWjm",
+      "designation": "HOD",
+      "department": "Mechanical Engineering",
+      "educational_qualification": "Masters",
+      "papers_publications": [
+        "Advances in Mechanical - Paper 3",
+        "Mechanical Engineering Curriculum Update 2022"
+      ],
+      "student_research": [
+        {
+          "project_id": "P20250003",
+          "title": "Study on Mechanical - Optimization",
+          "year": 2019,
+          "students": [
+            {
+              "student_id": "S20250015",
+              "name": "Riya Gupta"
+            },
+            {
+              "student_id": "S20250003",
+              "name": "Rohan Chopra"
+            },
+            {
+              "student_id": "S20250030",
+              "name": "Shruti Kapoor"
+            }
+          ]
+        },
+        {
+          "project_id": "P20250004",
+          "title": "Study on Mechanical - Optimization",
+          "year": 2020,
+          "students": [
+            {
+              "student_id": "S20250012",
+              "name": "Vivaan Khan"
+            },
+            {
+              "student_id": "S20250030",
+              "name": "Shruti Kapoor"
+            },
+            {
+              "student_id": "S20250027",
+              "name": "Siddharth Nair"
+            }
+          ]
+        }
+      ],
+      "category": "faculty"
+    },
+    "F20250005": {
+      "name": "Yash Iyer",
+      "faculty_id": "F20250005",
+      "email": "yash.iyer66@faculty.univ.edu",
+      "password": "zGccciTvZE",
+      "designation": "HOD",
+      "department": "Civil Engineering",
+      "educational_qualification": "Masters",
+      "papers_publications": [
+        "Advances in Civil - Paper 4",
+        "Civil Engineering Curriculum Update 2022"
+      ],
+      "student_research": [
+        {
+          "project_id": "P20250005",
+          "title": "Study on Civil - Design",
+          "year": 2022,
+          "students": [
+            {
+              "student_id": "S20250021",
+              "name": "Kiran Bhatt"
+            },
+            {
+              "student_id": "S20250045",
+              "name": "Siddharth Saxena"
+            },
+            {
+              "student_id": "S20250008",
+              "name": "Ishaan Nair"
+            }
+          ]
+        },
+        {
+          "project_id": "P20250006",
+          "title": "Study on Civil - Simulation",
+          "year": 2022,
+          "students": [
+            {
+              "student_id": "S20250016",
+              "name": "Rohan Bhatt"
+            },
+            {
+              "student_id": "S20250048",
+              "name": "Siddharth Iyer"
+            }
+          ]
+        }
+      ],
+      "category": "faculty"
+    },
+    "F20250006": {
+      "name": "Jyoti Chopra",
+      "faculty_id": "F20250006",
+      "email": "jyoti.chopra59@faculty.univ.edu",
+      "password": "jM5Giu7Nuk",
+      "designation": "HOD",
+      "department": "Electrical Engineering",
+      "educational_qualification": "PhD",
+      "papers_publications": [
+        "Advances in Electrical - Paper 5",
+        "Electrical Engineering Curriculum Update 2022"
+      ],
+      "student_research": [
+        {
+          "project_id": "P20250007",
+          "title": "Study on Electrical - Simulation",
+          "year": 2021,
+          "students": [
+            {
+              "student_id": "S20250047",
+              "name": "Ishaan Sharma"
+            },
+            {
+              "student_id": "S20250002",
+              "name": "Kunal Bhatt"
+            }
+          ]
+        },
+        {
+          "project_id": "P20250008",
+          "title": "Study on Electrical - Optimization",
+          "year": 2022,
+          "students": [
+            {
+              "student_id": "S20250014",
+              "name": "Ananya Nair"
+            },
+            {
+              "student_id": "S20250038",
+              "name": "Diya Sharma"
+            },
+            {
+              "student_id": "S20250005",
+              "name": "Kiran Bhatt"
+            }
+          ]
+        }
+      ],
+      "category": "faculty"
+    },
+    "F20250007": {
+      "name": "Ananya Kapoor",
+      "faculty_id": "F20250007",
+      "email": "ananya.kapoor79@faculty.univ.edu",
+      "password": "V1tLvG1GIF",
+      "designation": "HOD",
+      "department": "Information Technology",
+      "educational_qualification": "Masters",
+      "papers_publications": [
+        "Advances in Information - Paper 6",
+        "Information Technology Curriculum Update 2022"
+      ],
+      "student_research": [
+        {
+          "project_id": "P20250009",
+          "title": "Study on Information - Simulation",
+          "year": 2019,
+          "students": [
+            {
+              "student_id": "S20250009",
+              "name": "Vivaan Singh"
+            }
+          ]
+        }
+      ],
+      "category": "faculty"
+    },
+    "F20250008": {
+      "name": "Kiran Iyer",
+      "faculty_id": "F20250008",
+      "email": "kiran.iyer73@faculty.univ.edu",
+      "password": "tE0bxvRhAL",
+      "designation": "Faculty Advisor",
+      "department": "Computer Science and Engineering",
+      "division": "A",
+      "educational_qualification": "Masters",
+      "papers_publications": [
+        "Study on Computer topics - A",
+        "Student Mentorship in Computer Science and Engineering"
+      ],
+      "student_research": [
+        {
+          "project_id": "P20250010",
+          "title": "Study on Computer - Simulation",
+          "year": 2022,
+          "students": [
+            {
+              "student_id": "S20250046",
+              "name": "Sameer Iyer"
+            },
+            {
+              "student_id": "S20250024",
+              "name": "Meera Chopra"
+            },
+            {
+              "student_id": "S20250023",
+              "name": "Vikram Mehta"
+            }
+          ]
+        }
+      ],
+      "category": "faculty"
+    },
+    "F20250009": {
+      "name": "Tanvi Kapoor",
+      "faculty_id": "F20250009",
+      "email": "tanvi.kapoor93@faculty.univ.edu",
+      "password": "3SObMEq9PY",
+      "designation": "Faculty Advisor",
+      "department": "Computer Science and Engineering",
+      "division": "B",
+      "educational_qualification": "PhD",
+      "papers_publications": [
+        "Study on Computer topics - B",
+        "Student Mentorship in Computer Science and Engineering"
+      ],
+      "student_research": [],
+      "category": "faculty"
+    },
+    "F20250010": {
+      "name": "Nikhil Iyer",
+      "faculty_id": "F20250010",
+      "email": "nikhil.iyer93@faculty.univ.edu",
+      "password": "dLEkHOUNX1",
+      "designation": "Faculty Advisor",
+      "department": "Computer Science and Engineering",
+      "division": "C",
+      "educational_qualification": "Masters",
+      "papers_publications": [
+        "Study on Computer topics - C",
+        "Student Mentorship in Computer Science and Engineering"
+      ],
+      "student_research": [],
+      "category": "faculty"
+    },
+    "F20250011": {
+      "name": "Vivaan Mehta",
+      "faculty_id": "F20250011",
+      "email": "vivaan.mehta19@faculty.univ.edu",
+      "password": "0RpcK8Shmb",
+      "designation": "Faculty Advisor",
+      "department": "Electronics and Communication Engineering",
+      "division": "A",
+      "educational_qualification": "Masters",
+      "papers_publications": [
+        "Study on Electronics topics - A",
+        "Student Mentorship in Electronics and Communication Engineering"
+      ],
+      "student_research": [
+        {
+          "project_id": "P20250011",
+          "title": "Study on Electronics - Design",
+          "year": 2022,
+          "students": [
+            {
+              "student_id": "S20250006",
+              "name": "Kiran Bhatt"
+            },
+            {
+              "student_id": "S20250018",
+              "name": "Nikhil Rao"
+            }
+          ]
+        }
+      ],
+      "category": "faculty"
+    },
+    "F20250012": {
+      "name": "Manav Kapoor",
+      "faculty_id": "F20250012",
+      "email": "manav.kapoor41@faculty.univ.edu",
+      "password": "AjASnAGXN6",
+      "designation": "Faculty Advisor",
+      "department": "Electronics and Communication Engineering",
+      "division": "B",
+      "educational_qualification": "Masters",
+      "papers_publications": [
+        "Study on Electronics topics - B",
+        "Student Mentorship in Electronics and Communication Engineering"
+      ],
+      "student_research": [
+        {
+          "project_id": "P20250012",
+          "title": "Study on Electronics - Simulation",
+          "year": 2024,
+          "students": [
+            {
+              "student_id": "S20250026",
+              "name": "Kunal Nair"
+            }
+          ]
+        }
+      ],
+      "category": "faculty"
+    },
+    "F20250013": {
+      "name": "Rajat Mehta",
+      "faculty_id": "F20250013",
+      "email": "rajat.mehta95@faculty.univ.edu",
+      "password": "UdTiHnJuQE",
+      "designation": "Faculty Advisor",
+      "department": "Electronics and Communication Engineering",
+      "division": "C",
+      "educational_qualification": "Masters",
+      "papers_publications": [
+        "Study on Electronics topics - C",
+        "Student Mentorship in Electronics and Communication Engineering"
+      ],
+      "student_research": [],
+      "category": "faculty"
+    },
+    "F20250014": {
+      "name": "Vikram Rao",
+      "faculty_id": "F20250014",
+      "email": "vikram.rao41@faculty.univ.edu",
+      "password": "9lD6IvIwRX",
+      "designation": "Faculty Advisor",
+      "department": "Mechanical Engineering",
+      "division": "A",
+      "educational_qualification": "Masters",
+      "papers_publications": [
+        "Study on Mechanical topics - A",
+        "Student Mentorship in Mechanical Engineering"
+      ],
+      "student_research": [
+        {
+          "project_id": "P20250013",
+          "title": "Study on Mechanical - Simulation",
+          "year": 2020,
+          "students": [
+            {
+              "student_id": "S20250025",
+              "name": "Ananya Bhatt"
+            }
+          ]
+        },
+        {
+          "project_id": "P20250014",
+          "title": "Study on Mechanical - Design",
+          "year": 2025,
+          "students": [
+            {
+              "student_id": "S20250049",
+              "name": "Harsh Patel"
+            }
+          ]
+        }
+      ],
+      "category": "faculty"
+    },
+    "F20250015": {
+      "name": "Kavya Chopra",
+      "faculty_id": "F20250015",
+      "email": "kavya.chopra79@faculty.univ.edu",
+      "password": "Em9prJto8t",
+      "designation": "Faculty Advisor",
+      "department": "Mechanical Engineering",
+      "division": "B",
+      "educational_qualification": "Masters",
+      "papers_publications": [
+        "Study on Mechanical topics - B",
+        "Student Mentorship in Mechanical Engineering"
+      ],
+      "student_research": [
+        {
+          "project_id": "P20250015",
+          "title": "Study on Mechanical - Optimization",
+          "year": 2019,
+          "students": [
+            {
+              "student_id": "S20250012",
+              "name": "Vivaan Khan"
+            }
+          ]
+        },
+        {
+          "project_id": "P20250016",
+          "title": "Study on Mechanical - Design",
+          "year": 2024,
+          "students": [
+            {
+              "student_id": "S20250001",
+              "name": "Ananya Rao"
+            },
+            {
+              "student_id": "S20250025",
+              "name": "Ananya Bhatt"
+            },
+            {
+              "student_id": "S20250030",
+              "name": "Shruti Kapoor"
+            }
+          ]
+        }
+      ],
+      "category": "faculty"
+    },
+    "F20250016": {
+      "name": "Sameer Nair",
+      "faculty_id": "F20250016",
+      "email": "sameer.nair91@faculty.univ.edu",
+      "password": "nSTFuEwJ77",
+      "designation": "Faculty Advisor",
+      "department": "Mechanical Engineering",
+      "division": "C",
+      "educational_qualification": "Masters",
+      "papers_publications": [
+        "Study on Mechanical topics - C",
+        "Student Mentorship in Mechanical Engineering"
+      ],
+      "student_research": [],
+      "category": "faculty"
+    },
+    "F20250017": {
+      "name": "Nandini Reddy",
+      "faculty_id": "F20250017",
+      "email": "nandini.reddy37@faculty.univ.edu",
+      "password": "hKRIy5z0w9",
+      "designation": "Faculty Advisor",
+      "department": "Civil Engineering",
+      "division": "A",
+      "educational_qualification": "PhD",
+      "papers_publications": [
+        "Study on Civil topics - A",
+        "Student Mentorship in Civil Engineering"
+      ],
+      "student_research": [
+        {
+          "project_id": "P20250017",
+          "title": "Study on Civil - Optimization",
+          "year": 2025,
+          "students": [
+            {
+              "student_id": "S20250021",
+              "name": "Kiran Bhatt"
+            },
+            {
+              "student_id": "S20250048",
+              "name": "Siddharth Iyer"
+            }
+          ]
+        }
+      ],
+      "category": "faculty"
+    },
+    "F20250018": {
+      "name": "Kunal Kapoor",
+      "faculty_id": "F20250018",
+      "email": "kunal.kapoor38@faculty.univ.edu",
+      "password": "cs9Tfw7CPq",
+      "designation": "Faculty Advisor",
+      "department": "Civil Engineering",
+      "division": "B",
+      "educational_qualification": "Masters",
+      "papers_publications": [
+        "Study on Civil topics - B",
+        "Student Mentorship in Civil Engineering"
+      ],
+      "student_research": [],
+      "category": "faculty"
+    },
+    "F20250019": {
+      "name": "Rohan Sharma",
+      "faculty_id": "F20250019",
+      "email": "rohan.sharma28@faculty.univ.edu",
+      "password": "m0Ir7JSrig",
+      "designation": "Faculty Advisor",
+      "department": "Civil Engineering",
+      "division": "C",
+      "educational_qualification": "PhD",
+      "papers_publications": [
+        "Study on Civil topics - C",
+        "Student Mentorship in Civil Engineering"
+      ],
+      "student_research": [
+        {
+          "project_id": "P20250018",
+          "title": "Study on Civil - Optimization",
+          "year": 2021,
+          "students": [
+            {
+              "student_id": "S20250050",
+              "name": "Siddharth Chopra"
+            },
+            {
+              "student_id": "S20250028",
+              "name": "Neha Nair"
+            },
+            {
+              "student_id": "S20250048",
+              "name": "Siddharth Iyer"
+            }
+          ]
+        },
+        {
+          "project_id": "P20250019",
+          "title": "Study on Civil - Simulation",
+          "year": 2021,
+          "students": [
+            {
+              "student_id": "S20250048",
+              "name": "Siddharth Iyer"
+            },
+            {
+              "student_id": "S20250021",
+              "name": "Kiran Bhatt"
+            },
+            {
+              "student_id": "S20250034",
+              "name": "Aditya Kapoor"
+            }
+          ]
+        }
+      ],
+      "category": "faculty"
+    },
+    "F20250020": {
+      "name": "Nikhil Khan",
+      "faculty_id": "F20250020",
+      "email": "nikhil.khan32@faculty.univ.edu",
+      "password": "dQ5HoOodgA",
+      "designation": "Faculty Advisor",
+      "department": "Electrical Engineering",
+      "division": "A",
+      "educational_qualification": "Masters",
+      "papers_publications": [
+        "Study on Electrical topics - A",
+        "Student Mentorship in Electrical Engineering"
+      ],
+      "student_research": [
+        {
+          "project_id": "P20250020",
+          "title": "Study on Electrical - Optimization",
+          "year": 2021,
+          "students": [
+            {
+              "student_id": "S20250028",
+              "name": "Neha Nair"
+            },
+            {
+              "student_id": "S20250036",
+              "name": "Vivaan Iyer"
+            },
+            {
+              "student_id": "S20250032",
+              "name": "Rohan Kapoor"
+            }
+          ]
+        }
+      ],
+      "category": "faculty"
+    },
+    "F20250021": {
+      "name": "Riya Khan",
+      "faculty_id": "F20250021",
+      "email": "riya.khan92@faculty.univ.edu",
+      "password": "EgRXia9J7k",
+      "designation": "Faculty Advisor",
+      "department": "Electrical Engineering",
+      "division": "B",
+      "educational_qualification": "Masters",
+      "papers_publications": [
+        "Study on Electrical topics - B",
+        "Student Mentorship in Electrical Engineering"
+      ],
+      "student_research": [],
+      "category": "faculty"
+    },
+    "F20250022": {
+      "name": "Nandini Saxena",
+      "faculty_id": "F20250022",
+      "email": "nandini.saxena84@faculty.univ.edu",
+      "password": "744EEPmW9s",
+      "designation": "Faculty Advisor",
+      "department": "Electrical Engineering",
+      "division": "C",
+      "educational_qualification": "Masters",
+      "papers_publications": [
+        "Study on Electrical topics - C",
+        "Student Mentorship in Electrical Engineering"
+      ],
+      "student_research": [
+        {
+          "project_id": "P20250021",
+          "title": "Study on Electrical - Simulation",
+          "year": 2022,
+          "students": [
+            {
+              "student_id": "S20250027",
+              "name": "Siddharth Nair"
+            },
+            {
+              "student_id": "S20250010",
+              "name": "Jyoti Singh"
+            }
+          ]
+        },
+        {
+          "project_id": "P20250022",
+          "title": "Study on Electrical - Simulation",
+          "year": 2025,
+          "students": [
+            {
+              "student_id": "S20250031",
+              "name": "Riya Gupta"
+            },
+            {
+              "student_id": "S20250016",
+              "name": "Rohan Bhatt"
+            },
+            {
+              "student_id": "S20250015",
+              "name": "Riya Gupta"
+            }
+          ]
+        }
+      ],
+      "category": "faculty"
+    },
+    "F20250023": {
+      "name": "Nandini Reddy",
+      "faculty_id": "F20250023",
+      "email": "nandini.reddy37@faculty.univ.edu",
+      "password": "Pd6XfPKoIV",
+      "designation": "Faculty Advisor",
+      "department": "Information Technology",
+      "division": "A",
+      "educational_qualification": "PhD",
+      "papers_publications": [
+        "Study on Information topics - A",
+        "Student Mentorship in Information Technology"
+      ],
+      "student_research": [],
+      "category": "faculty"
+    },
+    "F20250024": {
+      "name": "Lakshmi Nair",
+      "faculty_id": "F20250024",
+      "email": "lakshmi.nair23@faculty.univ.edu",
+      "password": "A41l76c1zY",
+      "designation": "Faculty Advisor",
+      "department": "Information Technology",
+      "division": "B",
+      "educational_qualification": "Masters",
+      "papers_publications": [
+        "Study on Information topics - B",
+        "Student Mentorship in Information Technology"
+      ],
+      "student_research": [],
+      "category": "faculty"
+    },
+    "F20250025": {
+      "name": "Siddharth Kapoor",
+      "faculty_id": "F20250025",
+      "email": "siddharth.kapoor24@faculty.univ.edu",
+      "password": "7V937s4cat",
+      "designation": "Faculty Advisor",
+      "department": "Information Technology",
+      "division": "C",
+      "educational_qualification": "PhD",
+      "papers_publications": [
+        "Study on Information topics - C",
+        "Student Mentorship in Information Technology"
+      ],
+      "student_research": [],
+      "category": "faculty"
+    },
+    "F20250026": {
+      "name": "Nandini Iyer",
+      "faculty_id": "F20250026",
+      "email": "nandini.iyer83@faculty.univ.edu",
+      "password": "IHF48i2GDr",
+      "designation": "Professor",
+      "department": "Civil Engineering",
+      "educational_qualification": "PhD",
+      "papers_publications": [
+        "Research on Civil - 2020"
+      ],
+      "student_research": [
+        {
+          "project_id": "P20250023",
+          "title": "Study on Civil - Simulation",
+          "year": 2020,
+          "students": [
+            {
+              "student_id": "S20250016",
+              "name": "Rohan Bhatt"
+            },
+            {
+              "student_id": "S20250034",
+              "name": "Aditya Kapoor"
+            },
+            {
+              "student_id": "S20250021",
+              "name": "Kiran Bhatt"
+            }
+          ]
+        },
+        {
+          "project_id": "P20250024",
+          "title": "Study on Civil - Optimization",
+          "year": 2023,
+          "students": [
+            {
+              "student_id": "S20250008",
+              "name": "Ishaan Nair"
+            },
+            {
+              "student_id": "S20250045",
+              "name": "Siddharth Saxena"
+            },
+            {
+              "student_id": "S20250028",
+              "name": "Neha Nair"
+            }
+          ]
+        }
+      ],
+      "category": "faculty"
+    },
+    "F20250027": {
+      "name": "Ravindra Gupta",
+      "faculty_id": "F20250027",
+      "email": "ravindra.gupta92@faculty.univ.edu",
+      "password": "laVvYsKRWm",
+      "designation": "Professor",
+      "department": "Mechanical Engineering",
+      "educational_qualification": "Masters",
+      "papers_publications": [
+        "Research on Mechanical - 2024"
+      ],
+      "student_research": [],
+      "category": "faculty"
+    },
+    "F20250028": {
+      "name": "Vikram Patel",
+      "faculty_id": "F20250028",
+      "email": "vikram.patel86@faculty.univ.edu",
+      "password": "gliEu7paqy",
+      "designation": "Professor",
+      "department": "Civil Engineering",
+      "educational_qualification": "Masters",
+      "papers_publications": [
+        "Research on Civil - 2024"
+      ],
+      "student_research": [
+        {
+          "project_id": "P20250025",
+          "title": "Study on Civil - Optimization",
+          "year": 2025,
+          "students": [
+            {
+              "student_id": "S20250050",
+              "name": "Siddharth Chopra"
+            },
+            {
+              "student_id": "S20250004",
+              "name": "Meera Gupta"
+            },
+            {
+              "student_id": "S20250008",
+              "name": "Ishaan Nair"
+            }
+          ]
+        },
+        {
+          "project_id": "P20250026",
+          "title": "Study on Civil - Optimization",
+          "year": 2025,
+          "students": [
+            {
+              "student_id": "S20250048",
+              "name": "Siddharth Iyer"
+            },
+            {
+              "student_id": "S20250021",
+              "name": "Kiran Bhatt"
+            },
+            {
+              "student_id": "S20250045",
+              "name": "Siddharth Saxena"
+            }
+          ]
+        }
+      ],
+      "category": "faculty"
+    },
+    "F20250029": {
+      "name": "Vikram Iyer",
+      "faculty_id": "F20250029",
+      "email": "vikram.iyer93@faculty.univ.edu",
+      "password": "KaqPxSpdQh",
+      "designation": "Assistant Professor",
+      "department": "Electrical Engineering",
+      "educational_qualification": "Masters",
+      "papers_publications": [
+        "Research on Electrical - 2019"
+      ],
+      "student_research": [],
+      "category": "faculty"
+    },
+    "F20250030": {
+      "name": "Pranav Saxena",
+      "faculty_id": "F20250030",
+      "email": "pranav.saxena99@faculty.univ.edu",
+      "password": "tShO68sxNo",
+      "designation": "Professor",
+      "department": "Information Technology",
+      "educational_qualification": "PhD",
+      "papers_publications": [
+        "Research on Information - 2021"
+      ],
+      "student_research": [
+        {
+          "project_id": "P20250027",
+          "title": "Study on Information - Optimization",
+          "year": 2024,
+          "students": [
+            {
+              "student_id": "S20250040",
+              "name": "Jyoti Gupta"
+            }
+          ]
+        }
+      ],
+      "category": "faculty"
+    }
+  },
+  "admins": {
+    "AD2025001": {
+      "name": "Lakshmi Saxena",
+      "admin_id": "AD2025001",
+      "email": "lakshmi.saxena32@admin.univ.edu",
+      "password": "SMTnz6pJuX",
+      "designation": "IT Administrator",
+      "department": "IT Services",
+      "category": "admin"
+    },
+    "AD2025002": {
+      "name": "Ravindra Nair",
+      "admin_id": "AD2025002",
+      "email": "ravindra.nair84@admin.univ.edu",
+      "password": "wtqxG4FDgZ",
+      "designation": "IT Administrator",
+      "department": "IT Services",
+      "category": "admin"
+    },
+    "AD2025003": {
+      "name": "Lakshmi Bhatt",
+      "admin_id": "AD2025003",
+      "email": "lakshmi.bhatt41@admin.univ.edu",
+      "password": "6nxuAcK3oV",
+      "designation": "IT Administrator",
+      "department": "IT Services",
+      "category": "admin"
+    },
+    "AD2025004": {
+      "name": "Kunal Nair",
+      "admin_id": "AD2025004",
+      "email": "kunal.nair75@admin.univ.edu",
+      "password": "LUAsjmvoyK",
+      "designation": "IT Administrator",
+      "department": "IT Services",
+      "category": "admin"
+    },
+    "AD2025005": {
+      "name": "Lakshmi Nair",
+      "admin_id": "AD2025005",
+      "email": "lakshmi.nair84@admin.univ.edu",
+      "password": "8RvqW0F9UP",
+      "designation": "IT Administrator",
+      "department": "IT Services",
+      "category": "admin"
+    }
+  },
+  "metadata": {
+    "generated_on": "2025-09-17T13:00:58.934065",
+    "student_count": 50,
+    "faculty_count": 30,
+    "admin_count": 5,
+    "notes": "Sanitized for Realtime DB keys.",
+    "extras_added_on": "2025-09-17T18:07:21.824125",
+    "note": "Added extras only for 10 students; others have empty lists for these fields."
+  }
+}

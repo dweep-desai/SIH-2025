@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_core/firebase_core.dart';
 import '../pages/login_page.dart';
 import '../pages/semester_info_page.dart';
 import '../pages/dashboard_page.dart';
@@ -7,7 +10,6 @@ import '../pages/achievements_page.dart';
 import '../pages/faculty_search_page.dart';
 import '../pages/request_approval_page.dart';
 import '../pages/approval_status_page.dart';
-import '../pages/student_edit_profile_page.dart';
 
 // ---------------- GLOBAL DRAWER ----------------
 class MainDrawer extends StatelessWidget {
@@ -73,6 +75,30 @@ class MainDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final FirebaseDatabase db = FirebaseDatabase.instanceFor(
+      app: Firebase.app(),
+      databaseURL: 'https://hackproj-190-default-rtdb.asia-southeast1.firebasedatabase.app',
+    );
+    final String? email = FirebaseAuth.instance.currentUser?.email;
+    final Stream<String?> photoStream = email == null
+        ? const Stream.empty()
+        : db
+            .ref('students')
+            .orderByChild('email')
+            .equalTo(email)
+            .onValue
+            .map((event) {
+              final snap = event.snapshot;
+              if (!snap.exists || snap.value is! Map) return null;
+              final Map m = snap.value as Map;
+              if (m.isEmpty) return null;
+              final first = m.values.first;
+              if (first is Map && first['profile_photo_url'] is String) {
+                return first['profile_photo_url'] as String;
+              }
+              return null;
+            });
+
     return Drawer(
       child: Column(
         children: [
@@ -85,21 +111,30 @@ class MainDrawer extends StatelessWidget {
                 end: Alignment.bottomRight,
               ),
             ),
-            child: const Center(
+            child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundColor: Colors.white,
-                    child: Icon(
-                      Icons.person,
-                      size: 40,
-                      color: Colors.indigo,
-                    ),
+                  StreamBuilder<String?>(
+                    stream: photoStream,
+                    builder: (context, snapshot) {
+                      final String? url = snapshot.data;
+                      return CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.white,
+                        backgroundImage: (url != null && url.isNotEmpty) ? NetworkImage(url) : null,
+                        child: (url == null || url.isEmpty)
+                            ? const Icon(
+                                Icons.person,
+                                size: 40,
+                                color: Colors.indigo,
+                              )
+                            : null,
+                      );
+                    },
                   ),
-                  SizedBox(height: 10),
-                  Text(
+                  const SizedBox(height: 10),
+                  const Text(
                     "Smart Student Hub",
                     style: TextStyle(
                       fontSize: 20,
@@ -107,7 +142,7 @@ class MainDrawer extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  Text(
+                  const Text(
                     "Welcome, Student!",
                     style: TextStyle(
                       fontSize: 14,

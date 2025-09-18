@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_core/firebase_core.dart';
+import '../services/db_service.dart';
 import 'dashboard_page.dart';
 import 'faculty_dashboard_page.dart';
 import 'admin_dashboard_page.dart';
@@ -50,19 +52,32 @@ class _LoginPageState extends State<LoginPage> {
         password: password,
       );
 
-      // Enforce role via Firestore: users/{uid}.role must match selected tab
+      // Enforce role via Realtime DB: users/{uid}/role must match selected tab
       final uid = cred.user!.uid;
-      final snap = await FirebaseFirestore.instance.collection('users').doc(uid).get();
-      final data = snap.data();
-      final storedRole = data != null ? (data['role'] as String?) : null;
+      final DatabaseReference roleRef = FirebaseDatabase.instanceFor(
+        app: Firebase.app(),
+        databaseURL: 'https://hackproj-190-default-rtdb.asia-southeast1.firebasedatabase.app',
+      ).ref('users/$uid/role');
+      final DataSnapshot roleSnap = await roleRef.get();
+      String? storedRole = roleSnap.exists ? (roleSnap.value as String?) : null;
       if (storedRole == null) {
-        await FirebaseAuth.instance.signOut();
-        _showSnack('Account not configured. Missing role for this user.');
-        return;
+        // Attempt to infer role based on presence in students/faculty/admins collections
+        final inferred = await RealtimeDbService.instance.getUserRoleByEmail(email);
+        if (inferred == AppUserRole.unknown) {
+          await FirebaseAuth.instance.signOut();
+          _showSnack('Account not configured. Missing role for this user.');
+          return;
+        }
+        storedRole = inferred.name; // 'student' | 'faculty' | 'admin'
+        // Persist the inferred role for next time
+        await FirebaseDatabase.instanceFor(
+          app: Firebase.app(),
+          databaseURL: 'https://hackproj-190-default-rtdb.asia-southeast1.firebasedatabase.app',
+        ).ref('users/$uid/role').set(storedRole);
       }
       if (storedRole != _expectedRole) {
         await FirebaseAuth.instance.signOut();
-        _showSnack('Role mismatch: Please select "$storedRole" to login with this account.');
+        _showSnack('Unable to authenticate');
         return;
       }
 

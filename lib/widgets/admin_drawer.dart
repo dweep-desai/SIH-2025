@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../pages/login_page.dart';
 import '../pages/admin_dashboard_page.dart';
 import '../pages/admin_institute_analytics_page.dart';
@@ -13,6 +14,9 @@ class AdminDrawer extends StatelessWidget {
   const AdminDrawer({super.key, required this.context});
 
   void _signOut() {
+    try {
+      FirebaseAuth.instance.signOut();
+    } catch (_) {}
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const LoginPage()),
@@ -61,29 +65,14 @@ class AdminDrawer extends StatelessWidget {
         children: [
           Container(
             height: 200,
-<<<<<<< HEAD
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.indigo, Colors.indigoAccent],
-=======
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [Colors.orange.shade700, Colors.orange.shade500],
->>>>>>> d52f62f54e5850ed1358a9acab690429f95993a4
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
             ),
             child: const Center(
-<<<<<<< HEAD
-              child: Text(
-                "Smart Student Hub - Admin",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-=======
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -113,7 +102,6 @@ class AdminDrawer extends StatelessWidget {
                     ),
                   ),
                 ],
->>>>>>> d52f62f54e5850ed1358a9acab690429f95993a4
               ),
             ),
           ),
@@ -161,7 +149,7 @@ class AdminDrawer extends StatelessWidget {
       ),
     );
   }
-
+  
   Widget _buildDrawerItem({
     required IconData icon,
     required String title,
