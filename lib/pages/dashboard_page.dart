@@ -172,26 +172,8 @@ class DashboardPage extends StatelessWidget {
     final int currentSem = (student?["currentSemester"] is int)
         ? student!["currentSemester"] as int
         : 3;
-    final Map<String, dynamic>? gradesData = student?["grades"] is Map<String, dynamic>
-        ? Map<String, dynamic>.from(student!["grades"] as Map)
-        : (student?["grades_till_previous_sem"] is Map<String, dynamic>
-            ? Map<String, dynamic>.from(student!["grades_till_previous_sem"] as Map)
-            : null);
-    // Compute average across semesters BEFORE currentSem
-    Map<String, dynamic>? gradesBeforeCurrent;
-    if (gradesData != null) {
-      gradesBeforeCurrent = {};
-      gradesData.forEach((semKey, courses) {
-        final int? semInt = int.tryParse(semKey.toString());
-        // Include semesters from 1..currentSem
-        if (semInt != null && semInt <= currentSem) {
-          gradesBeforeCurrent![semKey] = courses;
-        }
-      });
-    }
-    final double avg = StudentService.computeAverageGpa(gradesBeforeCurrent);
-    final double normalized = (avg / 10.0).clamp(0.0, 1.0);
-
+    // Use service resolver that falls back to local JSON if DB is empty
+    // We’ll render asynchronously using FutureBuilder
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -205,30 +187,37 @@ class DashboardPage extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Current Semester: $currentSem",
-                style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onSurface),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: FutureBuilder<double>(
+            future: StudentService.instance.getOverallGpaForCurrentStudent(upToSemester: currentSem),
+            builder: (context, snapshot) {
+              final double avg = (snapshot.data ?? 0.0).clamp(0.0, 10.0);
+              final double normalized = (avg / 10.0).clamp(0.0, 1.0);
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Avg GPA till prev sem: ${avg.toStringAsFixed(1)} / 10", style: textTheme.bodyLarge),
-                  Icon(Icons.show_chart, color: colorScheme.primary)
+                  Text(
+                    "Current Semester: $currentSem",
+                    style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onSurface),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Overall GPA: ${avg.toStringAsFixed(1)} / 10", style: textTheme.bodyLarge),
+                      Icon(Icons.show_chart, color: colorScheme.primary)
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  LinearProgressIndicator(
+                    value: normalized,
+                    backgroundColor: colorScheme.surfaceContainerHighest,
+                    color: colorScheme.primary,
+                    minHeight: 6,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
                 ],
-              ),
-              const SizedBox(height: 8),
-              LinearProgressIndicator(
-                value: normalized,
-                backgroundColor: colorScheme.surfaceContainerHighest, // Softer background
-                color: colorScheme.primary,
-                minHeight: 6,
-                borderRadius: BorderRadius.circular(3),
-              ),
-            ],
+              );
+            },
           ),
         ),
       ),

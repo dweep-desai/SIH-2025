@@ -111,10 +111,14 @@ class StudentService {
         return 7.0;
       case 'B':
         return 6.0;
-      case 'C':
+      case 'C+':
         return 5.0;
-      case 'D':
+      case 'C':
         return 4.0;
+      case 'D+':
+        return 3.0;
+      case 'D':
+        return 2.0;
       case 'E':
         return 1.0;
       default:
@@ -138,6 +142,44 @@ class StudentService {
     });
     if (count == 0) return 0.0;
     return total / count;
+  }
+
+  // Average GPA for a single semester (averages courses in that semester)
+  static double computeSemesterGpa(Map semesterCourses) {
+    double total = 0.0;
+    int count = 0;
+    semesterCourses.forEach((_, grade) {
+      if (grade is String) {
+        total += letterToGpa(grade);
+        count += 1;
+      }
+    });
+    if (count == 0) return 0.0;
+    return total / count;
+  }
+
+  // Average of semester GPAs (treat each semester equally)
+  static double computeAverageGpaAcrossSemesters(
+    Map<String, dynamic>? gradesBySemester, {
+    int? upToSemester,
+  }) {
+    if (gradesBySemester == null || gradesBySemester.isEmpty) return 0.0;
+    double totalSemGpa = 0.0;
+    int semCount = 0;
+    final List<MapEntry<String, dynamic>> entries = gradesBySemester.entries.toList();
+    for (final entry in entries) {
+      final int? semInt = int.tryParse(entry.key.toString());
+      if (semInt == null) continue;
+      if (upToSemester != null && semInt > upToSemester) continue;
+      final dynamic courses = entry.value;
+      if (courses is Map && courses.isNotEmpty) {
+        final double semGpa = computeSemesterGpa(courses);
+        totalSemGpa += semGpa;
+        semCount += 1;
+      }
+    }
+    if (semCount == 0) return 0.0;
+    return totalSemGpa / semCount;
   }
 
   Future<List<dynamic>> getAchievements(String studentId) async {
@@ -187,7 +229,7 @@ class StudentService {
       if (best != -1) {
         final dynamic v = coursesMap[best.toString()];
         if (v is List) return v.where((e) => e != null).toList();
-        if (v is Map) return (v as Map).values.where((e) => e != null).toList();
+        if (v is Map) return v.values.where((e) => e != null).toList();
       }
     }
     // Fallback: local JSON asset latest_with_courses.json
@@ -311,6 +353,35 @@ class StudentService {
       out[k.toString()] = v.toString();
     });
     return out;
+  }
+
+  Future<double> getOverallGpaForCurrentStudent({int? upToSemester}) async {
+    // Try realtime DB first
+    Map<String, dynamic>? student = await getCurrentStudentByEmail();
+    Map<String, dynamic>? gradesBySemester;
+    if (student != null) {
+      if (student['grades'] is Map) {
+        gradesBySemester = Map<String, dynamic>.from(student['grades'] as Map);
+      } else if (student['grades_till_previous_sem'] is Map) {
+        gradesBySemester = Map<String, dynamic>.from(student['grades_till_previous_sem'] as Map);
+      }
+    }
+    // Fallback to local JSON asset by email
+    if (gradesBySemester == null || gradesBySemester.isEmpty) {
+      final String? email = FirebaseAuth.instance.currentUser?.email;
+      if (email != null && email.isNotEmpty) {
+        try {
+          final Map<String, dynamic>? localStudent = await LocalDataService.instance.getStudentByEmail(email);
+          if (localStudent != null) {
+            final dynamic g = localStudent['grades_till_previous_sem'];
+            if (g is Map) {
+              gradesBySemester = Map<String, dynamic>.from(g);
+            }
+          }
+        } catch (_) {}
+      }
+    }
+    return computeAverageGpaAcrossSemesters(gradesBySemester, upToSemester: upToSemester);
   }
 }
 
