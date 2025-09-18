@@ -11,7 +11,7 @@ class SemesterInfoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 2,
       initialIndex: startTabIndex,
       child: Scaffold(
         appBar: AppBar(
@@ -114,8 +114,11 @@ class CoursesTab extends StatelessWidget {
                 return Card(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   child: ListTile(
-                    title: Text(name),
-                    trailing: const Text('-', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo)),
+                    leading: const Icon(Icons.book_outlined, color: Colors.indigo),
+                    title: Text(
+                      name,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
                   ),
                 );
               },
@@ -136,23 +139,19 @@ class CoursesTab extends StatelessWidget {
               itemBuilder: (context, index) {
                 final course = courses[index];
                 String name;
-                dynamic gradeVal;
-                dynamic creditsVal;
+                // We intentionally ignore grade/credits in UI
                 if (course is Map && course['name'] != null) {
                   name = course['name'].toString();
-                  gradeVal = course['grade'];
-                  creditsVal = course['credits'];
                 } else {
                   name = course.toString();
                 }
                 return Card(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   child: ListTile(
-                    title: Text(name),
-                    subtitle: Text('Credits: ${creditsVal ?? '-'}'),
-                    trailing: Text(
-                      (gradeVal ?? '-').toString(),
-                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo),
+                    leading: const Icon(Icons.book_outlined, color: Colors.indigo),
+                    title: Text(
+                      name,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
                     ),
                   ),
                 );

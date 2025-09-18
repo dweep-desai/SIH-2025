@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'local_data_service.dart';
 
 class StudentService {
   StudentService._();
@@ -189,7 +190,14 @@ class StudentService {
         if (v is Map) return (v as Map).values.where((e) => e != null).toList();
       }
     }
-    // Fallback: derive courses from grades_till_previous_sem/{semester} in latest.json
+    // Fallback: local JSON asset latest_with_courses.json
+    try {
+      final List<dynamic> localCourses = await LocalDataService.instance.getCoursesForSemester(studentId, semester);
+      if (localCourses.isNotEmpty) return localCourses;
+    } catch (_) {
+      // ignore local load errors and continue to grades-derived fallback
+    }
+    // Fallback: derive courses from grades_till_previous_sem/{semester}
     final DataSnapshot gradesSnap = await _db.ref('students/$studentId/grades_till_previous_sem/$semester').get();
     if (gradesSnap.exists && gradesSnap.value is Map) {
       final Map m = gradesSnap.value as Map;
