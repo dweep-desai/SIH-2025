@@ -72,8 +72,26 @@ class StudentService {
       final String key = data.keys.first;
       final dynamic value = data[key];
       if (value is Map) {
-        final result = Map<String, dynamic>.from(value);
+        final raw = Map<String, dynamic>.from(value);
+        final Map<String, dynamic> result = {};
+        result.addAll(raw);
         result['studentId'] = key;
+        if (!result.containsKey('currentSemester') && result.containsKey('current_sem')) {
+          result['currentSemester'] = result['current_sem'];
+        }
+        if (!result.containsKey('facultyAdvisor') && result.containsKey('faculty_advisor')) {
+          result['facultyAdvisor'] = result['faculty_advisor'];
+        }
+        if (!result.containsKey('grades') && result.containsKey('grades_till_previous_sem')) {
+          final dynamic g = result['grades_till_previous_sem'];
+          if (g is Map) result['grades'] = Map<String, dynamic>.from(g);
+        }
+        if (!result.containsKey('domain') && result.containsKey('domains')) {
+          result['domain'] = result['domains'];
+        }
+        if (!result.containsKey('profile_photo_url') && result.containsKey('photo_url')) {
+          result['profile_photo_url'] = result['photo_url'];
+        }
         return result;
       }
       return null;
@@ -150,9 +168,41 @@ class StudentService {
 
   Future<List<dynamic>> getCoursesForSemester(String studentId, int semester) async {
     final DataSnapshot snap = await _db.ref('students/$studentId/courses/$semester').get();
-    if (!snap.exists) return const [];
-    if (snap.value is List) return (snap.value as List).where((e) => e != null).toList();
-    if (snap.value is Map) return (snap.value as Map).values.where((e) => e != null).toList();
+    if (snap.exists) {
+      if (snap.value is List) return (snap.value as List).where((e) => e != null).toList();
+      if (snap.value is Map) return (snap.value as Map).values.where((e) => e != null).toList();
+    }
+    // Try to fetch the courses map and pick the nearest previous semester
+    final DataSnapshot allCourses = await _db.ref('students/$studentId/courses').get();
+    if (allCourses.exists && allCourses.value is Map) {
+      final Map coursesMap = allCourses.value as Map;
+      int best = -1;
+      for (final key in coursesMap.keys) {
+        final int? semInt = int.tryParse(key.toString());
+        if (semInt != null && semInt <= semester) {
+          if (semInt > best) best = semInt;
+        }
+      }
+      if (best != -1) {
+        final dynamic v = coursesMap[best.toString()];
+        if (v is List) return v.where((e) => e != null).toList();
+        if (v is Map) return (v as Map).values.where((e) => e != null).toList();
+      }
+    }
+    // Fallback: derive courses from grades_till_previous_sem/{semester} in latest.json
+    final DataSnapshot gradesSnap = await _db.ref('students/$studentId/grades_till_previous_sem/$semester').get();
+    if (gradesSnap.exists && gradesSnap.value is Map) {
+      final Map m = gradesSnap.value as Map;
+      final List<Map<String, dynamic>> derived = [];
+      m.forEach((courseName, letter) {
+        derived.add({
+          'name': courseName.toString(),
+          'grade': letter.toString(),
+          'credits': null,
+        });
+      });
+      return derived;
+    }
     return const [];
   }
 
@@ -178,6 +228,20 @@ class StudentService {
     final DataSnapshot snap = await _db.ref('faculty/$facultyId').get();
     if (!snap.exists || snap.value is! Map) return null;
     return Map<String, dynamic>.from(snap.value as Map);
+  }
+
+  Future<String?> resolveFacultyAdvisorName(String? advisorField) async {
+    if (advisorField == null || advisorField.isEmpty) return null;
+    // If already a human-readable name, return as-is
+    if (!advisorField.startsWith('F')) return advisorField;
+    try {
+      final m = await getFacultyById(advisorField);
+      if (m == null) return advisorField; // keep id
+      final dynamic name = m['name'];
+      return name is String ? name : advisorField;
+    } catch (_) {
+      return advisorField;
+    }
   }
 
   Future<void> requestApproval({
@@ -228,6 +292,17 @@ class StudentService {
       pendingRefFaculty.set(approval),
       _db.ref('students/$studentId/approvals/pending/$pushId').set(approval),
     ]);
+  }
+
+  Future<Map<String, String>> getGradesForSemester(String studentId, int semester) async {
+    final DataSnapshot snap = await _db.ref('students/$studentId/grades_till_previous_sem/$semester').get();
+    if (!snap.exists || snap.value is! Map) return {};
+    final Map m = snap.value as Map;
+    final Map<String, String> out = {};
+    m.forEach((k, v) {
+      out[k.toString()] = v.toString();
+    });
+    return out;
   }
 }
 

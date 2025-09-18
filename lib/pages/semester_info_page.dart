@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/student_drawer.dart'; // Will be created
+import '../services/student_service.dart';
 
 // ---------------- SEMESTER INFO PAGE ----------------
 class SemesterInfoPage extends StatelessWidget {
@@ -86,30 +87,78 @@ class CoursesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final courses = [
-      {"name": "Data Structures", "grade": "A", "credits": 4},
-      {"name": "Operating Systems", "grade": "B+", "credits": 3},
-      {"name": "Database Systems", "grade": "A-", "credits": 3},
-    ];
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: courses.length,
-      itemBuilder: (context, index) {
-        final course = courses[index];
-        return Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: ListTile(
-            title: Text(course["name"].toString()),
-            subtitle: Text("Credits: ${course["credits"]}"),
-            trailing: Text(
-              course["grade"].toString(),
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.indigo,
-              ),
-            ),
-          ),
+    return StreamBuilder<Map<String, dynamic>?>(
+      stream: StudentService.instance.getCurrentStudentStream(),
+      builder: (context, snapshot) {
+        final student = snapshot.data;
+        final String? studentId = student?["studentId"] as String?;
+        final int currentSem = (student != null && student["currentSemester"] is int)
+            ? student["currentSemester"] as int
+            : 1;
+        if (studentId == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        // Prefer inline student snapshot when available to avoid an extra roundtrip
+        final dynamic inlineCoursesMap = student?['courses'];
+        if (inlineCoursesMap is Map) {
+          final String semKey = currentSem.toString();
+          final dynamic inlineCourses = inlineCoursesMap[semKey];
+          if (inlineCourses is List && inlineCourses.isNotEmpty) {
+            final List<dynamic> courses = inlineCourses;
+            return ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: courses.length,
+              itemBuilder: (context, index) {
+                final course = courses[index];
+                final String name = course is String ? course : course.toString();
+                return Card(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: ListTile(
+                    title: Text(name),
+                    trailing: const Text('-', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo)),
+                  ),
+                );
+              },
+            );
+          }
+        }
+        // Fallback to service resolver (nearest previous or grades-derived)
+        return FutureBuilder<List<dynamic>>(
+          future: StudentService.instance.getCoursesForSemester(studentId, currentSem),
+          builder: (context, snap) {
+            final courses = snap.data ?? const [];
+            if (courses.isEmpty) {
+              return const Center(child: Text('No courses found for current semester.'));
+            }
+            return ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: courses.length,
+              itemBuilder: (context, index) {
+                final course = courses[index];
+                String name;
+                dynamic gradeVal;
+                dynamic creditsVal;
+                if (course is Map && course['name'] != null) {
+                  name = course['name'].toString();
+                  gradeVal = course['grade'];
+                  creditsVal = course['credits'];
+                } else {
+                  name = course.toString();
+                }
+                return Card(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: ListTile(
+                    title: Text(name),
+                    subtitle: Text('Credits: ${creditsVal ?? '-'}'),
+                    trailing: Text(
+                      (gradeVal ?? '-').toString(),
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo),
+                    ),
+                  ),
+                );
+              },
+            );
+          },
         );
       },
     );
@@ -122,34 +171,38 @@ class AttendanceTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> attendance = [
-      {"course": "Data Structures", "present": 42, "total": 50},
-      {"course": "Operating Systems", "present": 35, "total": 45},
-      {"course": "Database Systems", "present": 40, "total": 50},
-    ];
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: attendance.length,
-      itemBuilder: (context, index) {
-        final course = attendance[index];
-        final int present = course["present"] as int;
-        final int total = course["total"] as int;
-        final double percentage = present / total;
-
-        return Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: ListTile(
-            title: Text(course["course"].toString()),
-            subtitle: Text("Attendance: $present/$total"),
-            trailing: Text(
-              "${(percentage * 100).toStringAsFixed(1)}%",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: percentage >= 0.75 ? Colors.green : Colors.red,
-              ),
-            ),
-          ),
+    return StreamBuilder<Map<String, dynamic>?>(
+      stream: StudentService.instance.getCurrentStudentStream(),
+      builder: (context, snapshot) {
+        final student = snapshot.data;
+        final String? studentId = student?["studentId"] as String?;
+        if (studentId == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return FutureBuilder<double>(
+          future: StudentService.instance.getAttendancePercent(studentId),
+          builder: (context, snap) {
+            final double pct = (snap.data ?? 0.0).clamp(0.0, 1.0);
+            return ListView(
+              padding: const EdgeInsets.all(16),
+              children: [
+                Card(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: ListTile(
+                    title: const Text('Overall Attendance'),
+                    subtitle: const Text('All courses combined'),
+                    trailing: Text(
+                      '${(pct * 100).toStringAsFixed(1)}%',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: pct >= 0.75 ? Colors.green : Colors.red,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         );
       },
     );

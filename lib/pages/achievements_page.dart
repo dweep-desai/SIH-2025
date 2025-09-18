@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/student_drawer.dart';
-import '../data/approval_data.dart';
+import '../services/student_service.dart';
 
 // ---------------- ACHIEVEMENTS PAGE ----------------
 class AchievementsPage extends StatelessWidget {
@@ -8,8 +8,6 @@ class AchievementsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final ThemeData theme = Theme.of(context);
-
     // Desired order of categories as per request approval section
     const List<String> categoryOrder = [
       'Certifications',
@@ -20,112 +18,60 @@ class AchievementsPage extends StatelessWidget {
       'Workshops',
     ];
 
-    // Group ONLY accepted approval requests by category
-    final Map<String, List> grouped = {};
-    for (final req in approvalRequests.where((r) => r.status == 'accepted')) {
-      grouped.putIfAbsent(req.category, () => []).add(req);
-    }
-    
-    // Sort research papers and projects by points (highest first)
-    for (final category in ['Research papers', 'Projects']) {
-      if (grouped.containsKey(category)) {
-        grouped[category]!.sort((a, b) => (b.points ?? 0).compareTo(a.points ?? 0));
-      }
-    }
-
-    // Sample fallback content for empty categories
-    final Map<String, List<Map<String, String>>> sampleByCategory = {
-      'Certifications': [
-        {
-          'title': 'AWS Cloud Practitioner',
-          'description': 'Basic cloud concepts and AWS services.',
-          'points': '50'
-        }
-      ],
-      'Achievements': [
-        {
-          'title': 'Hackathon Finalist',
-          'description': 'Top 10 in University Hackathon 2024.',
-          'points': '45'
-        }
-      ],
-      'Experience': [
-        {
-          'title': 'Internship at Tech Corp',
-          'description': 'Summer intern, mobile development team.',
-        }
-      ],
-      'Research papers': [
-        {
-          'title': 'AI in Education',
-          'description': 'Exploring adaptive learning systems.',
-          'points': '48'
-        }
-      ],
-      'Projects': [
-        {
-          'title': 'Smart Campus App',
-          'description': 'Flutter app for student services.',
-          'points': '47'
-        }
-      ],
-      'Workshops': [
-        {
-          'title': 'Flutter Bootcamp',
-          'description': 'Hands-on workshop on Flutter basics.',
-          'points': '43'
-        }
-      ],
+    // Map UI category to DB section key
+    const Map<String, String> sectionKey = {
+      'Certifications': 'certifications',
+      'Achievements': 'achievements',
+      'Experience': 'experience',
+      'Research papers': 'research_papers',
+      'Projects': 'projects',
+      'Workshops': 'workshops',
     };
 
     return Scaffold(
         appBar: AppBar(
           title: const Text("Student Record"),
-          // backgroundColor: colorScheme.surface, // Or primary for a colored AppBar
-          // elevation: 0,
         ),
         drawer: MainDrawer(context: context),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              ...categoryOrder.map((cat) {
-                final realItems = grouped[cat] ?? [];
-                final List<Map<String, String?>> itemsData = realItems.isNotEmpty
-                    ? realItems
-                        .map<Map<String, String?>>((req) => {
-                              'title': req.title,
-                              'description': req.description,
-                              'points': req.points?.toString(),
-                            })
-                        .toList()
-                    : (sampleByCategory[cat] ?? []);
-                
-                // Limit items based on category
-                final int limit = _getItemLimit(cat);
-                final limitedItems = itemsData.take(limit).toList();
-                
-                return _CategoryCard(title: cat, items: limitedItems);
-              }),
-            ],
-          ),
+        body: StreamBuilder<Map<String, dynamic>?>(
+          stream: StudentService.instance.getCurrentStudentStream(),
+          builder: (context, snapshot) {
+            final student = snapshot.data;
+            final String? studentId = student?["studentId"] as String?;
+            if (studentId == null) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ...categoryOrder.map((cat) {
+                    final String key = sectionKey[cat]!;
+                    return FutureBuilder<List<dynamic>>(
+                      future: StudentService.instance.getTopRecords(studentId, key, limit: 1000),
+                      builder: (context, snap) {
+                        final itemsRaw = snap.data ?? const [];
+                        final List<Map<String, String?>> itemsData = itemsRaw.map<Map<String, String?>>((e) {
+                          if (e is Map) {
+                            return {
+                              'title': e['title']?.toString() ?? (e['name']?.toString() ?? 'Item'),
+                              'description': e['description']?.toString() ?? '',
+                              'points': e['points']?.toString(),
+                            };
+                          }
+                          return {'title': e.toString(), 'description': '', 'points': null};
+                        }).toList();
+                        return _CategoryCard(title: cat, items: itemsData);
+                      },
+                    );
+                  }),
+                ],
+              ),
+            );
+          },
         )
     );
-  }
-
-  int _getItemLimit(String category) {
-    switch (category) {
-      case 'Projects':
-      case 'Achievements':
-      case 'Research papers':
-      case 'Workshops':
-        return 3;
-      case 'Experience':
-        return 10;
-      default:
-        return 5;
-    }
   }
 }
 

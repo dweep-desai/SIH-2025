@@ -63,7 +63,7 @@ class DashboardPage extends StatelessWidget {
     final String studentId = (student?["studentId"] as String?) ?? "24BCE294";
     final String branch = (student?["branch"] as String?) ?? "Computer Science";
     final String institute = (student?["institute"] as String?) ?? "Nirma University";
-    final String facultyAdvisor = (student?["facultyAdvisor"] as String?) ?? "Dr. John Doe";
+    String facultyAdvisor = (student?["facultyAdvisor"] as String?) ?? "Dr. John Doe";
     final List domains = (student?["domain"] is List) ? (student!["domain"] as List) : ProfileData.getDomains();
     final String? photoUrl = student?["profile_photo_url"] as String?;
 
@@ -174,8 +174,22 @@ class DashboardPage extends StatelessWidget {
         : 3;
     final Map<String, dynamic>? gradesData = student?["grades"] is Map<String, dynamic>
         ? Map<String, dynamic>.from(student!["grades"] as Map)
-        : null;
-    final double avg = StudentService.computeAverageGpa(gradesData);
+        : (student?["grades_till_previous_sem"] is Map<String, dynamic>
+            ? Map<String, dynamic>.from(student!["grades_till_previous_sem"] as Map)
+            : null);
+    // Compute average across semesters BEFORE currentSem
+    Map<String, dynamic>? gradesBeforeCurrent;
+    if (gradesData != null) {
+      gradesBeforeCurrent = {};
+      gradesData.forEach((semKey, courses) {
+        final int? semInt = int.tryParse(semKey.toString());
+        // Include semesters from 1..currentSem
+        if (semInt != null && semInt <= currentSem) {
+          gradesBeforeCurrent![semKey] = courses;
+        }
+      });
+    }
+    final double avg = StudentService.computeAverageGpa(gradesBeforeCurrent);
     final double normalized = (avg / 10.0).clamp(0.0, 1.0);
 
     return Card(
@@ -202,7 +216,7 @@ class DashboardPage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("GPA: ${avg.toStringAsFixed(1)} / 10", style: textTheme.bodyLarge),
+                  Text("Avg GPA till prev sem: ${avg.toStringAsFixed(1)} / 10", style: textTheme.bodyLarge),
                   Icon(Icons.show_chart, color: colorScheme.primary)
                 ],
               ),

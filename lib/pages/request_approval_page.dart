@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import '../models/approval_request.dart';
-import '../data/approval_data.dart';
+import '../services/student_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../widgets/student_drawer.dart';
 
 class RequestApprovalPage extends StatefulWidget {
@@ -50,7 +50,7 @@ class _RequestApprovalPageState extends State<RequestApprovalPage> {
     }
   }
 
-  void submit() {
+  Future<void> submit() async {
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
 
@@ -61,20 +61,41 @@ class _RequestApprovalPageState extends State<RequestApprovalPage> {
       return;
     }
 
-    ApprovalRequest newRequest = ApprovalRequest(
-      title: title,
-      description: description,
-      category: selectedCategory!,
-      pdfPath: pickedFile?.path,
-      link: link,
-      status: isAutoAccepted ? 'accepted' : 'pending',
-    );
+    try {
+      final userEmail = FirebaseAuth.instance.currentUser?.email?.trim();
+      if (userEmail == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Not signed in')),
+        );
+        return;
+      }
+      final student = await StudentService.instance.getCurrentStudentByEmail();
+      if (student == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Student record not found')),
+        );
+        return;
+      }
+      final String studentId = student['studentId']?.toString() ?? '';
+      final String studentName = student['name']?.toString() ?? '';
+      final String branch = student['branch']?.toString() ?? '';
 
-    addApprovalRequest(newRequest);
+      await StudentService.instance.requestApproval(
+        studentId: studentId,
+        studentName: studentName,
+        branch: branch,
+        category: selectedCategory!,
+        itemId: title, // Using title as itemId placeholder; replace with real id if available
+      );
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Request submitted with status: ${newRequest.status}')),
-    );
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Request submitted: pending approval')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to submit: $e')),
+      );
+    }
 
     // Clear form
     setState(() {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../data/approval_data.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_core/firebase_core.dart';
 import '../widgets/student_drawer.dart';
 
 class ApprovalStatusPage extends StatelessWidget {
@@ -33,65 +35,75 @@ class ApprovalStatusPage extends StatelessWidget {
   }
 
   Widget _buildStatusList(String status) {
-    var filteredRequests = approvalRequests.where((req) => req.status == status).toList();
-    
-    // Sort research papers and projects by points (highest first)
-    filteredRequests.sort((a, b) {
-      if ((a.category == 'Research papers' || a.category == 'Projects') &&
-          (b.category == 'Research papers' || b.category == 'Projects')) {
-        final aPoints = a.points ?? 0;
-        final bPoints = b.points ?? 0;
-        return bPoints.compareTo(aPoints); // Descending order
-      }
-      return 0; // Keep original order for other categories
-    });
-
-    if (filteredRequests.isEmpty) {
-      return const Center(child: Text('No requests found.'));
+    final db = FirebaseDatabase.instanceFor(
+      app: Firebase.app(),
+      databaseURL: 'https://hackproj-190-default-rtdb.asia-southeast1.firebasedatabase.app',
+    );
+    final email = FirebaseAuth.instance.currentUser?.email;
+    if (email == null) {
+      return const Center(child: Text('Not signed in'));
     }
+    final Query q = db.ref('students').orderByChild('email').equalTo(email);
+    return StreamBuilder<DatabaseEvent>(
+      stream: q.onValue,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        final DataSnapshot snap = snapshot.data!.snapshot;
+        if (!snap.exists || snap.value is! Map) {
+          return const Center(child: Text('No requests found.'));
+        }
+        final Map m = snap.value as Map;
+        if (m.isEmpty) return const Center(child: Text('No requests found.'));
+        final dynamic first = m.values.first;
+        Map approvals = {};
+        if (first is Map) {
+          approvals = (first['approvals'] is Map) ? first['approvals'] as Map : {};
+        }
+        final Map statusMap = approvals[status] is Map ? approvals[status] as Map : {};
+        final List<Map<String, dynamic>> items = statusMap.values
+            .where((e) => e != null)
+            .map<Map<String, dynamic>>((e) => Map<String, dynamic>.from(e as Map))
+            .toList();
+        // Sort for research/projects by points desc if present
+        items.sort((a, b) {
+          final ca = (a['category'] ?? '').toString();
+          final cb = (b['category'] ?? '').toString();
+          if ((ca == 'Research papers' || ca == 'Projects') && (cb == 'Research papers' || cb == 'Projects')) {
+            final pa = (a['pointsAssigned'] is num) ? (a['pointsAssigned'] as num).toDouble() : 0.0;
+            final pb = (b['pointsAssigned'] is num) ? (b['pointsAssigned'] as num).toDouble() : 0.0;
+            return pb.compareTo(pa);
+          }
+          return 0;
+        });
 
-    return ListView.builder(
-      padding: const EdgeInsets.all(16.0),
-      itemCount: filteredRequests.length,
-      itemBuilder: (context, index) {
-        final request = filteredRequests[index];
-        return Card(
-          margin: const EdgeInsets.only(bottom: 12.0),
-          child: ListTile(
-            title: Text(request.title),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(request.description),
-                Text('Category: ${request.category}'),
-                if (request.points != null && 
-                    (request.category == 'Research papers' || request.category == 'Projects'))
-                  Text('Points: ${request.points}/50', 
-                       style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green[700])),
-                Text('Submitted: ${request.submittedAt.toLocal()}'),
-              ],
-            ),
-            trailing: status == 'rejected'
-                ? IconButton(
-                    icon: const Icon(Icons.info, color: Colors.red),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          title: const Text('Rejection Reason'),
-                          content: Text(request.rejectionReason ?? 'No reason provided.'),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.of(ctx).pop(),
-                              child: const Text('OK'),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  )
-                : null,
-          ),
+        if (items.isEmpty) {
+          return const Center(child: Text('No requests found.'));
+        }
+        return ListView.builder(
+          padding: const EdgeInsets.all(16.0),
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            final request = items[index];
+            return Card(
+              margin: const EdgeInsets.only(bottom: 12.0),
+              child: ListTile(
+                title: Text(request['title']?.toString() ?? request['studentName']?.toString() ?? 'Request'),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (request['description'] != null) Text(request['description'].toString()),
+                    Text('Category: ${request['category']}'),
+                    if (status == 'rejected' && request['reason'] != null)
+                      Text('Reason: ${request['reason']}'),
+                    if (request['pointsAssigned'] != null)
+                      Text('Points: ${request['pointsAssigned']}', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green[700])),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );

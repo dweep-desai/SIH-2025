@@ -4,6 +4,10 @@ import 'dart:io';
 import '../widgets/student_drawer.dart';
 import '../data/profile_data.dart';
 import 'dashboard_page.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_core/firebase_core.dart';
+import '../services/student_service.dart';
 
 class StudentEditProfilePage extends StatefulWidget {
   const StudentEditProfilePage({super.key});
@@ -65,13 +69,56 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
       // Debug: starting save
       print('[EditProfile] Save tapped');
 
-      // Persist selections
+      // Persist selections locally (existing behavior)
       print('[EditProfile] Selected domain1: ' + (_selectedDomain1?.toString() ?? 'null'));
       print('[EditProfile] Selected domain2: ' + (_selectedDomain2?.toString() ?? 'null'));
       ProfileData.setDomain1(_selectedDomain1);
       ProfileData.setDomain2(_selectedDomain2);
       // Try to read current avatar file path (if any)
       print('[EditProfile] Avatar path: ' + (ProfileData.profileImagePath?.toString() ?? 'null'));
+
+      // Write to Realtime DB (profile_photo_url and domain)
+      final student = await StudentService.instance.getCurrentStudentByEmail();
+      if (student != null) {
+        final String studentId = student['studentId']?.toString() ?? '';
+        if (studentId.isNotEmpty) {
+          final FirebaseDatabase db = FirebaseDatabase.instanceFor(
+            app: Firebase.app(),
+            databaseURL: 'https://hackproj-190-default-rtdb.asia-southeast1.firebasedatabase.app',
+          );
+
+          // Upload photo to Storage if a new local file was chosen
+          String? newPhotoUrl;
+          final String? localPath = ProfileData.profileImagePath;
+          if (localPath != null && localPath.isNotEmpty && File(localPath).existsSync()) {
+            try {
+              final FirebaseStorage storage = FirebaseStorage.instance;
+              final Reference ref = storage.ref().child('profile_photos/$studentId.jpg');
+              await ref.putFile(File(localPath));
+              newPhotoUrl = await ref.getDownloadURL();
+              print('[EditProfile] Uploaded photo. URL: ' + newPhotoUrl);
+            } catch (e) {
+              print('[EditProfile] Photo upload failed: ' + e.toString());
+            }
+          }
+
+          // Domains list (exclude null/duplicates)
+          final List<String> domains = [
+            if (_selectedDomain1 != null && _selectedDomain1!.isNotEmpty) _selectedDomain1!,
+            if (_selectedDomain2 != null && _selectedDomain2!.isNotEmpty) _selectedDomain2!,
+          ].toSet().toList();
+
+          final Map<String, dynamic> updates = {
+            if (domains.isNotEmpty) 'students/$studentId/domain': domains,
+          };
+          if (newPhotoUrl != null && newPhotoUrl.isNotEmpty) {
+            updates['students/$studentId/profile_photo_url'] = newPhotoUrl;
+          }
+          if (updates.isNotEmpty) {
+            await db.ref().update(updates);
+          }
+        }
+      }
 
       // Feedback
       ScaffoldMessenger.of(context).showSnackBar(

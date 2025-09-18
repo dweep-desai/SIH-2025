@@ -1,0 +1,88 @@
+SEMESTER INFO - COURSES SECTION (exact behavior)
+
+1) Where this runs
+- File: lib/pages/semester_info_page.dart
+- Widget: CoursesTab.build()
+
+2) Exact code excerpt used to render courses
+
+--- CODE START (from CoursesTab.build) ---
+final dynamic inlineCoursesMap = student?['courses'];
+if (inlineCoursesMap is Map) {
+  final String semKey = currentSem.toString();
+  final dynamic inlineCourses = inlineCoursesMap[semKey];
+  if (inlineCourses is List && inlineCourses.isNotEmpty) {
+    final List<dynamic> courses = inlineCourses;
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: courses.length,
+      itemBuilder: (context, index) {
+        final course = courses[index];
+        final String name = course is String ? course : course.toString();
+        return Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: ListTile(
+            title: Text(name),
+            trailing: const Text('-', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo)),
+          ),
+        );
+      },
+    );
+  }
+}
+// Fallback to service (nearest previous or derive from grades)
+return FutureBuilder<List<dynamic>>(
+  future: StudentService.instance.getCoursesForSemester(studentId, currentSem),
+  builder: (context, snap) {
+    final courses = snap.data ?? const [];
+    if (courses.isEmpty) {
+      return const Center(child: Text('No courses found for current semester.'));
+    }
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: courses.length,
+      itemBuilder: (context, index) {
+        final course = courses[index];
+        String name;
+        dynamic gradeVal;
+        dynamic creditsVal;
+        if (course is Map && course['name'] != null) {
+          name = course['name'].toString();
+          gradeVal = course['grade'];
+          creditsVal = course['credits'];
+        } else {
+          name = course.toString();
+        }
+        return Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: ListTile(
+            title: Text(name),
+            subtitle: Text('Credits: ${creditsVal ?? '-'}'),
+            trailing: Text(
+              (gradeVal ?? '-').toString(),
+              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo),
+            ),
+          ),
+        );
+      },
+    );
+  },
+);
+--- CODE END ---
+
+3) What it does, step-by-step
+- Listens to the current student via StudentService.getCurrentStudentStream().
+- Reads currentSem (supports either 'currentSemester' or 'current_sem').
+- First, it tries to render from the inline 'courses' map already present in the student snapshot:
+  - Expected shape in DB: students/{id}/courses/{sem} = ["Course A", "Course B", ...]
+  - If found and non-empty, it displays each name in a Card immediately (no extra DB call).
+- If inline list is missing/empty, it falls back to StudentService.getCoursesForSemester(id, currentSem), which:
+  1) Tries /students/{id}/courses/{currentSem}
+  2) If missing, tries /students/{id}/courses and picks the nearest previous semester key <= currentSem
+  3) If still missing, derives a list from /students/{id}/grades_till_previous_sem/{currentSem} by converting {courseName: letter} into [{name, grade}] so the UI still shows something.
+
+4) Rules requirements (summary)
+- Because the app subscribes at /students using orderByChild('email').equalTo(...), allow collection-level reads and per-child reads:
+  - students: { ".read": "auth != null", ".indexOn": ["email"], "$sid": { ".read": "auth != null && root.child('students').child($sid).child('email').val() === auth.token.email" } }
+
+This is exactly how the Courses section loads and renders data.
