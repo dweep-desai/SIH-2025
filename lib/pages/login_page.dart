@@ -131,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
     final Color rolePrimary = selectedIndex == 0
         ? Colors.blue.shade800
         : selectedIndex == 1
-            ? Colors.green.shade700
+            ? const Color.fromARGB(255, 25, 107, 30)
             : Colors.orange.shade700;
     final Color rolePrimaryLight = rolePrimary.withOpacity(0.25);
     final Color roleSurfaceBlend = colorScheme.surface.withOpacity(0.4);
