@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/student_drawer.dart';
+import '../services/auth_service.dart';
 
 // ---------------- GRADES PAGE ----------------
 class GradesPage extends StatefulWidget {
@@ -15,14 +16,31 @@ class GradesPage extends StatefulWidget {
 }
 
 class _GradesPageState extends State<GradesPage> {
+  final AuthService _authService = AuthService();
   late int _selectedSemester;
-  final int totalSemesters = 7;
-  final int currentSemester = 3; // TODO: replace with real current semester
+  bool _isLoading = true;
+  int _currentSemester = 1;
 
   @override
   void initState() {
     super.initState();
     _selectedSemester = widget.initialSemester;
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      final userData = _authService.getCurrentUser();
+      if (userData != null) {
+        setState(() {
+          _currentSemester = userData['current_semester'] ?? 1;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error loading user data: $e');
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -30,6 +48,14 @@ class _GradesPageState extends State<GradesPage> {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
     final TextTheme textTheme = theme.textTheme;
+
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: const Text("Grades")),
+        drawer: MainDrawer(context: context),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -56,7 +82,7 @@ class _GradesPageState extends State<GradesPage> {
                   icon: Icon(Icons.arrow_drop_down_rounded, color: colorScheme.primary, size: 30),
                   dropdownColor: colorScheme.surfaceContainerHighest,
                   style: textTheme.titleMedium?.copyWith(color: colorScheme.onSurface),
-                  items: List.generate(currentSemester - 1, (index) {
+                  items: List.generate(_currentSemester - 1, (index) {
                     return DropdownMenuItem<int>(
                       value: index + 1,
                       child: Text("Semester ${index + 1}"),
@@ -90,28 +116,62 @@ class SemGradesTab extends StatelessWidget {
 
   const SemGradesTab({super.key, required this.semester});
 
+  // Convert numeric grade (1-10) to letter grade
+  String _convertNumericToLetterGrade(int numericGrade) {
+    if (numericGrade >= 9) return 'A+';
+    if (numericGrade >= 8) return 'A';
+    if (numericGrade >= 7) return 'B+';
+    if (numericGrade >= 6) return 'B';
+    if (numericGrade >= 5) return 'C+';
+    if (numericGrade >= 4) return 'C';
+    if (numericGrade >= 3) return 'D';
+    if (numericGrade >= 2) return 'E';
+    return 'F';
+  }
+
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
     final TextTheme textTheme = theme.textTheme;
 
-    // Mock grades - replace with real semester-specific data later
-    final List<Map<String, dynamic>> grades = [
-      {"course": "Subject A - Sem $semester", "grade": "A", "credits": 4},
-      {"course": "Subject B - Sem $semester", "grade": "B+", "credits": 3},
-      {"course": "Subject C - Sem $semester", "grade": "A-", "credits": 3},
-      {"course": "Subject D - Sem $semester", "grade": "A", "credits": 3},
-    ];
-
-    if (grades.isEmpty) {
+    // Get grades from Firebase data
+    final AuthService authService = AuthService();
+    final userData = authService.getCurrentUser();
+    final semesterKey = 'sem$semester';
+    final gradesData = userData?['grades']?[semesterKey] ?? {};
+    
+    if (gradesData.isEmpty) {
       return Center(
-        child: Text(
-          "No grades available for Semester $semester.",
-          style: textTheme.titleMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.grade_outlined,
+              size: 64,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              "No grades available for Semester $semester.",
+              style: textTheme.titleMedium?.copyWith(color: colorScheme.onSurfaceVariant),
+            ),
+          ],
         ),
       );
     }
+
+    // Convert grades data to list format
+    final List<Map<String, dynamic>> grades = [];
+    gradesData.forEach((courseCode, grade) {
+      // Convert numeric grade to letter grade
+      String letterGrade = _convertNumericToLetterGrade(grade as int);
+      grades.add({
+        "course": courseCode,
+        "grade": letterGrade,
+        "credits": 3, // Default credits, can be updated from courses data
+      });
+    });
 
     return ListView(
       children: [

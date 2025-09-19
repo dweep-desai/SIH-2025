@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
-import '../models/approval_request.dart';
-import '../data/approval_data.dart';
 import '../widgets/student_drawer.dart';
+import '../services/auth_service.dart';
 
 class RequestApprovalPage extends StatefulWidget {
   const RequestApprovalPage({super.key});
@@ -50,7 +49,7 @@ class _RequestApprovalPageState extends State<RequestApprovalPage> {
     }
   }
 
-  void submit() {
+  Future<void> submit() async {
     if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
 
@@ -61,32 +60,44 @@ class _RequestApprovalPageState extends State<RequestApprovalPage> {
       return;
     }
 
-    ApprovalRequest newRequest = ApprovalRequest(
-      title: title,
-      description: description,
-      category: selectedCategory!,
-      pdfPath: pickedFile?.path,
-      link: link,
-      status: isAutoAccepted ? 'accepted' : 'pending',
-    );
+    try {
+      final AuthService authService = AuthService();
+      
+      // Create request data for Firebase
+      Map<String, dynamic> requestData = {
+        'title': title,
+        'description': description,
+        'category': selectedCategory!,
+        'link': link,
+        'pdf_path': pickedFile?.path,
+        'experience_type': experienceType,
+        'status': isAutoAccepted ? 'accepted' : 'pending',
+        'submitted_at': DateTime.now().toIso8601String(),
+      };
 
-    addApprovalRequest(newRequest);
+      // Submit to Firebase
+      await authService.submitApprovalRequest(requestData);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Request submitted with status: ${newRequest.status}')),
-    );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Request submitted with status: ${requestData['status']}')),
+      );
 
-    // Clear form
-    setState(() {
-      selectedCategory = null;
-      title = '';
-      description = '';
-      link = null;
-      pickedFile = null;
-      experienceType = null;
-    });
+      // Clear form
+      setState(() {
+        selectedCategory = null;
+        title = '';
+        description = '';
+        link = null;
+        pickedFile = null;
+        experienceType = null;
+      });
 
-    // Optionally navigate to approval status page or update UI accordingly
+    } catch (e) {
+      print('Error submitting approval request: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error submitting request. Please try again.')),
+      );
+    }
   }
 
   @override

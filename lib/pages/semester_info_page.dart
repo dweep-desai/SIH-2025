@@ -1,17 +1,56 @@
 import 'package:flutter/material.dart';
-import '../widgets/student_drawer.dart'; // Will be created
+import '../widgets/student_drawer.dart';
+import '../services/auth_service.dart';
 
 // ---------------- SEMESTER INFO PAGE ----------------
-class SemesterInfoPage extends StatelessWidget {
+class SemesterInfoPage extends StatefulWidget {
   final int startTabIndex;
 
   const SemesterInfoPage({super.key, this.startTabIndex = 0});
 
   @override
+  State<SemesterInfoPage> createState() => _SemesterInfoPageState();
+}
+
+class _SemesterInfoPageState extends State<SemesterInfoPage> {
+  final AuthService _authService = AuthService();
+  bool _isLoading = true;
+  Map<String, dynamic>? _userData;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      final userData = _authService.getCurrentUser();
+      if (userData != null) {
+        setState(() {
+          _userData = userData;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error loading user data: $e');
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: const Text("Semester Info")),
+        drawer: MainDrawer(context: context),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return DefaultTabController(
-      length: 3,
-      initialIndex: startTabIndex,
+      length: 2,
+      initialIndex: widget.startTabIndex,
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Semester Info"),
@@ -23,10 +62,10 @@ class SemesterInfoPage extends StatelessWidget {
           ),
         ),
         drawer: MainDrawer(context: context),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            CoursesTab(),
-            AttendanceTab(),
+            CoursesTab(userData: _userData),
+            AttendanceTab(userData: _userData),
           ],
         ),
       ),
@@ -82,31 +121,73 @@ class SemesterOverviewTab extends StatelessWidget {
 
 // ---------------- COURSES TAB ----------------
 class CoursesTab extends StatelessWidget {
-  const CoursesTab({super.key});
+  final Map<String, dynamic>? userData;
+  
+  const CoursesTab({super.key, this.userData});
 
   @override
   Widget build(BuildContext context) {
-    final courses = [
-      {"name": "Data Structures", "grade": "A", "credits": 4},
-      {"name": "Operating Systems", "grade": "B+", "credits": 3},
-      {"name": "Database Systems", "grade": "A-", "credits": 3},
-    ];
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+    final TextTheme textTheme = theme.textTheme;
+
+    // Get current semester courses from Firebase data
+    final currentSemester = userData?['current_semester'] ?? 1;
+    final semesterKey = 'sem$currentSemester';
+    final courses = userData?['courses']?[semesterKey] ?? [];
+    
+    if (courses.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(16),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.book_outlined,
+                size: 64,
+                color: colorScheme.onSurfaceVariant,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'No courses found for Semester $currentSemester',
+                style: textTheme.titleMedium?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: courses.length,
       itemBuilder: (context, index) {
-        final course = courses[index];
+        final courseString = courses[index] as String;
+        final parts = courseString.split(' - ');
+        final courseCode = parts.isNotEmpty ? parts[0] : courseString;
+        final courseName = parts.length > 1 ? parts[1] : courseString;
+        
         return Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: ListTile(
-            title: Text(course["name"].toString()),
-            subtitle: Text("Credits: ${course["credits"]}"),
-            trailing: Text(
-              course["grade"].toString(),
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.indigo,
+            title: Text(courseName),
+            subtitle: Text("Course Code: $courseCode"),
+            trailing: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.green.shade100,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'Ongoing',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.green.shade700,
+                ),
               ),
             ),
           ),
@@ -118,32 +199,67 @@ class CoursesTab extends StatelessWidget {
 
 // ---------------- ATTENDANCE TAB ----------------
 class AttendanceTab extends StatelessWidget {
-  const AttendanceTab({super.key});
+  final Map<String, dynamic>? userData;
+  
+  const AttendanceTab({super.key, this.userData});
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> attendance = [
-      {"course": "Data Structures", "present": 42, "total": 50},
-      {"course": "Operating Systems", "present": 35, "total": 45},
-      {"course": "Database Systems", "present": 40, "total": 50},
-    ];
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+    final TextTheme textTheme = theme.textTheme;
+
+    // Get attendance data from Firebase
+    final attendance = userData?['attendance'] ?? 0;
+    final currentSemester = userData?['current_semester'] ?? 1;
+    final semesterKey = 'sem$currentSemester';
+    final courses = userData?['courses']?[semesterKey] ?? [];
+    
+    if (courses.isEmpty) {
+      return Padding(
+        padding: const EdgeInsets.all(16),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.check_circle_outline,
+                size: 64,
+                color: colorScheme.onSurfaceVariant,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'No attendance data available',
+                style: textTheme.titleMedium?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return ListView.builder(
       padding: const EdgeInsets.all(16),
-      itemCount: attendance.length,
+      itemCount: courses.length,
       itemBuilder: (context, index) {
-        final course = attendance[index];
-        final int present = course["present"] as int;
-        final int total = course["total"] as int;
-        final double percentage = present / total;
+        final courseString = courses[index] as String;
+        final parts = courseString.split(' - ');
+        final courseName = parts.length > 1 ? parts[1] : courseString;
+        
+        // Calculate attendance for this course (simplified - using overall attendance)
+        final double percentage = attendance / 100.0;
+        final int present = (attendance * 0.8).round(); // Simulate course-specific attendance
+        final int total = 100;
 
         return Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: ListTile(
-            title: Text(course["course"].toString()),
+            title: Text(courseName),
             subtitle: Text("Attendance: $present/$total"),
             trailing: Text(
-              "${(percentage * 100).toStringAsFixed(1)}%",
+              "${percentage.toStringAsFixed(1)}%",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: percentage >= 0.75 ? Colors.green : Colors.red,

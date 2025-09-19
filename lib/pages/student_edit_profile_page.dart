@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../widgets/student_drawer.dart';
-import '../data/profile_data.dart';
+import '../services/auth_service.dart';
 import 'dashboard_page.dart';
 
 class StudentEditProfilePage extends StatefulWidget {
@@ -19,14 +19,28 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
   final ImagePicker _picker = ImagePicker();
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
+  final AuthService _authService = AuthService();
+  Map<String, dynamic>? _userData;
 
   @override
   void initState() {
     super.initState();
-    // Load existing profile data
-    _selectedDomain1 = ProfileData.domain1;
-    _selectedDomain2 = ProfileData.domain2;
-    _avatar = ProfileData.getProfileImageProvider();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final userData = _authService.getCurrentUser();
+    if (userData != null) {
+      setState(() {
+        _userData = userData;
+        // Handle empty strings and null values properly
+        _selectedDomain1 = userData['domain1']?.toString().isEmpty == true ? null : userData['domain1']?.toString();
+        _selectedDomain2 = userData['domain2']?.toString().isEmpty == true ? null : userData['domain2']?.toString();
+        _avatar = userData['profile_photo'] != null && userData['profile_photo'].toString().isNotEmpty
+            ? NetworkImage(userData['profile_photo'].toString())
+            : null;
+      });
+    }
   }
 
   Future<void> _pickImage() async {
@@ -42,8 +56,8 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
         setState(() {
           _avatar = FileImage(File(image.path));
         });
-        // Store the image path
-        ProfileData.setProfileImagePath(image.path);
+        // Store the image path locally (in a real app, you'd upload to Firebase Storage)
+        print('Profile image selected: ${image.path}');
       }
     } catch (e) {
       if (mounted) {
@@ -65,13 +79,29 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
       // Debug: starting save
       print('[EditProfile] Save tapped');
 
-      // Persist selections
-      print('[EditProfile] Selected domain1: ' + (_selectedDomain1?.toString() ?? 'null'));
-      print('[EditProfile] Selected domain2: ' + (_selectedDomain2?.toString() ?? 'null'));
-      ProfileData.setDomain1(_selectedDomain1);
-      ProfileData.setDomain2(_selectedDomain2);
-      // Try to read current avatar file path (if any)
-      print('[EditProfile] Avatar path: ' + (ProfileData.profileImagePath?.toString() ?? 'null'));
+      // Update domains in Firebase
+      print('[EditProfile] Selected domain1: ${_selectedDomain1 ?? 'null'}');
+      print('[EditProfile] Selected domain2: ${_selectedDomain2 ?? 'null'}');
+      print('[EditProfile] User ID: ${_userData?['id']}');
+      print('[EditProfile] User category: ${_userData?['category']}');
+      
+      if (_userData != null) {
+        print('[EditProfile] Calling updateDomains...');
+        await _authService.updateDomains(
+          _userData!['id'],
+          _userData!['category'],
+          _selectedDomain1 ?? '',
+          _selectedDomain2 ?? '',
+        );
+        print('[EditProfile] Domains updated in Firebase');
+        
+        // Refresh user data to get latest updates
+        print('[EditProfile] Refreshing current user...');
+        await _authService.refreshCurrentUser();
+        print('[EditProfile] User data refreshed');
+      } else {
+        print('[EditProfile] ERROR: _userData is null!');
+      }
 
       // Feedback
       ScaffoldMessenger.of(context).showSnackBar(
@@ -86,8 +116,8 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
       final canPop = Navigator.of(context).canPop();
       print('[EditProfile] Navigator.canPop: ' + canPop.toString());
       if (canPop) {
-        print('[EditProfile] Popping back to previous screen');
-        Navigator.of(context).pop(true);
+        print('[EditProfile] Popping back to previous screen with refresh flag');
+        Navigator.of(context).pop(true); // Pass true to indicate data was updated
       } else {
         print('[EditProfile] No back stack. Replacing with DashboardPage');
         Navigator.of(context).pushReplacement(
@@ -176,11 +206,10 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
                         ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
-                            value: _selectedDomain1,
+                            value: _selectedDomain1?.isEmpty == true ? null : _selectedDomain1,
                             isExpanded: true,
                             hint: const Text('Select Domain 1'),
                             items: const [
-                              DropdownMenuItem(value: null, child: Text('Select Domain 1')),
                               DropdownMenuItem(value: 'AI/ML', child: Text('AI/ML')),
                               DropdownMenuItem(value: 'Data Science', child: Text('Data Science')),
                               DropdownMenuItem(value: 'Cybersecurity', child: Text('Cybersecurity')),
@@ -219,11 +248,10 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
                         ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
-                            value: _selectedDomain2,
+                            value: _selectedDomain2?.isEmpty == true ? null : _selectedDomain2,
                             isExpanded: true,
                             hint: const Text('Select Domain 2'),
                             items: const [
-                              DropdownMenuItem(value: null, child: Text('Select Domain 2')),
                               DropdownMenuItem(value: 'AI/ML', child: Text('AI/ML')),
                               DropdownMenuItem(value: 'Data Science', child: Text('Data Science')),
                               DropdownMenuItem(value: 'Cybersecurity', child: Text('Cybersecurity')),

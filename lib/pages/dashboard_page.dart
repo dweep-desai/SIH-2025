@@ -1,26 +1,187 @@
 import 'package:flutter/material.dart';
 import '../widgets/student_drawer.dart';
-import '../data/profile_data.dart';
+import '../services/auth_service.dart';
 import 'semester_info_page.dart';
 import 'student_edit_profile_page.dart';
 import 'achievements_page.dart';
 
 // ---------------- DASHBOARD PAGE ----------------
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
   @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  final AuthService _authService = AuthService();
+  bool _isLoading = true;
+  Map<String, dynamic>? _userData;
+  double _gpa = 0.0;
+  List<Map<String, dynamic>> _topAchievements = [];
+
+  // Method to refresh data from external calls
+  void refreshData() {
+    print('🔄 Dashboard refreshData called');
+    _loadUserData();
+  }
+
+
+  // Method to force refresh data
+  Future<void> _forceRefresh() async {
+    print('🔄 Force refreshing dashboard data...');
+    await _loadUserData();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Refresh data when returning from other pages
+    print('🔄 Dashboard didChangeDependencies - refreshing data');
+    _loadUserData();
+  }
+
+
+  Future<void> _loadUserData() async {
+    try {
+      // Refresh user data from Firebase to get latest updates
+      await _authService.refreshCurrentUser();
+      final userData = _authService.getCurrentUser();
+      if (userData != null) {
+        // Safely cast the grades data
+        Map<String, dynamic> grades = {};
+        if (userData['grades'] != null) {
+          try {
+            grades = Map<String, dynamic>.from(userData['grades'] as Map<dynamic, dynamic>);
+          } catch (e) {
+            print('❌ Error casting grades: $e');
+            grades = {};
+          }
+        }
+        
+        // Safely cast the student_record data
+        Map<String, dynamic> studentRecord = {};
+        if (userData['student_record'] != null) {
+          try {
+            studentRecord = Map<String, dynamic>.from(userData['student_record'] as Map<dynamic, dynamic>);
+          } catch (e) {
+            print('❌ Error casting student_record: $e');
+            studentRecord = {};
+          }
+        }
+        
+        setState(() {
+          _userData = userData;
+          _gpa = _authService.calculateGPA(grades);
+          _topAchievements = _getTopAchievements(studentRecord);
+          _isLoading = false;
+        });
+        print('✅ Dashboard loaded - GPA: $_gpa');
+        print('✅ Domain1: "${userData['domain1']}" (type: ${userData['domain1'].runtimeType})');
+        print('✅ Domain2: "${userData['domain2']}" (type: ${userData['domain2'].runtimeType})');
+        print('✅ Domain1 isEmpty: ${userData['domain1'].toString().isEmpty}');
+        print('✅ Domain2 isEmpty: ${userData['domain2'].toString().isEmpty}');
+        print('✅ Domain1 isNotEmpty: ${userData['domain1'].toString().isNotEmpty}');
+        print('✅ Domain2 isNotEmpty: ${userData['domain2'].toString().isNotEmpty}');
+        print('✅ Full userData keys: ${userData.keys.toList()}');
+        print('✅ Grades data: $grades');
+        print('✅ Student record data: $studentRecord');
+      }
+    } catch (e) {
+      print('Error loading user data: $e');
+      setState(() => _isLoading = false);
+    }
+  }
+
+  List<Map<String, dynamic>> _getTopAchievements(Map<String, dynamic> studentRecord) {
+    List<Map<String, dynamic>> achievements = [];
+    
+    // Get top 3 from each category
+    for (String category in ['achievements', 'projects', 'workshops']) {
+      if (studentRecord[category] != null) {
+        try {
+          List<dynamic> items = [];
+          if (studentRecord[category] is List) {
+            items = studentRecord[category] as List<dynamic>;
+          } else if (studentRecord[category] is Map) {
+            items = (studentRecord[category] as Map<dynamic, dynamic>).values.toList();
+          }
+          
+          // Sort by points if available, otherwise take first 3
+          items.sort((a, b) {
+            int pointsA = 0;
+            int pointsB = 0;
+            
+            if (a is Map) {
+              pointsA = a['points'] ?? 0;
+            }
+            if (b is Map) {
+              pointsB = b['points'] ?? 0;
+            }
+            
+            return pointsB.compareTo(pointsA);
+          });
+          
+          achievements.addAll(items.take(3).map((item) {
+            if (item is Map) {
+              return {
+                'title': item['title'] ?? item['name'] ?? 'Achievement',
+                'category': category,
+                'points': item['points'] ?? 0,
+              };
+            }
+            return {
+              'title': 'Achievement',
+              'category': category,
+              'points': 0,
+            };
+          }));
+        } catch (e) {
+          print('❌ Error processing $category: $e');
+        }
+      }
+    }
+    
+    // Sort all achievements by points and return top 3
+    achievements.sort((a, b) => (b['points'] as int).compareTo(a['points'] as int));
+    return achievements.take(3).toList();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
     // Student theme: blue
     final Color studentPrimary = Colors.blue.shade800;
+
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("Dashboard"),
+          backgroundColor: studentPrimary,
+          foregroundColor: Colors.white,
+        ),
+        drawer: MainDrawer(context: context),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Dashboard"),
         backgroundColor: studentPrimary,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            onPressed: _forceRefresh,
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Refresh Data',
+          ),
+        ],
       ),
       drawer: MainDrawer(context: context),
       body: LayoutBuilder(
@@ -67,19 +228,21 @@ class DashboardPage extends StatelessWidget {
                 CircleAvatar(
                   radius: 40,
                   backgroundColor: colorScheme.primaryContainer,
-                  backgroundImage: ProfileData.getProfileImageProvider(),
-                  child: ProfileData.getProfileImageProvider() == null
+                  backgroundImage: _userData?['profile_photo'] != null && _userData!['profile_photo'].isNotEmpty
+                      ? NetworkImage(_userData!['profile_photo'])
+                      : null,
+                  child: _userData?['profile_photo'] == null || _userData!['profile_photo'].isEmpty
                       ? Icon(Icons.person, size: 40, color: colorScheme.onPrimaryContainer)
                       : null,
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  "Tathya Barot", // Replace with dynamic data if available
+                  _userData?['name'] ?? "Loading...",
                   style: textTheme.titleLarge?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "Student ID: 24BCE294", // Example detail
+                  "Student ID: ${_userData?['student_id'] ?? 'Loading...'}",
                   style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
                 ),
                 const SizedBox(height: 8),
@@ -88,12 +251,12 @@ class DashboardPage extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start, // Align details to the start
                   children: [
-                    _buildDetailRow(context, Icons.calendar_today, "DOB: 28 Aug 2006"),
-                    _buildDetailRow(context, Icons.school, "Branch: Computer Science"),
-                    _buildDetailRow(context, Icons.account_balance, "Institute: Nirma University"),
-                    _buildDetailRow(context, Icons.person_outline, "Faculty Advisor: Dr. John Doe"),
-                    if (ProfileData.getDomains().isNotEmpty)
-                      _buildDetailRow(context, Icons.work_outline, "Domains: ${ProfileData.getDomains().join(', ')}"),
+                    _buildDetailRow(context, Icons.school, "Branch: ${_userData?['branch'] ?? 'Loading...'}"),
+                    _buildDetailRow(context, Icons.account_balance, "Institute: ${_userData?['institute'] ?? 'Loading...'}"),
+                    _buildDetailRow(context, Icons.person_outline, "Faculty Advisor: ${_userData?['faculty_advisor'] ?? 'Loading...'}"),
+                    // Always show domains for debugging
+                    _buildDetailRow(context, Icons.work_outline, "Domain 1: ${_userData?['domain1'] ?? 'Not set'}"),
+                    _buildDetailRow(context, Icons.work_outline, "Domain 2: ${_userData?['domain2'] ?? 'Not set'}"),
                   ],
                 ),
               ],
@@ -105,11 +268,16 @@ class DashboardPage extends StatelessWidget {
                 color: Colors.transparent,
                 child: InkWell(
                   borderRadius: BorderRadius.circular(20),
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    final result = await Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const StudentEditProfilePage()),
                     );
+                    // If profile was updated, refresh the dashboard
+                    if (result == true) {
+                      print('🔄 Profile was updated, refreshing dashboard');
+                      refreshData();
+                    }
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -173,20 +341,20 @@ class DashboardPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Current Semester: 3", // Replace with dynamic data
+                "Current Semester: ${_userData?['current_semester'] ?? 'Loading...'}",
                 style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onSurface),
               ),
               const SizedBox(height: 8),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("GPA: 8 / 10", style: textTheme.bodyLarge), // Replace with dynamic data
+                  Text("GPA: ${_gpa.toStringAsFixed(2)} / 10", style: textTheme.bodyLarge),
                   Icon(Icons.show_chart, color: colorScheme.primary)
                 ],
               ),
               const SizedBox(height: 8),
               LinearProgressIndicator(
-                value: 0.8, // Replace with dynamic data
+                value: _gpa / 10, // Convert to 0-1 range
                 backgroundColor: colorScheme.surfaceContainerHighest, // Softer background
                 color: colorScheme.primary,
                 minHeight: 6,
@@ -203,7 +371,7 @@ class DashboardPage extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
     final TextTheme textTheme = theme.textTheme;
-    final double attendancePercentage = 0.85; // Replace with dynamic data
+    final double attendancePercentage = (_userData?['attendance'] ?? 0) / 100.0;
 
     return Card(
       elevation: 2,
@@ -256,8 +424,6 @@ class DashboardPage extends StatelessWidget {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
     final TextTheme textTheme = theme.textTheme;
-    // Dummy data
-    final achievements = ["Won 2nd place in App Making Competition", "Designed website for MUN"];
 
     return Card(
       elevation: 2,
@@ -286,12 +452,13 @@ class DashboardPage extends StatelessWidget {
                 ),
               ),
               const Divider(height: 16, indent: 16, endIndent: 16),
-              ...achievements.map((achievement) => ListTile(
+              ..._topAchievements.map((achievement) => ListTile(
                 dense: true,
-                title: Text(achievement, style: textTheme.bodyMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
+                title: Text(achievement['title'], style: textTheme.bodyMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
+                subtitle: Text("${achievement['category']} • ${achievement['points']} points", style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
                 trailing: Icon(Icons.arrow_forward_ios, size: 14, color: colorScheme.onSurfaceVariant),
               )),
-              if (achievements.isEmpty)
+              if (_topAchievements.isEmpty)
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Center(child: Text("No achievements to display", style: textTheme.bodyMedium)),

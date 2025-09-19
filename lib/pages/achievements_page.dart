@@ -1,14 +1,50 @@
 import 'package:flutter/material.dart';
 import '../widgets/student_drawer.dart';
-import '../data/approval_data.dart';
+import '../services/auth_service.dart';
 
 // ---------------- ACHIEVEMENTS PAGE ----------------
-class AchievementsPage extends StatelessWidget {
+class AchievementsPage extends StatefulWidget {
   const AchievementsPage({super.key});
 
   @override
+  State<AchievementsPage> createState() => _AchievementsPageState();
+}
+
+class _AchievementsPageState extends State<AchievementsPage> {
+  final AuthService _authService = AuthService();
+  bool _isLoading = true;
+  Map<String, dynamic>? _userData;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      final userData = _authService.getCurrentUser();
+      if (userData != null) {
+        setState(() {
+          _userData = userData;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error loading user data: $e');
+      setState(() => _isLoading = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // final ThemeData theme = Theme.of(context);
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: const Text("Student Record")),
+        drawer: MainDrawer(context: context),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     // Desired order of categories as per request approval section
     const List<String> categoryOrder = [
@@ -20,16 +56,29 @@ class AchievementsPage extends StatelessWidget {
       'Workshops',
     ];
 
-    // Group ONLY accepted approval requests by category
+    // Get student record from Firebase data
+    final studentRecord = _userData?['student_record'] ?? {};
+    
+    // Group data by category
     final Map<String, List> grouped = {};
-    for (final req in approvalRequests.where((r) => r.status == 'accepted')) {
-      grouped.putIfAbsent(req.category, () => []).add(req);
+    for (final category in categoryOrder) {
+      final categoryKey = category.toLowerCase().replaceAll(' ', '_');
+      if (studentRecord[categoryKey] != null) {
+        final items = studentRecord[categoryKey] is List 
+            ? studentRecord[categoryKey] 
+            : studentRecord[categoryKey].values.toList();
+        grouped[category] = items;
+      }
     }
     
     // Sort research papers and projects by points (highest first)
     for (final category in ['Research papers', 'Projects']) {
       if (grouped.containsKey(category)) {
-        grouped[category]!.sort((a, b) => (b.points ?? 0).compareTo(a.points ?? 0));
+        grouped[category]!.sort((a, b) {
+          final aPoints = a is Map ? (a['points'] ?? 0) : 0;
+          final bPoints = b is Map ? (b['points'] ?? 0) : 0;
+          return bPoints.compareTo(aPoints);
+        });
       }
     }
 
@@ -94,11 +143,20 @@ class AchievementsPage extends StatelessWidget {
                 final realItems = grouped[cat] ?? [];
                 final List<Map<String, String?>> itemsData = realItems.isNotEmpty
                     ? realItems
-                        .map<Map<String, String?>>((req) => {
-                              'title': req.title,
-                              'description': req.description,
-                              'points': req.points?.toString(),
-                            })
+                        .map<Map<String, String?>>((item) {
+                          if (item is Map) {
+                            return {
+                              'title': item['title']?.toString() ?? '',
+                              'description': item['description']?.toString() ?? '',
+                              'points': item['points']?.toString(),
+                            };
+                          }
+                          return {
+                            'title': '',
+                            'description': '',
+                            'points': null,
+                          };
+                        })
                         .toList()
                     : (sampleByCategory[cat] ?? []);
                 

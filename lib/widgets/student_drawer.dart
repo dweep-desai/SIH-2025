@@ -8,6 +8,7 @@ import '../pages/faculty_search_page.dart';
 import '../pages/request_approval_page.dart';
 import '../pages/approval_status_page.dart';
 import '../pages/student_edit_profile_page.dart';
+import '../services/auth_service.dart';
 
 // ---------------- GLOBAL DRAWER ----------------
 class MainDrawer extends StatelessWidget {
@@ -85,34 +86,58 @@ class MainDrawer extends StatelessWidget {
                 end: Alignment.bottomRight,
               ),
             ),
-            child: const Center(
+            child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundColor: Colors.white,
-                    child: Icon(
-                      Icons.person,
-                      size: 40,
-                      color: Colors.indigo,
-                    ),
+                  Builder(
+                    builder: (context) {
+                      final userData = AuthService().getCurrentUser();
+                      final profilePhoto = userData?['profile_photo'];
+                      
+                      return CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.white,
+                        backgroundImage: profilePhoto != null && profilePhoto.isNotEmpty
+                            ? NetworkImage(profilePhoto)
+                            : null,
+                        child: profilePhoto == null || profilePhoto.isEmpty
+                            ? const Icon(
+                                Icons.person,
+                                size: 40,
+                                color: Colors.indigo,
+                              )
+                            : null,
+                      );
+                    },
                   ),
-                  SizedBox(height: 10),
-                  Text(
-                    "Smart Student Hub",
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  const SizedBox(height: 10),
+                  Builder(
+                    builder: (context) {
+                      final userData = AuthService().getCurrentUser();
+                      final name = userData?['name'] ?? 'Student Name';
+                      return Text(
+                        name,
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    },
                   ),
-                  Text(
-                    "Welcome, Student!",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white70,
-                    ),
+                  Builder(
+                    builder: (context) {
+                      final userData = AuthService().getCurrentUser();
+                      final email = userData?['email'] ?? 'student@university.edu';
+                      return Text(
+                        email,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.white70,
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

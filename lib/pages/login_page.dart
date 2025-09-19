@@ -30,8 +30,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    // Load database when page initializes
-    AuthService().loadDatabase();
+    // AuthService now uses Firebase Realtime Database directly
+    // No need to load local database
   }
 
   void _devLogin() {
@@ -58,6 +58,18 @@ class _LoginPageState extends State<LoginPage> {
       
       print('🔍 Attempting login for: $email');
       print('🔍 Expected category: $_expectedCategory');
+      
+      // Validate email format
+      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
+        _showSnack('Please enter a valid email address.');
+        return;
+      }
+      
+      // Validate password
+      if (password.length < 6 || password.length > 50) {
+        _showSnack('Password must be between 6 and 50 characters.');
+        return;
+      }
       
       // Authenticate user using our custom service
       final user = await AuthService().authenticateUser(email, password, _expectedCategory);
@@ -109,9 +121,19 @@ class _LoginPageState extends State<LoginPage> {
           case 'network-request-failed':
             errorMessage = 'Network error. Please check your internet connection.';
             break;
+          case 'invalid-credential':
+            errorMessage = 'Invalid credentials. Please check your email and password.';
+            break;
+          case 'operation-not-allowed':
+            errorMessage = 'Email/password accounts are not enabled.';
+            break;
           default:
-            errorMessage = 'Authentication failed: ${e.message}';
+            errorMessage = 'Authentication failed: ${e.message ?? 'Unknown error'}';
         }
+      } else if (e.toString().contains('Query#get')) {
+        errorMessage = 'Database connection error. Please check your internet connection and try again.';
+      } else if (e.toString().contains('timeout')) {
+        errorMessage = 'Connection timeout. Please check your internet connection.';
       }
       
       _showSnack(errorMessage);
@@ -265,8 +287,8 @@ class _LoginPageState extends State<LoginPage> {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your email';
                           }
-                          if (!value.contains('@')) {
-                            return 'Please enter a valid email';
+                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                            return 'Please enter a valid email address';
                           }
                           return null;
                         },
@@ -305,6 +327,9 @@ class _LoginPageState extends State<LoginPage> {
                           }
                           if (value.length < 6) {
                             return 'Password must be at least 6 characters';
+                          }
+                          if (value.length > 50) {
+                            return 'Password is too long';
                           }
                           return null;
                         },
