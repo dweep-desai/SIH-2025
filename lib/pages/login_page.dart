@@ -5,6 +5,7 @@ import '../services/auth_service.dart';
 import 'dashboard_page.dart';
 import 'faculty_dashboard_page.dart';
 import 'admin_dashboard_page.dart';
+import 'import_database_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -383,19 +384,40 @@ class _LoginPageState extends State<LoginPage> {
                       
                       const SizedBox(height: 16),
                       
-                      // Developer Login Button
-                      OutlinedButton(
-                        onPressed: _devLogin,
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: const Color(0xFF1976D2),
-                          side: const BorderSide(color: Color(0xFF1976D2)),
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: const Text('Developer Login'),
-                      ),
+                              // Developer Login Button
+                              OutlinedButton(
+                                onPressed: _devLogin,
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: const Color(0xFF1976D2),
+                                  side: const BorderSide(color: Color(0xFF1976D2)),
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                child: const Text('Developer Login'),
+                              ),
+                              
+                              const SizedBox(height: 8),
+                              
+                              // Import Database Button
+                              OutlinedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (_) => const ImportDatabasePage()),
+                                  );
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.orange,
+                                  side: const BorderSide(color: Colors.orange),
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                child: const Text('Import Database'),
+                              ),
                       
                       const SizedBox(height: 16),
                       

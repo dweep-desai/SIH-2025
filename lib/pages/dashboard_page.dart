@@ -33,6 +33,28 @@ class _DashboardPageState extends State<DashboardPage> {
     await _loadUserData();
   }
 
+
+  // Method to fetch domains from student branch
+  Future<void> _fetchDomainsFromStudentBranch() async {
+    if (_userData != null) {
+      print('🔄 Fetching domains from student branch...');
+      final domains = await _authService.fetchDomainsFromStudentBranch(_userData!['id']);
+      
+      if (domains['domain1']!.isNotEmpty || domains['domain2']!.isNotEmpty) {
+        setState(() {
+          _userData!['domain1'] = domains['domain1'];
+          _userData!['domain2'] = domains['domain2'];
+        });
+        print('✅ Domains updated from student branch');
+        print('✅ Domain1: "${domains['domain1']}"');
+        print('✅ Domain2: "${domains['domain2']}"');
+      } else {
+        print('❌ No domains found in student branch');
+      }
+    }
+  }
+
+
   @override
   void initState() {
     super.initState();
@@ -50,9 +72,9 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Future<void> _loadUserData() async {
     try {
-      // Refresh user data from Firebase to get latest updates
-      await _authService.refreshCurrentUser();
-      final userData = _authService.getCurrentUser();
+      // Force refresh user data directly from Firebase to get latest updates
+      print('🔄 Dashboard _loadUserData - force refreshing from Firebase...');
+      final userData = await _authService.forceRefreshUserData();
       if (userData != null) {
         // Safely cast the grades data
         Map<String, dynamic> grades = {};
@@ -76,22 +98,42 @@ class _DashboardPageState extends State<DashboardPage> {
           }
         }
         
+        // Fetch domains from student branch if user is a student
+        if (userData['category'] == 'student') {
+          print('🔄 Fetching domains from student branch...');
+          final domains = await _authService.fetchDomainsFromStudentBranch(userData['id']);
+          userData['domain1'] = domains['domain1'];
+          userData['domain2'] = domains['domain2'];
+          print('✅ Domains fetched from student branch: ${domains}');
+        }
+        
         setState(() {
           _userData = userData;
           _gpa = _authService.calculateGPA(grades);
           _topAchievements = _getTopAchievements(studentRecord);
           _isLoading = false;
         });
+        
+        // Enhanced domain logging
         print('✅ Dashboard loaded - GPA: $_gpa');
+        print('✅ User ID: ${userData['id']}');
+        print('✅ User Category: ${userData['category']}');
         print('✅ Domain1: "${userData['domain1']}" (type: ${userData['domain1'].runtimeType})');
         print('✅ Domain2: "${userData['domain2']}" (type: ${userData['domain2'].runtimeType})');
         print('✅ Domain1 isEmpty: ${userData['domain1'].toString().isEmpty}');
         print('✅ Domain2 isEmpty: ${userData['domain2'].toString().isEmpty}');
         print('✅ Domain1 isNotEmpty: ${userData['domain1'].toString().isNotEmpty}');
         print('✅ Domain2 isNotEmpty: ${userData['domain2'].toString().isNotEmpty}');
+        print('✅ Domain1 == null: ${userData['domain1'] == null}');
+        print('✅ Domain2 == null: ${userData['domain2'] == null}');
+        print('✅ Domain1 == "": ${userData['domain1'] == ""}');
+        print('✅ Domain2 == "": ${userData['domain2'] == ""}');
         print('✅ Full userData keys: ${userData.keys.toList()}');
         print('✅ Grades data: $grades');
         print('✅ Student record data: $studentRecord');
+      } else {
+        print('❌ Failed to get user data from Firebase');
+        setState(() => _isLoading = false);
       }
     } catch (e) {
       print('Error loading user data: $e');
@@ -177,9 +219,14 @@ class _DashboardPageState extends State<DashboardPage> {
         foregroundColor: Colors.white,
         actions: [
           IconButton(
+            onPressed: _fetchDomainsFromStudentBranch,
+            icon: const Icon(Icons.domain),
+            tooltip: 'Fetch Domains from Student Branch',
+          ),
+          IconButton(
             onPressed: _forceRefresh,
             icon: const Icon(Icons.refresh),
-            tooltip: 'Refresh Data',
+            tooltip: 'Refresh Page',
           ),
         ],
       ),
@@ -205,6 +252,11 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
           );
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _forceRefresh,
+        tooltip: 'Refresh Dashboard',
+        child: const Icon(Icons.refresh),
       ),
     );
   }
@@ -254,9 +306,9 @@ class _DashboardPageState extends State<DashboardPage> {
                     _buildDetailRow(context, Icons.school, "Branch: ${_userData?['branch'] ?? 'Loading...'}"),
                     _buildDetailRow(context, Icons.account_balance, "Institute: ${_userData?['institute'] ?? 'Loading...'}"),
                     _buildDetailRow(context, Icons.person_outline, "Faculty Advisor: ${_userData?['faculty_advisor'] ?? 'Loading...'}"),
-                    // Always show domains for debugging
-                    _buildDetailRow(context, Icons.work_outline, "Domain 1: ${_userData?['domain1'] ?? 'Not set'}"),
-                    _buildDetailRow(context, Icons.work_outline, "Domain 2: ${_userData?['domain2'] ?? 'Not set'}"),
+                    // Display domains with proper handling of empty strings
+                    _buildDetailRow(context, Icons.work_outline, "Domain 1: ${_getDomainDisplay(_userData?['domain1'])}"),
+                    _buildDetailRow(context, Icons.work_outline, "Domain 2: ${_getDomainDisplay(_userData?['domain2'])}"),
                   ],
                 ),
               ],
@@ -317,6 +369,13 @@ class _DashboardPageState extends State<DashboardPage> {
         ],
       ),
     );
+  }
+
+  // Helper method to handle domain display
+  String _getDomainDisplay(dynamic domain) {
+    if (domain == null) return 'Not set';
+    if (domain.toString().isEmpty) return 'Not set';
+    return domain.toString();
   }
 
   Widget gpaCard(BuildContext context) {

@@ -28,14 +28,42 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
     _loadUserData();
   }
 
+  // Valid domain options
+  static const List<String> _validDomains = [
+    'AI/ML',
+    'Data Science',
+    'Cybersecurity',
+    'Web Development',
+  ];
+
+  // Method to validate domain values
+  String? _validateDomain(String? domain) {
+    if (domain == null || domain.isEmpty) return null;
+    if (_validDomains.contains(domain)) return domain;
+    print('⚠️ Invalid domain value: "$domain", setting to null');
+    return null;
+  }
+
   Future<void> _loadUserData() async {
     final userData = _authService.getCurrentUser();
     if (userData != null) {
       setState(() {
         _userData = userData;
         // Handle empty strings and null values properly
-        _selectedDomain1 = userData['domain1']?.toString().isEmpty == true ? null : userData['domain1']?.toString();
-        _selectedDomain2 = userData['domain2']?.toString().isEmpty == true ? null : userData['domain2']?.toString();
+        String domain1 = userData['domain1']?.toString() ?? '';
+        String domain2 = userData['domain2']?.toString() ?? '';
+        
+        print('🔍 Loading domains - domain1: "$domain1", domain2: "$domain2"');
+        print('🔍 Domain1 isEmpty: ${domain1.isEmpty}');
+        print('🔍 Domain2 isEmpty: ${domain2.isEmpty}');
+        
+        // Validate domain values before setting
+        _selectedDomain1 = _validateDomain(domain1.isEmpty ? null : domain1);
+        _selectedDomain2 = _validateDomain(domain2.isEmpty ? null : domain2);
+        
+        print('🔍 Selected domain1: $_selectedDomain1');
+        print('🔍 Selected domain2: $_selectedDomain2');
+        
         _avatar = userData['profile_photo'] != null && userData['profile_photo'].toString().isNotEmpty
             ? NetworkImage(userData['profile_photo'].toString())
             : null;
@@ -86,19 +114,32 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
       print('[EditProfile] User category: ${_userData?['category']}');
       
       if (_userData != null) {
+        String domain1ToSave = _selectedDomain1 ?? '';
+        String domain2ToSave = _selectedDomain2 ?? '';
+        
+        print('[EditProfile] Domain1 to save: "$domain1ToSave"');
+        print('[EditProfile] Domain2 to save: "$domain2ToSave"');
+        print('[EditProfile] Domain1 isEmpty: ${domain1ToSave.isEmpty}');
+        print('[EditProfile] Domain2 isEmpty: ${domain2ToSave.isEmpty}');
+        
         print('[EditProfile] Calling updateDomains...');
         await _authService.updateDomains(
           _userData!['id'],
           _userData!['category'],
-          _selectedDomain1 ?? '',
-          _selectedDomain2 ?? '',
+          domain1ToSave,
+          domain2ToSave,
         );
         print('[EditProfile] Domains updated in Firebase');
         
-        // Refresh user data to get latest updates
-        print('[EditProfile] Refreshing current user...');
-        await _authService.refreshCurrentUser();
-        print('[EditProfile] User data refreshed');
+        // Force refresh user data directly from Firebase to get latest updates
+        print('[EditProfile] Force refreshing current user from Firebase...');
+        await _authService.forceRefreshUserData();
+        print('[EditProfile] User data force refreshed from Firebase');
+        
+        // Reload the profile page data to show updated values
+        print('[EditProfile] Reloading profile page data...');
+        await _loadUserData();
+        print('[EditProfile] Profile page data reloaded');
       } else {
         print('[EditProfile] ERROR: _userData is null!');
       }
@@ -206,7 +247,7 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
                         ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
-                            value: _selectedDomain1?.isEmpty == true ? null : _selectedDomain1,
+                            value: _selectedDomain1,
                             isExpanded: true,
                             hint: const Text('Select Domain 1'),
                             items: const [
@@ -248,7 +289,7 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
                         ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
-                            value: _selectedDomain2?.isEmpty == true ? null : _selectedDomain2,
+                            value: _selectedDomain2,
                             isExpanded: true,
                             hint: const Text('Select Domain 2'),
                             items: const [
@@ -277,7 +318,145 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
                 ),
               ],
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 16),
+            // Debug button to test domain selection
+            OutlinedButton.icon(
+              onPressed: () {
+                print('🔍 DEBUG: Current domain1: "$_selectedDomain1"');
+                print('🔍 DEBUG: Current domain2: "$_selectedDomain2"');
+                print('🔍 DEBUG: Domain1 is null: ${_selectedDomain1 == null}');
+                print('🔍 DEBUG: Domain2 is null: ${_selectedDomain2 == null}');
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Domain1: "$_selectedDomain1", Domain2: "$_selectedDomain2"'),
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.bug_report),
+              label: const Text('Debug Domains'),
+            ),
+            const SizedBox(height: 8),
+            // Test Firebase write permissions
+            OutlinedButton.icon(
+              onPressed: () async {
+                if (_userData != null) {
+                  print('🧪 Testing Firebase write permissions...');
+                  await _authService.testFirebaseWrite(_userData!['id'], _userData!['category']);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Firebase write test completed - check console'),
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                }
+              },
+              icon: const Icon(Icons.cloud_upload),
+              label: const Text('Test Firebase Write'),
+            ),
+            const SizedBox(height: 8),
+            // Test domain update with hardcoded values
+            OutlinedButton.icon(
+              onPressed: () async {
+                if (_userData != null) {
+                  print('🧪 Testing domain update with hardcoded values...');
+                  try {
+                    await _authService.updateDomains(
+                      _userData!['id'],
+                      _userData!['category'],
+                      'AI/ML',
+                      'Data Science',
+                    );
+                    print('🧪 Hardcoded domain update completed');
+                    await _loadUserData(); // Reload to see changes
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Hardcoded domain test completed - check console'),
+                        duration: Duration(seconds: 3),
+                      ),
+                    );
+                  } catch (e) {
+                    print('🧪 Hardcoded domain update failed: $e');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Hardcoded domain test failed: $e'),
+                        duration: const Duration(seconds: 3),
+                      ),
+                    );
+                  }
+                }
+              },
+              icon: const Icon(Icons.edit),
+              label: const Text('Test Domain Update'),
+            ),
+            const SizedBox(height: 8),
+            // Test with empty values to clear domains
+            OutlinedButton.icon(
+              onPressed: () async {
+                if (_userData != null) {
+                  print('🧪 Testing domain update with empty values...');
+                  try {
+                    await _authService.updateDomains(
+                      _userData!['id'],
+                      _userData!['category'],
+                      '',
+                      '',
+                    );
+                    print('🧪 Empty domain update completed');
+                    await _loadUserData(); // Reload to see changes
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Empty domain test completed - check console'),
+                        duration: Duration(seconds: 3),
+                      ),
+                    );
+                  } catch (e) {
+                    print('🧪 Empty domain update failed: $e');
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Empty domain test failed: $e'),
+                        duration: const Duration(seconds: 3),
+                      ),
+                    );
+                  }
+                }
+              },
+              icon: const Icon(Icons.clear),
+              label: const Text('Test Clear Domains'),
+            ),
+            const SizedBox(height: 8),
+            // Check authentication status
+            OutlinedButton.icon(
+              onPressed: () {
+                _authService.checkAuthStatus();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Authentication status checked - see console'),
+                    duration: Duration(seconds: 3),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.security),
+              label: const Text('Check Auth Status'),
+            ),
+            const SizedBox(height: 8),
+            // Verify domains in Firebase
+            OutlinedButton.icon(
+              onPressed: () async {
+                if (_userData != null) {
+                  await _authService.verifyDomainsInFirebase(_userData!['id'], _userData!['category']);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Firebase verification completed - see console'),
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                }
+              },
+              icon: const Icon(Icons.verified),
+              label: const Text('Verify Firebase Domains'),
+            ),
+            const SizedBox(height: 16),
             ElevatedButton.icon(
               onPressed: _isLoading ? null : _saveProfile,
               icon: _isLoading 
