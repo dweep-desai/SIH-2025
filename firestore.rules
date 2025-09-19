@@ -1,0 +1,161 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function getUserCategory() {
+      return getUserData().category;
+    }
+    
+    function getUserBranch() {
+      let userData = getUserData();
+      return userData.category == 'student' ? userData.branch : userData.department;
+    }
+    
+    function isStudent() {
+      return getUserCategory() == 'student';
+    }
+    
+    function isFaculty() {
+      return getUserCategory() == 'faculty';
+    }
+    
+    function isAdmin() {
+      return getUserCategory() == 'admin';
+    }
+    
+    function isSameBranch(branch) {
+      return getUserBranch() == branch;
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    // Users collection rules
+    match /users/{userId} {
+      // Users can read their own data
+      allow read: if isAuthenticated() && isOwner(userId);
+      
+      // Users can update their own profile data (limited fields)
+      allow update: if isAuthenticated() && isOwner(userId) 
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['profile_photo', 'domain1', 'domain2', 'last_login', 'current_branch', 'login_category']);
+      
+      // Only admins can create new users
+      allow create: if isAuthenticated() && isAdmin();
+      
+      // Only admins can delete users
+      allow delete: if isAuthenticated() && isAdmin();
+    }
+    
+    // Students collection rules
+    match /students/{studentId} {
+      // Students can read their own data
+      allow read: if isAuthenticated() && isStudent() && isOwner(studentId);
+      
+      // Faculty can read students in their department
+      allow read: if isAuthenticated() && isFaculty() && isSameBranch(resource.data.branch);
+      
+      // Admins can read all students
+      allow read: if isAuthenticated() && isAdmin();
+      
+      // Students can update limited fields in their own record
+      allow update: if isAuthenticated() && isStudent() && isOwner(studentId)
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['profile_photo', 'domain1', 'domain2', 'courses', 'grades']);
+      
+      // Faculty can update student records in their department
+      allow update: if isAuthenticated() && isFaculty() && isSameBranch(resource.data.branch)
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['attendance', 'grades', 'student_record']);
+      
+      // Only admins can create/delete students
+      allow create, delete: if isAuthenticated() && isAdmin();
+    }
+    
+    // Faculty collection rules
+    match /faculty/{facultyId} {
+      // Faculty can read their own data
+      allow read: if isAuthenticated() && isFaculty() && isOwner(facultyId);
+      
+      // Students can read faculty in their branch
+      allow read: if isAuthenticated() && isStudent() && isSameBranch(resource.data.department);
+      
+      // Admins can read all faculty
+      allow read: if isAuthenticated() && isAdmin();
+      
+      // Faculty can update their own profile
+      allow update: if isAuthenticated() && isFaculty() && isOwner(facultyId)
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['profile_photo', 'faculty_record', 'approval_section', 'approval_history', 'approval_analytics']);
+      
+      // Only admins can create/delete faculty
+      allow create, delete: if isAuthenticated() && isAdmin();
+    }
+    
+    // Admin collection rules
+    match /admin/{adminId} {
+      // Admins can read their own data
+      allow read: if isAuthenticated() && isAdmin() && isOwner(adminId);
+      
+      // Only admins can create/update/delete admin records
+      allow create, update, delete: if isAuthenticated() && isAdmin();
+    }
+    
+    // Approval requests collection
+    match /approval_requests/{requestId} {
+      // Students can read their own approval requests
+      allow read: if isAuthenticated() && isStudent() && resource.data.student_id == request.auth.uid;
+      
+      // Faculty can read approval requests for students in their department
+      allow read: if isAuthenticated() && isFaculty() && isSameBranch(resource.data.branch);
+      
+      // Admins can read all approval requests
+      allow read: if isAuthenticated() && isAdmin();
+      
+      // Students can create approval requests
+      allow create: if isAuthenticated() && isStudent() 
+        && request.resource.data.student_id == request.auth.uid
+        && request.resource.data.branch == getUserBranch();
+      
+      // Faculty can update approval requests for students in their department
+      allow update: if isAuthenticated() && isFaculty() && isSameBranch(resource.data.branch)
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['status', 'faculty_comment', 'points_awarded', 'approved_by']);
+      
+      // Only admins can delete approval requests
+      allow delete: if isAuthenticated() && isAdmin();
+    }
+    
+    // Analytics collection (admin only)
+    match /analytics/{document=**} {
+      allow read, write: if isAuthenticated() && isAdmin();
+    }
+    
+    // System logs (admin only)
+    match /logs/{document=**} {
+      allow read, write: if isAuthenticated() && isAdmin();
+    }
+    
+    // Public data (read-only for authenticated users)
+    match /public/{document=**} {
+      allow read: if isAuthenticated();
+      allow write: if isAuthenticated() && isAdmin();
+    }
+    
+    // Default deny rule for any unmatched paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

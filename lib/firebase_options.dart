@@ -41,48 +41,54 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBHbVwSai9_0oOGJKStKeNogsDfG39CL50',
-    appId: '1:977763811180:web:44031103fc2b099e77fd49',
-    messagingSenderId: '977763811180',
-    projectId: 'hackproj-190',
-    authDomain: 'hackproj-190.firebaseapp.com',
-    storageBucket: 'hackproj-190.firebasestorage.app',
-    measurementId: 'G-T48WL00K9Y',
+    apiKey: 'AIzaSyBdb8ckAPRsKafTRIZ71RiB7MxSXcWLGmk',
+    appId: '1:707876329859:web:c6691aa471a02ddbb8feb6',
+    messagingSenderId: '707876329859',
+    projectId: 'ssh-project-7ebc3',
+    authDomain: 'ssh-project-7ebc3.firebaseapp.com',
+    databaseURL: 'https://ssh-project-7ebc3-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'ssh-project-7ebc3.firebasestorage.app',
+    measurementId: 'G-ZS5BQEPPMP',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBaPzYC3LwXYkIERgo8YT8Zkz7Vm7ERD8U',
-    appId: '1:977763811180:android:2f41ea271fe5b63e77fd49',
-    messagingSenderId: '977763811180',
-    projectId: 'hackproj-190',
-    storageBucket: 'hackproj-190.firebasestorage.app',
+    apiKey: 'AIzaSyDpAjgTa4nGnS0P5kIfl8PC2LYhw5zYvQ8',
+    appId: '1:707876329859:android:1a7f797f5626582ab8feb6',
+    messagingSenderId: '707876329859',
+    projectId: 'ssh-project-7ebc3',
+    databaseURL: 'https://ssh-project-7ebc3-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'ssh-project-7ebc3.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBbJk0LwgeuIAUZZiQnjZCbSYyE0tTP304',
-    appId: '1:977763811180:ios:6648f0a9bd4a1cb177fd49',
-    messagingSenderId: '977763811180',
-    projectId: 'hackproj-190',
-    storageBucket: 'hackproj-190.firebasestorage.app',
+    apiKey: 'AIzaSyD6ESh7rtBAcD1axTuN88CBHADymgC57Vs',
+    appId: '1:707876329859:ios:82bd5ef3d8c59459b8feb6',
+    messagingSenderId: '707876329859',
+    projectId: 'ssh-project-7ebc3',
+    databaseURL: 'https://ssh-project-7ebc3-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'ssh-project-7ebc3.firebasestorage.app',
     iosBundleId: 'com.example.app2',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBbJk0LwgeuIAUZZiQnjZCbSYyE0tTP304',
-    appId: '1:977763811180:ios:6648f0a9bd4a1cb177fd49',
-    messagingSenderId: '977763811180',
-    projectId: 'hackproj-190',
-    storageBucket: 'hackproj-190.firebasestorage.app',
+    apiKey: 'AIzaSyD6ESh7rtBAcD1axTuN88CBHADymgC57Vs',
+    appId: '1:707876329859:ios:82bd5ef3d8c59459b8feb6',
+    messagingSenderId: '707876329859',
+    projectId: 'ssh-project-7ebc3',
+    databaseURL: 'https://ssh-project-7ebc3-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'ssh-project-7ebc3.firebasestorage.app',
     iosBundleId: 'com.example.app2',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyBHbVwSai9_0oOGJKStKeNogsDfG39CL50',
-    appId: '1:977763811180:web:4509188bab6745df77fd49',
-    messagingSenderId: '977763811180',
-    projectId: 'hackproj-190',
-    authDomain: 'hackproj-190.firebaseapp.com',
-    storageBucket: 'hackproj-190.firebasestorage.app',
-    measurementId: 'G-KR2M846WWK',
+    apiKey: 'AIzaSyBdb8ckAPRsKafTRIZ71RiB7MxSXcWLGmk',
+    appId: '1:707876329859:web:8781f7c06c67b7e6b8feb6',
+    messagingSenderId: '707876329859',
+    projectId: 'ssh-project-7ebc3',
+    authDomain: 'ssh-project-7ebc3.firebaseapp.com',
+    databaseURL: 'https://ssh-project-7ebc3-default-rtdb.asia-southeast1.firebasedatabase.app',
+    storageBucket: 'ssh-project-7ebc3.firebasestorage.app',
+    measurementId: 'G-D2Z34ZZZ0Y',
   );
+
 }

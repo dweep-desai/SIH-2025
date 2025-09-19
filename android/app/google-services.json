@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "977763811180",
-    "project_id": "hackproj-190",
-    "storage_bucket": "hackproj-190.firebasestorage.app"
+    "project_number": "707876329859",
+    "firebase_url": "https://ssh-project-7ebc3-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "ssh-project-7ebc3",
+    "storage_bucket": "ssh-project-7ebc3.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:977763811180:android:2f41ea271fe5b63e77fd49",
+        "mobilesdk_app_id": "1:707876329859:android:1a7f797f5626582ab8feb6",
         "android_client_info": {
           "package_name": "com.example.app2"
         }
@@ -15,26 +16,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBaPzYC3LwXYkIERgo8YT8Zkz7Vm7ERD8U"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:977763811180:android:ab3e04b54b77afd377fd49",
-        "android_client_info": {
-          "package_name": "com.example.hackaproj190"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBaPzYC3LwXYkIERgo8YT8Zkz7Vm7ERD8U"
+          "current_key": "AIzaSyDpAjgTa4nGnS0P5kIfl8PC2LYhw5zYvQ8"
         }
       ],
       "services": {
