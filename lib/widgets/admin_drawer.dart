@@ -114,6 +114,31 @@ class AdminDrawer extends StatelessWidget {
                 ),
                 const Divider(),
                 _buildDrawerItem(
+                  icon: Icons.person_add,
+                  title: "Add New Student",
+                  onTap: () {
+                    // TODO: Implement Add New Student
+                    Navigator.pop(context);
+                  },
+                ),
+                _buildDrawerItem(
+                  icon: Icons.person_add_outlined,
+                  title: "Add New Faculty",
+                  onTap: () {
+                    // TODO: Implement Add New Faculty
+                    Navigator.pop(context);
+                  },
+                ),
+                _buildDrawerItem(
+                  icon: Icons.link,
+                  title: "Database Link",
+                  onTap: () {
+                    // TODO: Implement Database Link
+                    Navigator.pop(context);
+                  },
+                ),
+                const Divider(),
+                _buildDrawerItem(
                   icon: Icons.lock_open,
                   title: "Sign Out",
                   onTap: _signOut,
