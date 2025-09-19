@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/student_drawer.dart';
 import '../services/auth_service.dart';
+import '../services/subject_mapping_service.dart';
 
 // ---------------- GRADES PAGE ----------------
 class GradesPage extends StatefulWidget {
@@ -17,6 +18,7 @@ class GradesPage extends StatefulWidget {
 
 class _GradesPageState extends State<GradesPage> {
   final AuthService _authService = AuthService();
+  final SubjectMappingService _subjectMapping = SubjectMappingService();
   late int _selectedSemester;
   bool _isLoading = true;
   int _currentSemester = 1;
@@ -25,7 +27,12 @@ class _GradesPageState extends State<GradesPage> {
   void initState() {
     super.initState();
     _selectedSemester = widget.initialSemester;
-    _loadUserData();
+    _initializeServices();
+  }
+
+  Future<void> _initializeServices() async {
+    await _subjectMapping.initializeMapping();
+    await _loadUserData();
   }
 
   Future<void> _loadUserData() async {
@@ -101,7 +108,7 @@ class _GradesPageState extends State<GradesPage> {
             const SizedBox(height: 20),
             // Grades content for the selected semester
             Expanded(
-              child: SemGradesTab(semester: _selectedSemester),
+              child: SemGradesTab(semester: _selectedSemester, subjectMapping: _subjectMapping),
             ),
           ],
         ),
@@ -113,8 +120,9 @@ class _GradesPageState extends State<GradesPage> {
 // ---------------- CONTENT DISPLAY for Grades ----------------
 class SemGradesTab extends StatelessWidget {
   final int semester;
+  final SubjectMappingService subjectMapping;
 
-  const SemGradesTab({super.key, required this.semester});
+  const SemGradesTab({super.key, required this.semester, required this.subjectMapping});
 
   // Convert numeric grade (1-10) to letter grade
   String _convertNumericToLetterGrade(int numericGrade) {
@@ -166,8 +174,11 @@ class SemGradesTab extends StatelessWidget {
     gradesData.forEach((courseCode, grade) {
       // Convert numeric grade to letter grade
       String letterGrade = _convertNumericToLetterGrade(grade as int);
+      String subjectName = subjectMapping.getSubjectName(courseCode);
+      
       grades.add({
-        "course": courseCode,
+        "courseCode": courseCode,
+        "courseName": subjectName,
         "grade": letterGrade,
         "credits": 3, // Default credits, can be updated from courses data
       });
@@ -200,8 +211,23 @@ class SemGradesTab extends StatelessWidget {
               ),
               const Divider(height: 1, indent: 16, endIndent: 16),
               ...grades.map((g) => ListTile(
-                title: Text(g['course'].toString(), style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500)),
-                subtitle: Text("Credits: ${g['credits']}", style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)),
+                title: Text(
+                  g['courseName'].toString(), 
+                  style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w500)
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Code: ${g['courseCode']}", 
+                      style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)
+                    ),
+                    Text(
+                      "Credits: ${g['credits']}", 
+                      style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant)
+                    ),
+                  ],
+                ),
                 trailing: Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(

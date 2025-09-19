@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/student_drawer.dart';
 import '../services/auth_service.dart';
+import '../services/subject_mapping_service.dart';
 
 // ---------------- SEMESTER INFO PAGE ----------------
 class SemesterInfoPage extends StatefulWidget {
@@ -14,13 +15,19 @@ class SemesterInfoPage extends StatefulWidget {
 
 class _SemesterInfoPageState extends State<SemesterInfoPage> {
   final AuthService _authService = AuthService();
+  final SubjectMappingService _subjectMapping = SubjectMappingService();
   bool _isLoading = true;
   Map<String, dynamic>? _userData;
 
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    _initializeServices();
+  }
+
+  Future<void> _initializeServices() async {
+    await _subjectMapping.initializeMapping();
+    await _loadUserData();
   }
 
   Future<void> _loadUserData() async {
@@ -64,8 +71,8 @@ class _SemesterInfoPageState extends State<SemesterInfoPage> {
         drawer: MainDrawer(context: context),
         body: TabBarView(
           children: [
-            CoursesTab(userData: _userData),
-            AttendanceTab(userData: _userData),
+            CoursesTab(userData: _userData, subjectMapping: _subjectMapping),
+            AttendanceTab(userData: _userData, subjectMapping: _subjectMapping),
           ],
         ),
       ),
@@ -122,8 +129,9 @@ class SemesterOverviewTab extends StatelessWidget {
 // ---------------- COURSES TAB ----------------
 class CoursesTab extends StatelessWidget {
   final Map<String, dynamic>? userData;
+  final SubjectMappingService subjectMapping;
   
-  const CoursesTab({super.key, this.userData});
+  const CoursesTab({super.key, this.userData, required this.subjectMapping});
 
   @override
   Widget build(BuildContext context) {
@@ -170,10 +178,14 @@ class CoursesTab extends StatelessWidget {
         final courseCode = parts.isNotEmpty ? parts[0] : courseString;
         final courseName = parts.length > 1 ? parts[1] : courseString;
         
+        // Use subject mapping to get the proper course name
+        final mappedCourseName = subjectMapping.getSubjectName(courseCode);
+        final displayName = mappedCourseName != courseCode ? mappedCourseName : courseName;
+        
         return Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: ListTile(
-            title: Text(courseName),
+            title: Text(displayName),
             subtitle: Text("Course Code: $courseCode"),
             trailing: Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -200,8 +212,9 @@ class CoursesTab extends StatelessWidget {
 // ---------------- ATTENDANCE TAB ----------------
 class AttendanceTab extends StatelessWidget {
   final Map<String, dynamic>? userData;
+  final SubjectMappingService subjectMapping;
   
-  const AttendanceTab({super.key, this.userData});
+  const AttendanceTab({super.key, this.userData, required this.subjectMapping});
 
   @override
   Widget build(BuildContext context) {
@@ -246,7 +259,12 @@ class AttendanceTab extends StatelessWidget {
       itemBuilder: (context, index) {
         final courseString = courses[index] as String;
         final parts = courseString.split(' - ');
+        final courseCode = parts.isNotEmpty ? parts[0] : courseString;
         final courseName = parts.length > 1 ? parts[1] : courseString;
+        
+        // Use subject mapping to get the proper course name
+        final mappedCourseName = subjectMapping.getSubjectName(courseCode);
+        final displayName = mappedCourseName != courseCode ? mappedCourseName : courseName;
         
         // Calculate attendance for this course (simplified - using overall attendance)
         final double percentage = attendance / 100.0;
@@ -256,8 +274,8 @@ class AttendanceTab extends StatelessWidget {
         return Card(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: ListTile(
-            title: Text(courseName),
-            subtitle: Text("Attendance: $present/$total"),
+            title: Text(displayName),
+            subtitle: Text("Code: $courseCode | Attendance: $present/$total"),
             trailing: Text(
               "${percentage.toStringAsFixed(1)}%",
               style: TextStyle(
