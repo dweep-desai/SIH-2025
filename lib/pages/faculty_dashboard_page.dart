@@ -1,26 +1,389 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import '../widgets/faculty_drawer.dart';
-import '../data/faculty_profile_data.dart';
-import '../data/approval_data.dart';
 import '../widgets/approval_donut_chart.dart';
 import 'faculty_edit_profile_page.dart';
+import '../services/auth_service.dart';
 
 // ---------------- FACULTY DASHBOARD PAGE ----------------
-class FacultyDashboardPage extends StatelessWidget {
+class FacultyDashboardPage extends StatefulWidget {
   const FacultyDashboardPage({super.key});
 
   @override
+  State<FacultyDashboardPage> createState() => _FacultyDashboardPageState();
+}
+
+class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
+  final AuthService _authService = AuthService();
+  bool _isLoading = true;
+  Map<String, dynamic>? _userData;
+  List<Map<String, dynamic>> _papersAndPublications = [];
+  List<Map<String, dynamic>> _projects = [];
+  List<Map<String, dynamic>> _approvalRequests = [];
+  List<Map<String, dynamic>> _approvalHistory = [];
+  Map<String, dynamic> _approvalAnalytics = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      // Force refresh user data from Firebase to get latest updates
+      print('🔄 Loading faculty user data...');
+      final userData = await _authService.forceRefreshUserData();
+      if (userData != null) {
+        print('✅ Faculty user data loaded: ${userData['name']}');
+        setState(() {
+          _userData = userData;
+          _isLoading = false;
+        });
+        
+        // Load faculty-specific data
+        await _loadFacultyData();
+      } else {
+        print('❌ No faculty user data found');
+        setState(() => _isLoading = false);
+      }
+    } catch (e) {
+      print('❌ Error loading faculty data: $e');
+      setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _loadFacultyData() async {
+    if (_userData == null) return;
+    
+    try {
+      // Load papers and publications (max 10)
+      if (_userData!['faculty_record'] != null && 
+          _userData!['faculty_record']['papers_and_publications'] != null) {
+        List<dynamic> papers = _userData!['faculty_record']['papers_and_publications'] as List<dynamic>;
+        _papersAndPublications = papers.take(10).map((paper) => 
+          Map<String, dynamic>.from(paper as Map<dynamic, dynamic>)).toList();
+      }
+      
+      // Load projects (max 10)
+      if (_userData!['faculty_record'] != null && 
+          _userData!['faculty_record']['projects'] != null) {
+        List<dynamic> projects = _userData!['faculty_record']['projects'] as List<dynamic>;
+        _projects = projects.take(10).map((project) => 
+          Map<String, dynamic>.from(project as Map<dynamic, dynamic>)).toList();
+      }
+      
+      // Load approval requests directly from Firebase
+      await _loadApprovalRequestsFromFirebase();
+      
+      // Load approval history directly from Firebase
+      await _loadApprovalHistoryFromFirebase();
+      
+      // Load approval analytics directly from Firebase
+      await _loadApprovalAnalyticsFromFirebase();
+      
+      setState(() {});
+    } catch (e) {
+      print('Error loading faculty data: $e');
+    }
+  }
+
+  // Method to refresh data from external calls
+  void refreshData() {
+    print('🔄 Faculty dashboard refreshData called');
+    _loadUserData();
+  }
+
+  // Method to refresh only approval requests
+  Future<void> _refreshApprovalRequests() async {
+    print('🔄 Refreshing approval requests...');
+    await _loadApprovalRequestsFromFirebase();
+    setState(() {});
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Approval requests refreshed. Found ${_approvalRequests.length} requests.'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  // Method to refresh only approval history
+  Future<void> _refreshApprovalHistory() async {
+    print('🔄 Refreshing approval history...');
+    await _loadApprovalHistoryFromFirebase();
+    setState(() {});
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Approval history refreshed. Found ${_approvalHistory.length} items.'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  // Method to refresh only approval analytics
+  Future<void> _refreshApprovalAnalytics() async {
+    print('🔄 Refreshing approval analytics...');
+    await _loadApprovalAnalyticsFromFirebase();
+    setState(() {});
+    
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Approval analytics refreshed.'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  // Method to load approval history directly from Firebase
+  Future<void> _loadApprovalHistoryFromFirebase() async {
+    try {
+      String facultyId = _userData!['id'];
+      print('🔍 Loading approval history directly from Firebase for faculty: $facultyId');
+      
+      // Get Firebase Database reference
+      final DatabaseReference databaseRef = FirebaseDatabase.instanceFor(
+        app: Firebase.app(),
+        databaseURL: 'https://ssh-project-7ebc3-default-rtdb.asia-southeast1.firebasedatabase.app',
+      ).ref();
+      
+      // Get approval history directly from Firebase
+      DataSnapshot historySnapshot = await databaseRef.child('faculty').child(facultyId).child('approval_history').get();
+      
+      print('🔍 Raw approval history from Firebase: ${historySnapshot.value}');
+      print('🔍 Approval history exists: ${historySnapshot.exists}');
+      
+      if (historySnapshot.exists && historySnapshot.value != null) {
+        if (historySnapshot.value is Map) {
+          Map<dynamic, dynamic> historyMap = historySnapshot.value as Map<dynamic, dynamic>;
+          _approvalHistory = historyMap.entries.map((entry) {
+            Map<String, dynamic> item = Map<String, dynamic>.from(entry.value as Map<dynamic, dynamic>);
+            item['request_id'] = entry.key; // Add the request ID
+            return item;
+          }).toList();
+          print('🔍 Loaded ${_approvalHistory.length} approval history items from Firebase');
+        } else {
+          print('🔍 Approval history is not a Map: ${historySnapshot.value.runtimeType}');
+          _approvalHistory = [];
+        }
+      } else {
+        print('🔍 No approval history found in Firebase');
+        _approvalHistory = [];
+      }
+    } catch (e) {
+      print('❌ Error loading approval history from Firebase: $e');
+      _approvalHistory = [];
+    }
+  }
+
+  // Method to load approval analytics directly from Firebase
+  Future<void> _loadApprovalAnalyticsFromFirebase() async {
+    try {
+      String facultyId = _userData!['id'];
+      print('🔍 Loading approval analytics directly from Firebase for faculty: $facultyId');
+      
+      // Get Firebase Database reference
+      final DatabaseReference databaseRef = FirebaseDatabase.instanceFor(
+        app: Firebase.app(),
+        databaseURL: 'https://ssh-project-7ebc3-default-rtdb.asia-southeast1.firebasedatabase.app',
+      ).ref();
+      
+      // Get approval analytics directly from Firebase
+      DataSnapshot analyticsSnapshot = await databaseRef.child('faculty').child(facultyId).child('approval_analytics').get();
+      
+      print('🔍 Raw approval analytics from Firebase: ${analyticsSnapshot.value}');
+      print('🔍 Approval analytics exists: ${analyticsSnapshot.exists}');
+      
+      if (analyticsSnapshot.exists && analyticsSnapshot.value != null) {
+        _approvalAnalytics = Map<String, dynamic>.from(analyticsSnapshot.value as Map<dynamic, dynamic>);
+        print('🔍 Loaded approval analytics from Firebase: $_approvalAnalytics');
+      } else {
+        print('🔍 No approval analytics found in Firebase, using defaults');
+        _approvalAnalytics = {
+          'total_approved': 0,
+          'total_rejected': 0,
+          'approval_rate': 0.0,
+          'avg_points_awarded': 0.0,
+        };
+      }
+    } catch (e) {
+      print('❌ Error loading approval analytics from Firebase: $e');
+      _approvalAnalytics = {
+        'total_approved': 0,
+        'total_rejected': 0,
+        'approval_rate': 0.0,
+        'avg_points_awarded': 0.0,
+      };
+    }
+  }
+
+  // Method to load approval requests directly from Firebase
+  Future<void> _loadApprovalRequestsFromFirebase() async {
+    try {
+      String facultyId = _userData!['id'];
+      print('🔍 Loading approval requests directly from Firebase for faculty: $facultyId');
+      
+      // Get Firebase Database reference
+      final DatabaseReference databaseRef = FirebaseDatabase.instanceFor(
+        app: Firebase.app(),
+        databaseURL: 'https://ssh-project-7ebc3-default-rtdb.asia-southeast1.firebasedatabase.app',
+      ).ref();
+      
+      // Get approval section directly from Firebase
+      DataSnapshot approvalSnapshot = await databaseRef.child('faculty').child(facultyId).child('approval_section').get();
+      
+      print('🔍 Raw approval section from Firebase: ${approvalSnapshot.value}');
+      print('🔍 Approval section exists: ${approvalSnapshot.exists}');
+      
+      if (approvalSnapshot.exists && approvalSnapshot.value != null) {
+        if (approvalSnapshot.value is Map) {
+          Map<dynamic, dynamic> approvalMap = approvalSnapshot.value as Map<dynamic, dynamic>;
+          _approvalRequests = approvalMap.entries.map((entry) {
+            Map<String, dynamic> request = Map<String, dynamic>.from(entry.value as Map<dynamic, dynamic>);
+            request['request_id'] = entry.key; // Add the request ID
+            return request;
+          }).toList();
+          print('🔍 Loaded ${_approvalRequests.length} approval requests from Firebase');
+          
+          // Log each request for debugging
+          for (var request in _approvalRequests) {
+            print('🔍 Request: ${request['request_id']} - ${request['title']} from ${request['student_name']}');
+          }
+        } else {
+          print('🔍 Approval section is not a Map: ${approvalSnapshot.value.runtimeType}');
+          _approvalRequests = [];
+        }
+      } else {
+        print('🔍 No approval section found in Firebase');
+        _approvalRequests = [];
+      }
+    } catch (e) {
+      print('❌ Error loading approval requests from Firebase: $e');
+      _approvalRequests = [];
+    }
+  }
+
+  // Debug method to check approval section
+  Future<void> _debugApprovalSection() async {
+    if (_userData == null) {
+      print('❌ No user data available for debugging');
+      return;
+    }
+
+    try {
+      String facultyId = _userData!['id'];
+      String facultyName = _userData!['name'];
+      String department = _userData!['department'];
+      
+      print('🔍 ==========================================');
+      print('🔍 DEBUGGING APPROVAL SECTION');
+      print('🔍 ==========================================');
+      print('🔍 Faculty: $facultyName ($facultyId)');
+      print('🔍 Department: $department');
+      print('🔍 ==========================================');
+      
+      // Check approval section directly from Firebase
+      final DatabaseReference databaseRef = FirebaseDatabase.instanceFor(
+        app: Firebase.app(),
+        databaseURL: 'https://ssh-project-7ebc3-default-rtdb.asia-southeast1.firebasedatabase.app',
+      ).ref();
+      
+      DataSnapshot approvalSnapshot = await databaseRef.child('faculty').child(facultyId).child('approval_section').get();
+      print('🔍 Raw approval section from Firebase: ${approvalSnapshot.value}');
+      print('🔍 Approval section exists: ${approvalSnapshot.exists}');
+      
+      if (approvalSnapshot.exists && approvalSnapshot.value != null) {
+        if (approvalSnapshot.value is Map) {
+          Map<dynamic, dynamic> approvalMap = approvalSnapshot.value as Map<dynamic, dynamic>;
+          print('🔍 Approval section is a Map with ${approvalMap.length} entries');
+          if (approvalMap.isNotEmpty) {
+            print('🔍 ==========================================');
+            print('🔍 PENDING APPROVAL REQUESTS:');
+            print('🔍 ==========================================');
+            approvalMap.forEach((key, value) {
+              print('🔍 Request ID: $key');
+              print('🔍 Student: ${value['student_name']} (${value['student_id']})');
+              print('🔍 Project: ${value['title']}');
+              print('🔍 Category: ${value['category']}');
+              print('🔍 ==========================================');
+            });
+          } else {
+            print('🔍 No pending approval requests found');
+          }
+        } else {
+          print('🔍 Approval section is not a Map: ${approvalSnapshot.value.runtimeType}');
+        }
+      } else {
+        print('🔍 No approval section found in Firebase');
+      }
+      
+      // Also refresh the UI data
+      await _loadApprovalRequestsFromFirebase();
+      setState(() {});
+      
+      // Show in UI
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Approval section debug info printed to console'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } catch (e) {
+      print('❌ Error debugging approval section: $e');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
     // Faculty theme: green
     final Color facultyPrimary = Colors.green.shade700;
+
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text("Faculty Dashboard"),
+          backgroundColor: facultyPrimary,
+          foregroundColor: Colors.white,
+        ),
+        drawer: MainDrawer(context: context, isFaculty: true),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Faculty Dashboard"),
         backgroundColor: facultyPrimary,
         foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            onPressed: _refreshApprovalRequests,
+            icon: const Icon(Icons.approval),
+            tooltip: 'Refresh Approval Requests',
+          ),
+          IconButton(
+            onPressed: _refreshApprovalHistory,
+            icon: const Icon(Icons.history),
+            tooltip: 'Refresh Approval History',
+          ),
+          IconButton(
+            onPressed: _refreshApprovalAnalytics,
+            icon: const Icon(Icons.analytics),
+            tooltip: 'Refresh Approval Analytics',
+          ),
+          IconButton(
+            onPressed: _debugApprovalSection,
+            icon: const Icon(Icons.bug_report),
+            tooltip: 'Debug Approval Section',
+          ),
+          IconButton(
+            onPressed: refreshData,
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Refresh Page',
+          ),
+        ],
       ),
       drawer: MainDrawer(context: context, isFaculty: true),
       body: LayoutBuilder(
@@ -34,7 +397,11 @@ class FacultyDashboardPage extends StatelessWidget {
                 const SizedBox(height: 16),
                 researchPapersCard(context),
                 const SizedBox(height: 16),
-                studentResearchCard(context),
+                projectsCard(context),
+                const SizedBox(height: 16),
+                approvalRequestsCard(context),
+                const SizedBox(height: 16),
+                approvalHistoryCard(context),
                 const SizedBox(height: 16),
                 approvalAnalyticsCard(context),
                 const SizedBox(height: 16),
@@ -65,19 +432,21 @@ class FacultyDashboardPage extends StatelessWidget {
                 CircleAvatar(
                   radius: 40,
                   backgroundColor: colorScheme.primaryContainer,
-                  backgroundImage: FacultyProfileData.getProfileImageProvider(),
-                  child: FacultyProfileData.getProfileImageProvider() == null
+                  backgroundImage: _userData?['profile_photo'] != null && _userData!['profile_photo'].toString().isNotEmpty
+                      ? NetworkImage(_userData!['profile_photo'])
+                      : null,
+                  child: _userData?['profile_photo'] == null || _userData!['profile_photo'].toString().isEmpty
                       ? Icon(Icons.person, size: 40, color: colorScheme.onPrimaryContainer)
                       : null,
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  "Dr. John Doe", // Replace with dynamic data
+                  _userData?['name'] ?? "Loading...",
                   style: textTheme.titleLarge?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  "Faculty ID: FAC001", // Example detail
+                  "Faculty ID: ${_userData?['faculty_id'] ?? 'Loading...'}",
                   style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
                 ),
                 const SizedBox(height: 8),
@@ -86,12 +455,10 @@ class FacultyDashboardPage extends StatelessWidget {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildDetailRow(context, Icons.work, "Designation: Professor - Computer Science"),
-                    _buildDetailRow(context, Icons.business, "Department: Computer Science"),
-                    _buildDetailRow(context, Icons.school, "Educational Qualifications: PhD in Computer Science"),
-                    _buildDetailRow(context, Icons.email, "Email: john.doe@nirmauni.ac.in"),
-                    if (FacultyProfileData.getDomains().isNotEmpty)
-                      _buildDetailRow(context, Icons.domain, "Domains: ${FacultyProfileData.getDomains().join(', ')}"),
+                    _buildDetailRow(context, Icons.work, "Designation: ${_userData?['designation'] ?? 'Loading...'}"),
+                    _buildDetailRow(context, Icons.business, "Department: ${_userData?['department'] ?? 'Loading...'}"),
+                    _buildDetailRow(context, Icons.school, "Educational Qualifications: ${_userData?['educational_qualifications'] ?? 'Loading...'}"),
+                    _buildDetailRow(context, Icons.email, "Email: ${_userData?['email'] ?? 'Loading...'}"),
                   ],
                 ),
               ],
@@ -154,13 +521,6 @@ class FacultyDashboardPage extends StatelessWidget {
     final ColorScheme colorScheme = theme.colorScheme;
     final TextTheme textTheme = theme.textTheme;
 
-    // Dummy data - replace with actual data
-    final papers = [
-      "Paper on Machine Learning in Healthcare - IEEE Conference 2023",
-      "Research on AI Ethics - ACM Journal 2022",
-      "Project on Data Mining Techniques - Springer 2021"
-    ];
-
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -172,10 +532,15 @@ class FacultyDashboardPage extends StatelessWidget {
             Text("Papers and Publications", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           ],
         ),
-        children: papers.isNotEmpty
-            ? papers.map((paper) => ListTile(
+        children: _papersAndPublications.isNotEmpty
+            ? _papersAndPublications.map((paper) => ListTile(
                 dense: true,
-                title: Text(paper, style: textTheme.bodyMedium),
+                title: Text(paper['title'] ?? 'Untitled', style: textTheme.bodyMedium),
+                subtitle: Text(paper['description'] ?? '', style: textTheme.bodySmall),
+                trailing: IconButton(
+                  icon: const Icon(Icons.info_outline),
+                  onPressed: () => _showPaperDetails(context, paper),
+                ),
               )).toList()
             : [
                 Padding(
@@ -187,24 +552,40 @@ class FacultyDashboardPage extends StatelessWidget {
     );
   }
 
-  Widget studentResearchCard(BuildContext context) {
+  void _showPaperDetails(BuildContext context, Map<String, dynamic> paper) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(paper['title'] ?? 'Untitled'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (paper['description'] != null) ...[
+              const Text('Description:', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(paper['description']),
+              const SizedBox(height: 8),
+            ],
+            if (paper['link'] != null) ...[
+              const Text('Link:', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(paper['link']),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget projectsCard(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
     final TextTheme textTheme = theme.textTheme;
-
-    // Dummy data - replace with actual data
-    final studentResearches = [
-      {
-        "topic": "AI in Education",
-        "conference": "ICML 2023",
-        "students": "Alice, Bob"
-      },
-      {
-        "topic": "Blockchain Security",
-        "conference": "IEEE Security 2022",
-        "students": "Charlie, David"
-      }
-    ];
 
     return Card(
       elevation: 2,
@@ -212,28 +593,62 @@ class FacultyDashboardPage extends StatelessWidget {
       child: ExpansionTile(
         title: Row(
           children: [
-            Icon(Icons.group, color: colorScheme.primary),
+            Icon(Icons.engineering, color: colorScheme.primary),
             const SizedBox(width: 8),
-            Text("Student Research", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+            Text("Projects", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
           ],
         ),
-        children: studentResearches.isNotEmpty
-            ? studentResearches.map((research) => ListTile(
+        children: _projects.isNotEmpty
+            ? _projects.map((project) => ListTile(
                 dense: true,
-                title: Text("${research['topic']} - ${research['conference']}", style: textTheme.bodyMedium),
-                subtitle: Text("Students: ${research['students']}", style: textTheme.bodySmall),
+                title: Text(project['title'] ?? 'Untitled', style: textTheme.bodyMedium),
+                subtitle: Text(project['description'] ?? '', style: textTheme.bodySmall),
+                trailing: IconButton(
+                  icon: const Icon(Icons.info_outline),
+                  onPressed: () => _showProjectDetails(context, project),
+                ),
               )).toList()
             : [
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Center(child: Text("No student research to display", style: textTheme.bodyMedium)),
+                  child: Center(child: Text("No projects to display", style: textTheme.bodyMedium)),
                 ),
               ],
       ),
     );
   }
 
-  Widget approvalAnalyticsCard(BuildContext context) {
+  void _showProjectDetails(BuildContext context, Map<String, dynamic> project) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(project['title'] ?? 'Untitled'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (project['description'] != null) ...[
+              const Text('Description:', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(project['description']),
+              const SizedBox(height: 8),
+            ],
+            if (project['link'] != null) ...[
+              const Text('Link:', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(project['link']),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget approvalRequestsCard(BuildContext context) {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
     final TextTheme textTheme = theme.textTheme;
@@ -241,61 +656,333 @@ class FacultyDashboardPage extends StatelessWidget {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: AnimatedBuilder(
-          animation: approvalStats,
-          builder: (context, _) {
-            final totalApproved = approvalStats.approvedCount;
-            final totalRejected = approvalStats.rejectedCount;
-            final approvalRate = approvalStats.approvalRatePercent;
-            final avgPoints = computeAveragePointsAwarded();
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
+      child: ExpansionTile(
+        title: Row(
+          children: [
+            Icon(Icons.approval, color: colorScheme.primary),
+            const SizedBox(width: 8),
+            Text("Approval Requests", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          ],
+        ),
+        children: _approvalRequests.isNotEmpty
+            ? _approvalRequests.map((request) => ListTile(
+                dense: true,
+                title: Text("${request['student_name'] ?? 'Unknown'} - ${request['project_name'] ?? 'Untitled'}", 
+                    style: textTheme.bodyMedium),
+                subtitle: Text("Category: ${request['category'] ?? 'Unknown'}", style: textTheme.bodySmall),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.analytics_outlined, color: colorScheme.primary),
-                    const SizedBox(width: 8),
-                    Text("Approval Analytics", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(child: _metricTile(context, 'Total Approved', '$totalApproved', Icons.check_circle, Colors.green)),
-                    const SizedBox(width: 12),
-                    Expanded(child: _metricTile(context, 'Total Rejected', '$totalRejected', Icons.cancel, Colors.red)),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(child: _metricTile(context, 'Approval Rate', approvalRate.toStringAsFixed(1), Icons.percent, colorScheme.primary)),
-                    const SizedBox(width: 12),
-                    Expanded(child: _metricTile(context, 'Avg. Points Awarded', avgPoints.toStringAsFixed(1), Icons.star_rate, colorScheme.tertiary)),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 280),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: ApprovalDonutChart(
-                        approved: totalApproved,
-                        rejected: totalRejected,
-                        pending: 0,
-                        includePending: false,
-                        showLegend: true,
-                        thicknessMultiplier: 1.5,
-                      ),
+                    IconButton(
+                      icon: const Icon(Icons.info_outline),
+                      onPressed: () => _showRequestDetails(context, request),
                     ),
-                  ),
+                    IconButton(
+                      icon: const Icon(Icons.check, color: Colors.green),
+                      onPressed: () => _handleApproval(request, true),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.red),
+                      onPressed: () => _handleApproval(request, false),
+                    ),
+                  ],
+                ),
+              )).toList()
+            : [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Center(child: Text("No approval requests to display", style: textTheme.bodyMedium)),
                 ),
               ],
-            );
-          },
+      ),
+    );
+  }
+
+  Widget approvalHistoryCard(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+    final TextTheme textTheme = theme.textTheme;
+
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ExpansionTile(
+        title: Row(
+          children: [
+            Icon(Icons.history, color: colorScheme.primary),
+            const SizedBox(width: 8),
+            Text("Approval History", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+          ],
+        ),
+        children: _approvalHistory.isNotEmpty
+            ? _approvalHistory.map((item) => ListTile(
+                dense: true,
+                title: Text("${item['student_name'] ?? 'Unknown'} - ${item['project_name'] ?? 'Untitled'}", 
+                    style: textTheme.bodyMedium),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Status: ${item['status'] ?? 'Unknown'}", style: textTheme.bodySmall),
+                    if (item['status'] == 'rejected' && item['reason'] != null)
+                      Text("Reason: ${item['reason']}", style: textTheme.bodySmall?.copyWith(color: Colors.red)),
+                    if (item['status'] == 'accepted' && item['points_awarded'] != null)
+                      Text("Points: ${item['points_awarded']}", style: textTheme.bodySmall?.copyWith(color: Colors.green)),
+                  ],
+                ),
+                trailing: Icon(
+                  item['status'] == 'accepted' ? Icons.check_circle : Icons.cancel,
+                  color: item['status'] == 'accepted' ? Colors.green : Colors.red,
+                ),
+              )).toList()
+            : [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Center(child: Text("No approval history to display", style: textTheme.bodyMedium)),
+                ),
+              ],
+      ),
+    );
+  }
+
+  void _showRequestDetails(BuildContext context, Map<String, dynamic> request) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text("${request['student_name'] ?? 'Unknown'} - ${request['project_name'] ?? 'Untitled'}"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (request['title'] != null) ...[
+              const Text('Title:', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(request['title']),
+              const SizedBox(height: 8),
+            ],
+            if (request['description'] != null) ...[
+              const Text('Description:', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(request['description']),
+              const SizedBox(height: 8),
+            ],
+            if (request['link'] != null) ...[
+              const Text('Link:', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(request['link']),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleApproval(Map<String, dynamic> request, bool approved) async {
+    try {
+      if (approved) {
+        // Show dialog for points input
+        await _showApprovalDialog(request, true);
+      } else {
+        // Show dialog for rejection reason
+        await _showRejectionDialog(request);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error handling approval: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _showApprovalDialog(Map<String, dynamic> request, bool approved) async {
+    final TextEditingController pointsController = TextEditingController();
+    
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Approve Request'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Student: ${request['student_name']}'),
+            Text('Project: ${request['project_name']}'),
+            const SizedBox(height: 16),
+            TextField(
+              controller: pointsController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Points to Award',
+                hintText: 'Enter points (1-100)',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              int points = int.tryParse(pointsController.text) ?? 0;
+              if (points < 1 || points > 100) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please enter points between 1 and 100'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+                return;
+              }
+              
+              Navigator.pop(context);
+              await _processApproval(request, true, points, '');
+            },
+            child: const Text('Approve'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _showRejectionDialog(Map<String, dynamic> request) async {
+    final TextEditingController reasonController = TextEditingController();
+    
+    return showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Reject Request'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('Student: ${request['student_name']}'),
+            Text('Project: ${request['project_name']}'),
+            const SizedBox(height: 16),
+            TextField(
+              controller: reasonController,
+              decoration: const InputDecoration(
+                labelText: 'Reason for Rejection',
+                hintText: 'Enter reason for rejection',
+              ),
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              if (reasonController.text.trim().isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please enter a reason for rejection'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+                return;
+              }
+              
+              Navigator.pop(context);
+              await _processApproval(request, false, 0, reasonController.text.trim());
+            },
+            child: const Text('Reject'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _processApproval(Map<String, dynamic> request, bool approved, int points, String reason) async {
+    try {
+      String requestId = request['request_id'] ?? DateTime.now().millisecondsSinceEpoch.toString();
+      
+      await _authService.handleApprovalRequest(requestId, approved, points, reason);
+      
+      // Refresh data
+      await _loadUserData();
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Request ${approved ? 'approved' : 'rejected'} successfully'),
+          backgroundColor: approved ? Colors.green : Colors.orange,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error processing approval: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Widget approvalAnalyticsCard(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+    final TextTheme textTheme = theme.textTheme;
+
+    final totalApproved = _approvalAnalytics['total_approved'] ?? 0;
+    final totalRejected = _approvalAnalytics['total_rejected'] ?? 0;
+    final approvalRate = _approvalAnalytics['approval_rate'] ?? 0.0;
+    final avgPoints = _approvalAnalytics['avg_points_awarded'] ?? 0.0;
+
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.analytics_outlined, color: colorScheme.primary),
+                const SizedBox(width: 8),
+                Text("Approval Analytics", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(child: _metricTile(context, 'Total Approved', '$totalApproved', Icons.check_circle, Colors.green)),
+                const SizedBox(width: 12),
+                Expanded(child: _metricTile(context, 'Total Rejected', '$totalRejected', Icons.cancel, Colors.red)),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(child: _metricTile(context, 'Approval Rate', '${(approvalRate * 100).toStringAsFixed(1)}%', Icons.percent, colorScheme.primary)),
+                const SizedBox(width: 12),
+                Expanded(child: _metricTile(context, 'Avg. Points Awarded', avgPoints.toStringAsFixed(1), Icons.star_rate, colorScheme.tertiary)),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 280),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: ApprovalDonutChart(
+                    approved: totalApproved,
+                    rejected: totalRejected,
+                    pending: 0,
+                    includePending: false,
+                    showLegend: true,
+                    thicknessMultiplier: 1.5,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
