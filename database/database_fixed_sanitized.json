@@ -1,0 +1,3928 @@
+{
+  "students": {
+    "S20250001": {
+      "category": "student",
+      "name": "Aarav Sharma",
+      "student_id": "S20250001",
+      "email": "aarav.sharma01@student.univ.edu",
+      "password": "As#2025!",
+      "dob": "2003-04-12",
+      "branch": "Computer Science",
+      "university": "Global Tech University",
+      "institute": "Technology",
+      "faculty_advisor": "F20250001",
+      "attendance": 92,
+      "current_semester": 6,
+      "start_year": 2022,
+      "graduate_year": 2025,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "CS101 - Programming Fundamentals",
+          "MA101 - Calculus I",
+          "PH101 - Physics for Engineers",
+          "EN101 - English Communication",
+          "IT101 - Intro to IT Systems"
+        ],
+        "sem2": [
+          "CS102 - Data Structures",
+          "MA102 - Calculus II",
+          "PH102 - Engineering Physics II",
+          "EN102 - Technical Writing",
+          "IT102 - Digital Logic"
+        ],
+        "sem3": [
+          "CS201 - Algorithms",
+          "CS202 - Computer Organization",
+          "MA201 - Discrete Mathematics",
+          "CS203 - Object Oriented Programming",
+          "EE201 - Circuit Theory"
+        ],
+        "sem4": [
+          "CS204 - Operating Systems",
+          "CS205 - Database Systems",
+          "CS206 - Software Engineering",
+          "MA202 - Probability & Statistics",
+          "CS207 - Computer Networks"
+        ],
+        "sem5": [
+          "CS301 - Design & Analysis of Algorithms",
+          "CS302 - Machine Learning",
+          "CS303 - Web Technologies",
+          "CS304 - Compiler Design",
+          "CS305 - Human Computer Interaction"
+        ],
+        "sem6": [
+          "CS401 - Distributed Systems",
+          "CS402 - Data Mining",
+          "CS403 - Cloud Computing",
+          "CS404 - Information Security",
+          "CS405 - Elective: IoT Systems"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "CS101": 8,
+          "MA101": 7,
+          "PH101": 6,
+          "EN101": 9,
+          "IT101": 7
+        },
+        "sem2": {
+          "CS102": 8,
+          "MA102": 7,
+          "PH102": 6,
+          "EN102": 8,
+          "IT102": 7
+        },
+        "sem3": {
+          "CS201": 9,
+          "CS202": 8,
+          "MA201": 8,
+          "CS203": 9,
+          "EE201": 7
+        },
+        "sem4": {
+          "CS204": 8,
+          "CS205": 9,
+          "CS206": 8,
+          "MA202": 7,
+          "CS207": 8
+        },
+        "sem5": {
+          "CS301": 9,
+          "CS302": 8,
+          "CS303": 8,
+          "CS304": 7,
+          "CS305": 8
+        }
+      },
+      "student_record": {
+        "research_papers": [
+          {
+            "title": "Energy-efficient scheduling in cloud data centers",
+            "description": "A study on reducing energy usage via adaptive VM scheduling.",
+            "points": 42
+          },
+          {
+            "title": "A lightweight intrusion detection model",
+            "description": "Prototype IDS using statistical features for IoT devices.",
+            "points": 40
+          }
+        ],
+        "certifications": [
+          {
+            "title": "AWS Cloud Practitioner",
+            "description": "Fundamentals of cloud computing and AWS core services.",
+            "points": 45
+          }
+        ],
+        "achievements": [
+          {
+            "title": "Hackathon 2nd Prize",
+            "description": "Built a campus navigation app.",
+            "points": 41
+          }
+        ],
+        "projects": [
+          {
+            "title": "Smart Attendance System",
+            "description": "Face recognition based attendance tracker.",
+            "points": 43
+          }
+        ],
+        "experience": [
+          {
+            "title": "Intern - SoftSolutions",
+            "description": "Backend development (3 months), worked on REST APIs."
+          }
+        ]
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250002": {
+      "category": "student",
+      "name": "Diya Patel",
+      "student_id": "S20250002",
+      "email": "diya.patel02@student.univ.edu",
+      "password": "Dp2025$",
+      "dob": "2002-11-05",
+      "branch": "Business Administration",
+      "university": "Global Tech University",
+      "institute": "Management",
+      "faculty_advisor": "F20250005",
+      "attendance": 88,
+      "current_semester": 7,
+      "start_year": 2021,
+      "graduate_year": 2025,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "BA101 - Principles of Management",
+          "EC101 - Microeconomics",
+          "MA101 - Business Mathematics",
+          "EN101 - Business Communication",
+          "IT101 - Business Systems"
+        ],
+        "sem2": [
+          "BA102 - Organizational Behavior",
+          "EC102 - Macroeconomics",
+          "MA102 - Statistics for Business",
+          "EN102 - Professional Writing",
+          "AC101 - Financial Accounting"
+        ],
+        "sem3": [
+          "MA201 - Managerial Economics",
+          "MK201 - Marketing Management",
+          "FN201 - Corporate Finance",
+          "HR201 - Human Resource Management",
+          "OP201 - Operations Management"
+        ],
+        "sem4": [
+          "MK202 - Consumer Behavior",
+          "FN202 - Investment Analysis",
+          "OP202 - Supply Chain Management",
+          "BA204 - Business Law",
+          "EN201 - Presentation Skills"
+        ],
+        "sem5": [
+          "MK301 - Digital Marketing",
+          "FN301 - Financial Markets",
+          "BA303 - Strategic Management",
+          "OP301 - Quality Management",
+          "BA305 - International Business"
+        ],
+        "sem6": [
+          "MK302 - Brand Management",
+          "FN302 - Corporate Taxation",
+          "BA304 - Entrepreneurship",
+          "OP302 - Project Management",
+          "BA306 - Ethics & Corporate Governance"
+        ],
+        "sem7": [
+          "BA401 - Strategic HR",
+          "MK401 - Marketing Research",
+          "FN401 - Financial Modeling",
+          "BA402 - Business Analytics",
+          "Elective: Internship Project"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "BA101": 8,
+          "EC101": 7,
+          "MA101": 7,
+          "EN101": 9,
+          "IT101": 8
+        },
+        "sem2": {
+          "BA102": 8,
+          "EC102": 7,
+          "MA102": 8,
+          "EN102": 8,
+          "AC101": 9
+        },
+        "sem3": {
+          "MA201": 8,
+          "MK201": 9,
+          "FN201": 8,
+          "HR201": 7,
+          "OP201": 8
+        },
+        "sem4": {
+          "MK202": 8,
+          "FN202": 7,
+          "OP202": 8,
+          "BA204": 9,
+          "EN201": 8
+        },
+        "sem5": {
+          "MK301": 9,
+          "FN301": 8,
+          "BA303": 8,
+          "OP301": 7,
+          "BA305": 8
+        },
+        "sem6": {
+          "MK302": 8,
+          "FN302": 7,
+          "BA304": 8,
+          "OP302": 8,
+          "BA306": 9
+        }
+      },
+      "student_record": {
+        "research_papers": [
+          {
+            "title": "Consumer preference shift during pandemic",
+            "description": "Survey-based analysis on FMCG buying habits.",
+            "points": 39
+          }
+        ],
+        "certifications": [
+          {
+            "title": "Google Digital Marketing Certificate",
+            "description": "Foundations of digital marketing and analytics.",
+            "points": 44
+          }
+        ],
+        "achievements": [
+          {
+            "title": "Best Case Presentation",
+            "description": "Inter-college case challenge top performer.",
+            "points": 42
+          }
+        ],
+        "projects": [
+          {
+            "title": "Market Entry Plan for Local Startup",
+            "description": "Go-to-market strategy proposal.",
+            "points": 40
+          }
+        ],
+        "experience": [
+          {
+            "title": "Marketing Intern - BrightAds",
+            "description": "Assisted in campaign analytics (2 months)."
+          }
+        ]
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250003": {
+      "category": "student",
+      "name": "Riya Singh",
+      "student_id": "S20250003",
+      "email": "riya.singh03@student.univ.edu",
+      "password": "Rs#2025!",
+      "dob": "2004-02-20",
+      "branch": "Pharmacy",
+      "university": "Global Tech University",
+      "institute": "Pharmacy",
+      "faculty_advisor": "F20250008",
+      "attendance": 95,
+      "current_semester": 4,
+      "start_year": 2023,
+      "graduate_year": 2026,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "PHM101 - Human Anatomy",
+          "CH101 - Organic Chemistry I",
+          "BI101 - Biology for Pharmacy",
+          "MA101 - Biostatistics",
+          "EN101 - Scientific Communication"
+        ],
+        "sem2": [
+          "PHM102 - Pharmaceutical Analysis I",
+          "CH102 - Organic Chemistry II",
+          "BI102 - Microbiology",
+          "PHM103 - Pharmacognosy",
+          "EN102 - Lab Report Writing"
+        ],
+        "sem3": [
+          "PHM201 - Pharmaceutical Chemistry",
+          "PHM202 - Pharmacology I",
+          "PHM203 - Pharmaceutical Technology",
+          "BI201 - Pathophysiology",
+          "CH201 - Medicinal Chemistry"
+        ],
+        "sem4": [
+          "PHM204 - Pharmacology II",
+          "PHM205 - Pharmaceutics II",
+          "PHM206 - Clinical Pharmacy",
+          "PHM207 - Pharmacotherapeutics",
+          "Elective: Drug Safety"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "PHM101": 9,
+          "CH101": 8,
+          "BI101": 8,
+          "MA101": 7,
+          "EN101": 9
+        },
+        "sem2": {
+          "PHM102": 9,
+          "CH102": 8,
+          "BI102": 9,
+          "PHM103": 8,
+          "EN102": 8
+        },
+        "sem3": {
+          "PHM201": 8,
+          "PHM202": 9,
+          "PHM203": 8,
+          "BI201": 7,
+          "CH201": 8
+        }
+      },
+      "student_record": {
+        "research_papers": [],
+        "certifications": [
+          {
+            "title": "Good Manufacturing Practices (GMP) - Short Course",
+            "description": "Overview of GMP in pharma manufacturing.",
+            "points": 41
+          }
+        ],
+        "achievements": [],
+        "projects": [
+          {
+            "title": "Formulation of sustained release tablet",
+            "description": "Prototype formulation and stability study.",
+            "points": 46
+          }
+        ],
+        "experience": [
+          {
+            "title": "Trainee - City Pharmacy",
+            "description": "Pharmacy assistance and patient counselling (1 month)."
+          }
+        ]
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250004": {
+      "category": "student",
+      "name": "Kabir Verma",
+      "student_id": "S20250004",
+      "email": "kabir.verma04@student.univ.edu",
+      "password": "Kv2025!*",
+      "dob": "2001-07-30",
+      "branch": "Mechanical Engineering",
+      "university": "Global Tech University",
+      "institute": "Technology",
+      "faculty_advisor": "F20250002",
+      "attendance": 85,
+      "current_semester": 8,
+      "start_year": 2020,
+      "graduate_year": 2024,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "ME101 - Engineering Mechanics",
+          "MA101 - Calculus I",
+          "PH101 - Physics I",
+          "EN101 - Communication Skills",
+          "ME102 - Engineering Drawing"
+        ],
+        "sem2": [
+          "ME103 - Thermodynamics I",
+          "MA102 - Calculus II",
+          "PH102 - Physics II",
+          "ME104 - Materials Science",
+          "CS101 - Intro to Engineering Software"
+        ],
+        "sem3": [
+          "ME201 - Fluid Mechanics",
+          "ME202 - Strength of Materials",
+          "ME203 - Manufacturing Processes",
+          "MA201 - Differential Equations",
+          "EE201 - Electrical Machines"
+        ],
+        "sem4": [
+          "ME204 - Heat Transfer",
+          "ME205 - Machine Design I",
+          "ME206 - Dynamics of Machines",
+          "ME207 - CAD/CAM",
+          "ME208 - Instrumentation"
+        ],
+        "sem5": [
+          "ME301 - Machine Design II",
+          "ME302 - Refrigeration & Air Conditioning",
+          "ME303 - Finite Element Methods",
+          "ME304 - Turbo Machinery",
+          "ME305 - Project I"
+        ],
+        "sem6": [
+          "ME401 - Advanced Manufacturing",
+          "ME402 - Composite Materials",
+          "ME403 - Mechatronics",
+          "ME404 - Industrial Engineering",
+          "ME405 - Elective: Robotics"
+        ],
+        "sem7": [
+          "ME406 - Automotive Engineering",
+          "ME407 - Optimization Techniques",
+          "ME408 - Project II",
+          "ME409 - Elective: Renewable Energy",
+          "ME410 - Seminar"
+        ],
+        "sem8": [
+          "ME501 - Major Project",
+          "ME502 - Professional Ethics",
+          "ME503 - Entrepreneurship",
+          "Elective: Advanced Manufacturing Lab",
+          "Elective: Condition Monitoring"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "ME101": 7,
+          "MA101": 7,
+          "PH101": 6,
+          "EN101": 8,
+          "ME102": 7
+        },
+        "sem2": {
+          "ME103": 7,
+          "MA102": 6,
+          "PH102": 7,
+          "ME104": 7,
+          "CS101": 8
+        },
+        "sem3": {
+          "ME201": 8,
+          "ME202": 7,
+          "ME203": 7,
+          "MA201": 7,
+          "EE201": 6
+        },
+        "sem4": {
+          "ME204": 8,
+          "ME205": 7,
+          "ME206": 7,
+          "ME207": 8,
+          "ME208": 7
+        },
+        "sem5": {
+          "ME301": 8,
+          "ME302": 7,
+          "ME303": 6,
+          "ME304": 7,
+          "ME305": 8
+        },
+        "sem6": {
+          "ME401": 8,
+          "ME402": 7,
+          "ME403": 8,
+          "ME404": 7,
+          "ME405": 8
+        },
+        "sem7": {
+          "ME406": 8,
+          "ME407": 7,
+          "ME408": 8,
+          "ME409": 7,
+          "ME410": 8
+        }
+      },
+      "student_record": {
+        "research_papers": [
+          {
+            "title": "Lightweight composite for automotive",
+            "description": "Examining glass-ceramic composites for vehicle panels.",
+            "points": 38
+          }
+        ],
+        "certifications": [],
+        "achievements": [
+          {
+            "title": "Best Design Award",
+            "description": "Awarded for gearbox optimization project.",
+            "points": 46
+          }
+        ],
+        "projects": [
+          {
+            "title": "Gearbox Efficiency Improvement",
+            "description": "Redesigned gear profile to reduce losses.",
+            "points": 44
+          }
+        ],
+        "experience": [
+          {
+            "title": "Intern - AutoMech",
+            "description": "Design team intern (6 months)."
+          }
+        ]
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250005": {
+      "category": "student",
+      "name": "Neha Kulkarni",
+      "student_id": "S20250005",
+      "email": "neha.kulkarni05@student.univ.edu",
+      "password": "Nk2025#",
+      "dob": "2002-06-18",
+      "branch": "Law",
+      "university": "Global Tech University",
+      "institute": "Law",
+      "faculty_advisor": "F20250009",
+      "attendance": 90,
+      "current_semester": 5,
+      "start_year": 2021,
+      "graduate_year": 2025,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "LW101 - Constitutional Law I",
+          "GS101 - Legal Methods",
+          "EN101 - Legal English",
+          "HS101 - History of Law",
+          "SS101 - Sociology"
+        ],
+        "sem2": [
+          "LW102 - Contract Law I",
+          "CR101 - Criminal Law I",
+          "EN102 - Drafting & Pleadings",
+          "EC101 - Economics for Law",
+          "PM101 - Political Science"
+        ],
+        "sem3": [
+          "LW201 - Constitutional Law II",
+          "LW202 - Tort Law",
+          "CR201 - Criminal Law II",
+          "LW203 - Administrative Law",
+          "LW204 - Family Law"
+        ],
+        "sem4": [
+          "LW301 - Property Law",
+          "LW302 - Intellectual Property Law",
+          "LW303 - Environmental Law",
+          "LW304 - Labour Law",
+          "Elective: Alternate Dispute Resolution"
+        ],
+        "sem5": [
+          "LW401 - Corporate Law",
+          "LW402 - Tax Law",
+          "LW403 - Human Rights Law",
+          "LW404 - International Law",
+          "LW405 - Moot Court Practice"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "LW101": 9,
+          "GS101": 8,
+          "EN101": 9,
+          "HS101": 8,
+          "SS101": 8
+        },
+        "sem2": {
+          "LW102": 8,
+          "CR101": 7,
+          "EN102": 9,
+          "EC101": 8,
+          "PM101": 8
+        },
+        "sem3": {
+          "LW201": 9,
+          "LW202": 8,
+          "CR201": 8,
+          "LW203": 8,
+          "LW204": 9
+        },
+        "sem4": {
+          "LW301": 8,
+          "LW302": 8,
+          "LW303": 7,
+          "LW304": 8,
+          "Elective: ADR": 9
+        }
+      },
+      "student_record": {
+        "research_papers": [
+          {
+            "title": "Privacy laws and social media in India",
+            "description": "Analysis of user data protection and policy gaps.",
+            "points": 41
+          }
+        ],
+        "certifications": [
+          {
+            "title": "Certificate in Intellectual Property Rights",
+            "description": "Introductory IPR course.",
+            "points": 40
+          }
+        ],
+        "achievements": [],
+        "projects": [],
+        "experience": [
+          {
+            "title": "Legal Intern - Advocate R. Mehta",
+            "description": "Court research and drafting (2 months)."
+          }
+        ]
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250006": {
+      "category": "student",
+      "name": "Vikram Joshi",
+      "student_id": "S20250006",
+      "email": "vikram.joshi06@student.univ.edu",
+      "password": "Vj2025!",
+      "dob": "2003-12-03",
+      "branch": "Electrical Engineering",
+      "university": "Global Tech University",
+      "institute": "Technology",
+      "faculty_advisor": "F20250003",
+      "attendance": 78,
+      "current_semester": 3,
+      "start_year": 2023,
+      "graduate_year": 2026,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "EE101 - Basic Electrical Engineering",
+          "MA101 - Calculus I",
+          "PH101 - Physics I",
+          "CS101 - Intro to Programming",
+          "EN101 - Communication Skills"
+        ],
+        "sem2": [
+          "EE102 - Circuit Theory",
+          "MA102 - Calculus II",
+          "PH102 - Physics II",
+          "EE103 - Electronic Devices",
+          "CS102 - Data Structures Intro"
+        ],
+        "sem3": [
+          "EE201 - Signals and Systems",
+          "EE202 - Digital Electronics",
+          "EE203 - Electromagnetics",
+          "MA201 - Linear Algebra",
+          "EE204 - Measurement & Instrumentation"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "EE101": 7,
+          "MA101": 6,
+          "PH101": 7,
+          "CS101": 8,
+          "EN101": 8
+        },
+        "sem2": {
+          "EE102": 7,
+          "MA102": 7,
+          "PH102": 6,
+          "EE103": 7,
+          "CS102": 7
+        }
+      },
+      "student_record": {
+        "research_papers": [],
+        "certifications": [
+          {
+            "title": "Embedded Systems Basics",
+            "description": "Online course on microcontrollers.",
+            "points": 39
+          }
+        ],
+        "achievements": [],
+        "projects": [
+          {
+            "title": "Line-following Robot",
+            "description": "Built prototype using sensors and microcontroller.",
+            "points": 40
+          }
+        ],
+        "experience": []
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250007": {
+      "category": "student",
+      "name": "Sana Khan",
+      "student_id": "S20250007",
+      "email": "sana.khan07@student.univ.edu",
+      "password": "Sk2025#",
+      "dob": "2004-08-25",
+      "branch": "Computer Science",
+      "university": "Global Tech University",
+      "institute": "Technology",
+      "faculty_advisor": "F20250001",
+      "attendance": 97,
+      "current_semester": 2,
+      "start_year": 2024,
+      "graduate_year": 2027,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "CS101 - Programming Fundamentals",
+          "MA101 - Calculus I",
+          "PH101 - Physics for Engineers",
+          "EN101 - English Communication",
+          "IT101 - Intro to IT Systems"
+        ],
+        "sem2": [
+          "CS102 - Data Structures",
+          "MA102 - Calculus II",
+          "PH102 - Engineering Physics II",
+          "EN102 - Technical Writing",
+          "IT102 - Digital Logic"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "CS101": 9,
+          "MA101": 8,
+          "PH101": 9,
+          "EN101": 9,
+          "IT101": 9
+        }
+      },
+      "student_record": {
+        "research_papers": [],
+        "certifications": [],
+        "achievements": [
+          {
+            "title": "Programming Contest Winner",
+            "description": "Won inter-college coding contest.",
+            "points": 45
+          }
+        ],
+        "projects": [],
+        "experience": []
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250008": {
+      "category": "student",
+      "name": "Arjun Reddy",
+      "student_id": "S20250008",
+      "email": "arjun.reddy08@student.univ.edu",
+      "password": "Ar#2025",
+      "dob": "2002-01-14",
+      "branch": "Civil Engineering",
+      "university": "Global Tech University",
+      "institute": "Technology",
+      "faculty_advisor": "F20250004",
+      "attendance": 81,
+      "current_semester": 6,
+      "start_year": 2022,
+      "graduate_year": 2025,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "CE101 - Engineering Mechanics",
+          "MA101 - Calculus I",
+          "PH101 - Physics I",
+          "CE102 - Building Materials",
+          "EN101 - Communication"
+        ],
+        "sem2": [
+          "CE103 - Fluid Mechanics I",
+          "MA102 - Calculus II",
+          "PH102 - Physics II",
+          "CE104 - Surveying I",
+          "CS101 - Engineering Software Intro"
+        ],
+        "sem3": [
+          "CE201 - Structural Analysis I",
+          "CE202 - Geotechnical Engineering",
+          "CE203 - Concrete Technology",
+          "MA201 - Strength of Materials",
+          "CE204 - Environmental Engineering I"
+        ],
+        "sem4": [
+          "CE205 - Reinforced Concrete Design",
+          "CE206 - Steel Structures",
+          "CE207 - Hydraulics",
+          "CE208 - Transportation Engineering",
+          "Elective: Earthquake Engineering"
+        ],
+        "sem5": [
+          "CE301 - Foundation Engineering",
+          "CE302 - Construction Management",
+          "CE303 - Water Resources Engineering",
+          "CE304 - Project Planning",
+          "CE305 - Structural Dynamics"
+        ],
+        "sem6": [
+          "CE401 - Advanced Structural Design",
+          "CE402 - Environmental Engineering II",
+          "CE403 - Pavement Design",
+          "CE404 - Elective: BIM",
+          "CE405 - Seminar"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "CE101": 7,
+          "MA101": 7,
+          "PH101": 6,
+          "CE102": 7,
+          "EN101": 8
+        },
+        "sem2": {
+          "CE103": 8,
+          "MA102": 7,
+          "PH102": 6,
+          "CE104": 7,
+          "CS101": 7
+        },
+        "sem3": {
+          "CE201": 8,
+          "CE202": 7,
+          "CE203": 8,
+          "MA201": 7,
+          "CE204": 7
+        },
+        "sem4": {
+          "CE205": 8,
+          "CE206": 7,
+          "CE207": 7,
+          "CE208": 8,
+          "Elective: EE": 7
+        },
+        "sem5": {
+          "CE301": 8,
+          "CE302": 7,
+          "CE303": 7,
+          "CE304": 8,
+          "CE305": 7
+        }
+      },
+      "student_record": {
+        "research_papers": [
+          {
+            "title": "Surface runoff optimization",
+            "description": "Modeling runoff for peri-urban catchments.",
+            "points": 39
+          }
+        ],
+        "certifications": [],
+        "achievements": [],
+        "projects": [
+          {
+            "title": "Low-cost water filter design",
+            "description": "Prototype for rural households.",
+            "points": 40
+          }
+        ],
+        "experience": [
+          {
+            "title": "Site Intern - BuildWell",
+            "description": "On-site surveying and supervision (2 months)."
+          }
+        ]
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250009": {
+      "category": "student",
+      "name": "Isha Nair",
+      "student_id": "S20250009",
+      "email": "isha.nair09@student.univ.edu",
+      "password": "In2025!",
+      "dob": "2003-05-02",
+      "branch": "Design",
+      "university": "Global Tech University",
+      "institute": "Arts",
+      "faculty_advisor": "F20250010",
+      "attendance": 86,
+      "current_semester": 4,
+      "start_year": 2023,
+      "graduate_year": 2026,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "DS101 - Design Fundamentals",
+          "AR101 - Art History",
+          "EN101 - Communication",
+          "IT101 - Design Tools I",
+          "MA101 - Basic Mathematics"
+        ],
+        "sem2": [
+          "DS102 - Visual Communication",
+          "DS103 - Typography",
+          "AR102 - Contemporary Art",
+          "IT102 - Design Tools II",
+          "EN102 - Portfolio Development"
+        ],
+        "sem3": [
+          "DS201 - Interaction Design",
+          "DS202 - User Experience",
+          "DS203 - 3D Design",
+          "DS204 - Materials & Methods",
+          "Elective: Photography"
+        ],
+        "sem4": [
+          "DS301 - Design Research",
+          "DS302 - Branding",
+          "DS303 - Workshop Practice",
+          "DS304 - Design Strategy",
+          "Elective: Animation"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "DS101": 8,
+          "AR101": 8,
+          "EN101": 9,
+          "IT101": 8,
+          "MA101": 7
+        },
+        "sem2": {
+          "DS102": 9,
+          "DS103": 8,
+          "AR102": 8,
+          "IT102": 9,
+          "EN102": 8
+        },
+        "sem3": {
+          "DS201": 8,
+          "DS202": 9,
+          "DS203": 8,
+          "DS204": 7,
+          "Elective: Photo": 8
+        }
+      },
+      "student_record": {
+        "research_papers": [],
+        "certifications": [
+          {
+            "title": "UI/UX Short Course",
+            "description": "Foundations of user interface design.",
+            "points": 43
+          }
+        ],
+        "achievements": [
+          {
+            "title": "Exhibition Selected",
+            "description": "Selected for regional design showcase.",
+            "points": 42
+          }
+        ],
+        "projects": [
+          {
+            "title": "Interactive Exhibition Kiosk",
+            "description": "Designed kiosk for museum exhibit.",
+            "points": 44
+          }
+        ],
+        "experience": []
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250010": {
+      "category": "student",
+      "name": "Manish Gupta",
+      "student_id": "S20250010",
+      "email": "manish.gupta10@student.univ.edu",
+      "password": "Mg2025#",
+      "dob": "2001-09-11",
+      "branch": "Biotechnology",
+      "university": "Global Tech University",
+      "institute": "Science",
+      "faculty_advisor": "F20250006",
+      "attendance": 83,
+      "current_semester": 7,
+      "start_year": 2020,
+      "graduate_year": 2024,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "BT101 - Cell Biology",
+          "CH101 - Organic Chemistry I",
+          "MA101 - Calculus I",
+          "EN101 - Scientific Writing",
+          "BI101 - Intro to Biology"
+        ],
+        "sem2": [
+          "BT102 - Genetics",
+          "CH102 - Organic Chemistry II",
+          "BI102 - Microbiology",
+          "MA102 - Biostatistics",
+          "EN102 - Lab Communication"
+        ],
+        "sem3": [
+          "BT201 - Molecular Biology",
+          "BT202 - Bioprocess Engineering",
+          "BT203 - Immunology",
+          "CH201 - Biochemistry",
+          "BT204 - Cell Culture Techniques"
+        ],
+        "sem4": [
+          "BT301 - Genetic Engineering",
+          "BT302 - Downstream Processing",
+          "BT303 - Fermentation Technology",
+          "BT304 - Bioinformatics",
+          "Elective: Proteomics"
+        ],
+        "sem5": [
+          "BT401 - Advanced Molecular Techniques",
+          "BT402 - Biostatistics II",
+          "BT403 - Environmental Biotechnology",
+          "BT404 - Project I",
+          "Elective: Stem Cells"
+        ],
+        "sem6": [
+          "BT501 - Industrial Biotechnology",
+          "BT502 - Regulatory Affairs",
+          "BT503 - Biosafety & Ethics",
+          "BT504 - Project II",
+          "Seminar"
+        ],
+        "sem7": [
+          "BT601 - Major Project",
+          "BT602 - Translational Research",
+          "Elective: Synthetic Biology",
+          "Elective: Advanced Bioinformatics",
+          "Seminar II"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "BT101": 8,
+          "CH101": 7,
+          "MA101": 7,
+          "EN101": 8,
+          "BI101": 8
+        },
+        "sem2": {
+          "BT102": 8,
+          "CH102": 7,
+          "BI102": 9,
+          "MA102": 8,
+          "EN102": 8
+        },
+        "sem3": {
+          "BT201": 9,
+          "BT202": 8,
+          "BT203": 8,
+          "CH201": 7,
+          "BT204": 8
+        },
+        "sem4": {
+          "BT301": 8,
+          "BT302": 9,
+          "BT303": 8,
+          "BT304": 8,
+          "Elective: Proteomics": 7
+        },
+        "sem5": {
+          "BT401": 8,
+          "BT402": 7,
+          "BT403": 8,
+          "BT404": 9,
+          "Elective: Stem Cells": 8
+        },
+        "sem6": {
+          "BT501": 8,
+          "BT502": 7,
+          "BT503": 8,
+          "BT504": 8,
+          "Seminar": 9
+        }
+      },
+      "student_record": {
+        "research_papers": [
+          {
+            "title": "Optimizing fermentation yield for enzyme production",
+            "description": "Small-scale study to improve yield in shake-flask cultures.",
+            "points": 47
+          },
+          {
+            "title": "CRISPR-based gene editing in yeast",
+            "description": "Method optimization for targeted edits.",
+            "points": 45
+          }
+        ],
+        "certifications": [
+          {
+            "title": "Course in Bioinformatics",
+            "description": "Basics of sequence analysis and databases.",
+            "points": 44
+          }
+        ],
+        "achievements": [],
+        "projects": [
+          {
+            "title": "Enzyme Purification Pipeline",
+            "description": "Developed small purification workflow.",
+            "points": 42
+          }
+        ],
+        "experience": [
+          {
+            "title": "Research Trainee - Institute of Biotech",
+            "description": "Assisted in fermentation lab work (3 months)."
+          }
+        ]
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250011": {
+      "category": "student",
+      "name": "Pranav Desai",
+      "student_id": "S20250011",
+      "email": "pranav.desai11@student.univ.edu",
+      "password": "Pd2025#",
+      "dob": "2003-10-09",
+      "branch": "Information Technology",
+      "university": "Global Tech University",
+      "institute": "Technology",
+      "faculty_advisor": "F20250001",
+      "attendance": 89,
+      "current_semester": 5,
+      "start_year": 2021,
+      "graduate_year": 2025,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "IT101 - Intro to IT Systems",
+          "CS101 - Programming Fundamentals",
+          "MA101 - Calculus I",
+          "EN101 - Communication",
+          "PH101 - Physics"
+        ],
+        "sem2": [
+          "IT102 - Digital Logic",
+          "CS102 - Data Structures",
+          "MA102 - Discrete Math",
+          "EN102 - Technical Writing",
+          "IT103 - System Fundamentals"
+        ],
+        "sem3": [
+          "IT201 - DBMS",
+          "IT202 - Web Technologies",
+          "IT203 - Networking Fundamentals",
+          "CS201 - Algorithms",
+          "MA201 - Probability & Stats"
+        ],
+        "sem4": [
+          "IT204 - OS & Security",
+          "IT205 - Software Engineering",
+          "IT206 - Mobile App Dev",
+          "IT207 - Cloud Basics",
+          "Elective: DevOps"
+        ],
+        "sem5": [
+          "IT301 - Full Stack Project",
+          "IT302 - Network Security",
+          "IT303 - Data Analytics",
+          "Elective: Blockchain",
+          "Elective: AI Fundamentals"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "IT101": 8,
+          "CS101": 8,
+          "MA101": 7,
+          "EN101": 8,
+          "PH101": 7
+        },
+        "sem2": {
+          "IT102": 8,
+          "CS102": 9,
+          "MA102": 7,
+          "EN102": 8,
+          "IT103": 8
+        },
+        "sem3": {
+          "IT201": 8,
+          "IT202": 9,
+          "IT203": 8,
+          "CS201": 8,
+          "MA201": 7
+        },
+        "sem4": {
+          "IT204": 8,
+          "IT205": 9,
+          "IT206": 8,
+          "IT207": 7,
+          "Elective: DevOps": 8
+        }
+      },
+      "student_record": {
+        "research_papers": [],
+        "certifications": [
+          {
+            "title": "CCNA Basic",
+            "description": "Networking fundamentals certificate.",
+            "points": 40
+          }
+        ],
+        "achievements": [
+          {
+            "title": "Scholarship for Academic Excellence",
+            "description": "Semester scholarship awarded.",
+            "points": 46
+          }
+        ],
+        "projects": [
+          {
+            "title": "Attendance Management System",
+            "description": "Web app with facial recognition login.",
+            "points": 43
+          }
+        ],
+        "experience": [
+          {
+            "title": "IT Intern - NetSecure",
+            "description": "Assisted in network setup (2 months)."
+          }
+        ]
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250012": {
+      "category": "student",
+      "name": "Meera Iyer",
+      "student_id": "S20250012",
+      "email": "meera.iyer12@student.univ.edu",
+      "password": "Mi2025#",
+      "dob": "2004-03-01",
+      "branch": "Architecture",
+      "university": "Global Tech University",
+      "institute": "Arts",
+      "faculty_advisor": "F20250011",
+      "attendance": 91,
+      "current_semester": 3,
+      "start_year": 2023,
+      "graduate_year": 2027,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "AR101 - Architectural History I",
+          "DS101 - Design Fundamentals",
+          "MA101 - Basic Math",
+          "EN101 - Communication",
+          "IT101 - CAD Basics"
+        ],
+        "sem2": [
+          "AR102 - Building Construction I",
+          "DS102 - Visual Communication",
+          "CE101 - Strength of Materials",
+          "AR103 - Site Planning",
+          "EN102 - Drawing & Presentation"
+        ],
+        "sem3": [
+          "AR201 - Structural Systems",
+          "AR202 - Environmental Systems",
+          "AR203 - Building Services",
+          "DS201 - Model Making",
+          "Elective: Urban Design"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "AR101": 9,
+          "DS101": 8,
+          "MA101": 8,
+          "EN101": 9,
+          "IT101": 8
+        },
+        "sem2": {
+          "AR102": 8,
+          "DS102": 9,
+          "CE101": 7,
+          "AR103": 8,
+          "EN102": 9
+        }
+      },
+      "student_record": {
+        "research_papers": [],
+        "certifications": [],
+        "achievements": [
+          {
+            "title": "Design Workshop Certificate",
+            "description": "Participated in national design workshop.",
+            "points": 40
+          }
+        ],
+        "projects": [
+          {
+            "title": "Community Center Concept",
+            "description": "Design proposal for a local NGO.",
+            "points": 42
+          }
+        ],
+        "experience": []
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250013": {
+      "category": "student",
+      "name": "Shaurya Mehta",
+      "student_id": "S20250013",
+      "email": "shaurya.mehta13@student.univ.edu",
+      "password": "Sm2025#",
+      "dob": "2002-12-27",
+      "branch": "Chemical Engineering",
+      "university": "Global Tech University",
+      "institute": "Technology",
+      "faculty_advisor": "F20250004",
+      "attendance": 79,
+      "current_semester": 6,
+      "start_year": 2022,
+      "graduate_year": 2025,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "CH101 - Chemistry I",
+          "MA101 - Calculus I",
+          "PH101 - Physics I",
+          "CE101 - Intro to Chem Engg",
+          "EN101 - Communication"
+        ],
+        "sem2": [
+          "CH102 - Chemistry II",
+          "MA102 - Calculus II",
+          "PH102 - Physics II",
+          "CE102 - Material Balances",
+          "CS101 - Engineering Software"
+        ],
+        "sem3": [
+          "CE201 - Thermodynamics",
+          "CE202 - Fluid Mechanics",
+          "CE203 - Heat Transfer",
+          "MA201 - Differential Equations",
+          "CE204 - Chemical Process Calculations"
+        ],
+        "sem4": [
+          "CE205 - Mass Transfer",
+          "CE206 - Reaction Engineering",
+          "CE207 - Process Control",
+          "CE208 - Process Equipment Design",
+          "Elective: Petrochemicals"
+        ],
+        "sem5": [
+          "CE301 - Separation Processes",
+          "CE302 - Plant Design",
+          "CE303 - Environmental Engineering",
+          "CE304 - Project I",
+          "CE305 - Elective: Corrosion"
+        ],
+        "sem6": [
+          "CE401 - Process Simulation",
+          "CE402 - Safety in Chemical Plants",
+          "CE403 - Biochemical Engineering",
+          "CE404 - Elective: Polymer Technology",
+          "CE405 - Seminar"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "CH101": 7,
+          "MA101": 6,
+          "PH101": 7,
+          "CE101": 8,
+          "EN101": 7
+        },
+        "sem2": {
+          "CH102": 7,
+          "MA102": 7,
+          "PH102": 6,
+          "CE102": 7,
+          "CS101": 7
+        },
+        "sem3": {
+          "CE201": 8,
+          "CE202": 7,
+          "CE203": 7,
+          "MA201": 6,
+          "CE204": 7
+        },
+        "sem4": {
+          "CE205": 8,
+          "CE206": 7,
+          "CE207": 7,
+          "CE208": 8,
+          "Elective: Petrochem": 7
+        },
+        "sem5": {
+          "CE301": 8,
+          "CE302": 7,
+          "CE303": 7,
+          "CE304": 8,
+          "CE305": 7
+        }
+      },
+      "student_record": {
+        "research_papers": [
+          {
+            "title": "Catalyst performance in esterification",
+            "description": "Comparative study of catalysts for biodiesel synthesis.",
+            "points": 40
+          }
+        ],
+        "certifications": [
+          {
+            "title": "Process Safety Basics",
+            "description": "Course on fundamentals of process safety.",
+            "points": 39
+          }
+        ],
+        "achievements": [],
+        "projects": [
+          {
+            "title": "Small-scale Distillation Unit",
+            "description": "Design and prototype for lab-scale distillation.",
+            "points": 41
+          }
+        ],
+        "experience": [
+          {
+            "title": "Intern - ChemWorks",
+            "description": "Assisted in pilot plant operation (2 months)."
+          }
+        ]
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250014": {
+      "category": "student",
+      "name": "Kritika Rao",
+      "student_id": "S20250014",
+      "email": "kritika.rao14@student.univ.edu",
+      "password": "Kr2025#",
+      "dob": "2004-09-16",
+      "branch": "Psychology",
+      "university": "Global Tech University",
+      "institute": "Arts",
+      "faculty_advisor": "F20250012",
+      "attendance": 93,
+      "current_semester": 2,
+      "start_year": 2024,
+      "graduate_year": 2028,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "PSY101 - Intro to Psychology",
+          "SO101 - Sociology Basics",
+          "EN101 - Communication",
+          "MA101 - Statistics I",
+          "EV101 - Ethics & Values"
+        ],
+        "sem2": [
+          "PSY102 - Developmental Psychology",
+          "PSY103 - Cognitive Psychology",
+          "MA102 - Statistics II",
+          "EN102 - Research Writing",
+          "Elective: Counselling Basics"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "PSY101": 9,
+          "SO101": 8,
+          "EN101": 9,
+          "MA101": 8,
+          "EV101": 9
+        }
+      },
+      "student_record": {
+        "research_papers": [],
+        "certifications": [],
+        "achievements": [],
+        "projects": [],
+        "experience": []
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250015": {
+      "category": "student",
+      "name": "Aditya Singh",
+      "student_id": "S20250015",
+      "email": "aditya.singh15@student.univ.edu",
+      "password": "As2025#",
+      "dob": "2002-02-02",
+      "branch": "Computer Science",
+      "university": "Global Tech University",
+      "institute": "Technology",
+      "faculty_advisor": "F20250001",
+      "attendance": 76,
+      "current_semester": 8,
+      "start_year": 2020,
+      "graduate_year": 2024,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "CS101 - Programming Fundamentals",
+          "MA101 - Calculus I",
+          "PH101 - Physics",
+          "EN101 - Communication",
+          "IT101 - Basics of IT"
+        ],
+        "sem2": [
+          "CS102 - Data Structures",
+          "MA102 - Calculus II",
+          "PH102 - Physics II",
+          "EN102 - Technical Writing",
+          "IT102 - Digital Logic"
+        ],
+        "sem3": [
+          "CS201 - Algorithms",
+          "CS202 - Computer Architecture",
+          "MA201 - Discrete Math",
+          "CS203 - OOP",
+          "EE201 - Circuits"
+        ],
+        "sem4": [
+          "CS204 - OS",
+          "CS205 - DBMS",
+          "CS206 - Software Engineering",
+          "MA202 - Stats",
+          "CS207 - Networks"
+        ],
+        "sem5": [
+          "CS301 - AI",
+          "CS302 - Web Dev",
+          "CS303 - Mobile Dev",
+          "CS304 - Compiler",
+          "CS305 - Elective"
+        ],
+        "sem6": [
+          "CS401 - Distributed Systems",
+          "CS402 - Data Mining",
+          "CS403 - Cloud Computing",
+          "CS404 - Info Security",
+          "CS405 - Elective"
+        ],
+        "sem7": [
+          "CS501 - Thesis I",
+          "CS502 - Elective",
+          "CS503 - Seminar",
+          "CS504 - Elective",
+          "CS505 - Elective"
+        ],
+        "sem8": [
+          "CS601 - Major Project",
+          "CS602 - Professional Practice",
+          "Elective: Advanced ML",
+          "Elective: DevOps",
+          "Elective: Edge Computing"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "CS101": 7,
+          "MA101": 6,
+          "PH101": 6,
+          "EN101": 7,
+          "IT101": 7
+        },
+        "sem2": {
+          "CS102": 7,
+          "MA102": 6,
+          "PH102": 6,
+          "EN102": 7,
+          "IT102": 6
+        },
+        "sem3": {
+          "CS201": 7,
+          "CS202": 6,
+          "MA201": 6,
+          "CS203": 7,
+          "EE201": 6
+        },
+        "sem4": {
+          "CS204": 7,
+          "CS205": 7,
+          "CS206": 6,
+          "MA202": 6,
+          "CS207": 7
+        },
+        "sem5": {
+          "CS301": 7,
+          "CS302": 6,
+          "CS303": 7,
+          "CS304": 6,
+          "CS305": 7
+        },
+        "sem6": {
+          "CS401": 7,
+          "CS402": 6,
+          "CS403": 6,
+          "CS404": 7,
+          "CS405": 6
+        },
+        "sem7": {
+          "CS501": 8,
+          "CS502": 7,
+          "CS503": 8,
+          "CS504": 7,
+          "CS505": 8
+        }
+      },
+      "student_record": {
+        "research_papers": [],
+        "certifications": [],
+        "achievements": [],
+        "projects": [],
+        "experience": []
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250016": {
+      "category": "student",
+      "name": "Ananya Bhatt",
+      "student_id": "S20250016",
+      "email": "ananya.bhatt16@student.univ.edu",
+      "password": "Ab2025#",
+      "dob": "2003-01-22",
+      "branch": "Electrical Engineering",
+      "university": "Global Tech University",
+      "institute": "Technology",
+      "faculty_advisor": "F20250003",
+      "attendance": 94,
+      "current_semester": 4,
+      "start_year": 2022,
+      "graduate_year": 2026,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "EE101 - Basic Electrical Engineering",
+          "MA101 - Calculus I",
+          "PH101 - Physics I",
+          "CS101 - Programming Basics",
+          "EN101 - Communication"
+        ],
+        "sem2": [
+          "EE102 - Circuit Theory",
+          "MA102 - Calculus II",
+          "PH102 - Physics II",
+          "EE103 - Electronic Devices",
+          "CS102 - Data Structures"
+        ],
+        "sem3": [
+          "EE201 - Signals & Systems",
+          "EE202 - Digital Electronics",
+          "MA201 - Linear Algebra",
+          "EE203 - Electromagnetics",
+          "EE204 - Measurement"
+        ],
+        "sem4": [
+          "EE301 - Control Systems",
+          "EE302 - Power Systems",
+          "EE303 - Communication Systems",
+          "Elective: Embedded Systems",
+          "Seminar"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "EE101": 9,
+          "MA101": 8,
+          "PH101": 9,
+          "CS101": 8,
+          "EN101": 9
+        },
+        "sem2": {
+          "EE102": 8,
+          "MA102": 8,
+          "PH102": 7,
+          "EE103": 8,
+          "CS102": 8
+        },
+        "sem3": {
+          "EE201": 9,
+          "EE202": 8,
+          "MA201": 8,
+          "EE203": 8,
+          "EE204": 9
+        }
+      },
+      "student_record": {
+        "research_papers": [],
+        "certifications": [
+          {
+            "title": "PCB Design Basics",
+            "description": "Short online PCB design course.",
+            "points": 40
+          }
+        ],
+        "achievements": [
+          {
+            "title": "Innovation Challenge Runner-up",
+            "description": "Smart sensor project recognition.",
+            "points": 43
+          }
+        ],
+        "projects": [
+          {
+            "title": "Low-power Sensor Node",
+            "description": "Battery-operated wireless sensor prototype.",
+            "points": 45
+          }
+        ],
+        "experience": []
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250017": {
+      "category": "student",
+      "name": "Rohan Kapoor",
+      "student_id": "S20250017",
+      "email": "rohan.kapoor17@student.univ.edu",
+      "password": "Rk2025#",
+      "dob": "2003-07-07",
+      "branch": "Computer Science",
+      "university": "Global Tech University",
+      "institute": "Technology",
+      "faculty_advisor": "F20250001",
+      "attendance": 87,
+      "current_semester": 3,
+      "start_year": 2023,
+      "graduate_year": 2026,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "CS101 - Programming Fundamentals",
+          "MA101 - Calculus I",
+          "PH101 - Physics",
+          "EN101 - Communication",
+          "IT101 - Intro to IT"
+        ],
+        "sem2": [
+          "CS102 - Data Structures",
+          "MA102 - Calculus II",
+          "PH102 - Physics II",
+          "EN102 - Technical Writing",
+          "IT102 - Digital Logic"
+        ],
+        "sem3": [
+          "CS201 - Algorithms",
+          "CS202 - Computer Organization",
+          "MA201 - Discrete Math",
+          "CS203 - OOP",
+          "EE201 - Circuits"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "CS101": 8,
+          "MA101": 7,
+          "PH101": 7,
+          "EN101": 8,
+          "IT101": 7
+        },
+        "sem2": {
+          "CS102": 9,
+          "MA102": 7,
+          "PH102": 7,
+          "EN102": 8,
+          "IT102": 8
+        }
+      },
+      "student_record": {
+        "research_papers": [],
+        "certifications": [
+          {
+            "title": "Python for Everybody",
+            "description": "Intro Python course.",
+            "points": 38
+          }
+        ],
+        "achievements": [],
+        "projects": [
+          {
+            "title": "Chatbot Prototype",
+            "description": "Rule-based chatbot for campus help.",
+            "points": 39
+          }
+        ],
+        "experience": []
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250018": {
+      "category": "student",
+      "name": "Pooja Rani",
+      "student_id": "S20250018",
+      "email": "pooja.rani18@student.univ.edu",
+      "password": "Pr2025#",
+      "dob": "2002-05-28",
+      "branch": "Pharmacy",
+      "university": "Global Tech University",
+      "institute": "Pharmacy",
+      "faculty_advisor": "F20250008",
+      "attendance": 84,
+      "current_semester": 5,
+      "start_year": 2021,
+      "graduate_year": 2025,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "PHM101 - Human Anatomy",
+          "CH101 - Organic Chemistry I",
+          "BI101 - Biology for Pharmacy",
+          "MA101 - Biostatistics",
+          "EN101 - Scientific Communication"
+        ],
+        "sem2": [
+          "PHM102 - Pharmaceutical Analysis I",
+          "CH102 - Organic Chemistry II",
+          "BI102 - Microbiology",
+          "PHM103 - Pharmacognosy",
+          "EN102 - Lab Report Writing"
+        ],
+        "sem3": [
+          "PHM201 - Pharmaceutical Chemistry",
+          "PHM202 - Pharmacology I",
+          "PHM203 - Pharmaceutical Technology",
+          "BI201 - Pathophysiology",
+          "CH201 - Medicinal Chemistry"
+        ],
+        "sem4": [
+          "PHM204 - Pharmacology II",
+          "PHM205 - Pharmaceutics II",
+          "PHM206 - Clinical Pharmacy",
+          "PHM207 - Pharmacotherapeutics",
+          "Elective: Drug Safety"
+        ],
+        "sem5": [
+          "PHM301 - Regulatory Affairs",
+          "PHM302 - Quality Assurance",
+          "PHM303 - Bioavailability Studies",
+          "PHM304 - Project",
+          "Elective: Pharmacovigilance"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "PHM101": 8,
+          "CH101": 7,
+          "BI101": 8,
+          "MA101": 7,
+          "EN101": 8
+        },
+        "sem2": {
+          "PHM102": 8,
+          "CH102": 7,
+          "BI102": 8,
+          "PHM103": 7,
+          "EN102": 8
+        },
+        "sem3": {
+          "PHM201": 9,
+          "PHM202": 8,
+          "PHM203": 8,
+          "BI201": 7,
+          "CH201": 8
+        },
+        "sem4": {
+          "PHM204": 8,
+          "PHM205": 8,
+          "PHM206": 7,
+          "PHM207": 8,
+          "Elective: Drug Safety": 8
+        }
+      },
+      "student_record": {
+        "research_papers": [],
+        "certifications": [
+          {
+            "title": "Pharmacovigilance Workshop",
+            "description": "Short workshop on drug safety reporting.",
+            "points": 38
+          }
+        ],
+        "achievements": [],
+        "projects": [
+          {
+            "title": "Formulation Stability Study",
+            "description": "Stability testing for prototype formulation.",
+            "points": 41
+          }
+        ],
+        "experience": [
+          {
+            "title": "Intern - Central Pharmacy",
+            "description": "Assisted in batch documentation (1 month)."
+          }
+        ]
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250019": {
+      "category": "student",
+      "name": "Tarun Malhotra",
+      "student_id": "S20250019",
+      "email": "tarun.malhotra19@student.univ.edu",
+      "password": "Tm2025#",
+      "dob": "2001-11-21",
+      "branch": "Management",
+      "university": "Global Tech University",
+      "institute": "Management",
+      "faculty_advisor": "F20250005",
+      "attendance": 82,
+      "current_semester": 8,
+      "start_year": 2020,
+      "graduate_year": 2024,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "BA101 - Principles of Management",
+          "EC101 - Microeconomics",
+          "MA101 - Business Mathematics",
+          "EN101 - Business Communication",
+          "IT101 - Business Systems"
+        ],
+        "sem2": [
+          "BA102 - Organizational Behavior",
+          "EC102 - Macroeconomics",
+          "MA102 - Statistics for Business",
+          "EN102 - Professional Writing",
+          "AC101 - Financial Accounting"
+        ],
+        "sem3": [
+          "MA201 - Managerial Economics",
+          "MK201 - Marketing Management",
+          "FN201 - Corporate Finance",
+          "HR201 - Human Resource Management",
+          "OP201 - Operations Management"
+        ],
+        "sem4": [
+          "MK202 - Consumer Behavior",
+          "FN202 - Investment Analysis",
+          "OP202 - Supply Chain Management",
+          "BA204 - Business Law",
+          "EN201 - Presentation Skills"
+        ],
+        "sem5": [
+          "MK301 - Digital Marketing",
+          "FN301 - Financial Markets",
+          "BA303 - Strategic Management",
+          "OP301 - Quality Management",
+          "BA305 - International Business"
+        ],
+        "sem6": [
+          "MK302 - Brand Management",
+          "FN302 - Corporate Taxation",
+          "BA304 - Entrepreneurship",
+          "OP302 - Project Management",
+          "BA306 - Ethics & Corporate Governance"
+        ],
+        "sem7": [
+          "BA401 - Strategic HR",
+          "MK401 - Marketing Research",
+          "FN401 - Financial Modeling",
+          "BA402 - Business Analytics",
+          "Elective: Consultancy Project"
+        ],
+        "sem8": [
+          "BA501 - Capstone Project",
+          "Elective: M&A Strategy",
+          "Elective: Risk Management",
+          "Elective: Leadership Lab",
+          "Seminar"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "BA101": 7,
+          "EC101": 7,
+          "MA101": 6,
+          "EN101": 8,
+          "IT101": 7
+        },
+        "sem2": {
+          "BA102": 7,
+          "EC102": 6,
+          "MA102": 7,
+          "EN102": 7,
+          "AC101": 8
+        },
+        "sem3": {
+          "MA201": 7,
+          "MK201": 8,
+          "FN201": 7,
+          "HR201": 6,
+          "OP201": 7
+        },
+        "sem4": {
+          "MK202": 8,
+          "FN202": 7,
+          "OP202": 7,
+          "BA204": 8,
+          "EN201": 7
+        },
+        "sem5": {
+          "MK301": 8,
+          "FN301": 7,
+          "BA303": 7,
+          "OP301": 7,
+          "BA305": 7
+        },
+        "sem6": {
+          "MK302": 7,
+          "FN302": 7,
+          "BA304": 8,
+          "OP302": 7,
+          "BA306": 8
+        },
+        "sem7": {
+          "BA401": 8,
+          "MK401": 7,
+          "FN401": 7,
+          "BA402": 8,
+          "Elective: Consultancy": 8
+        }
+      },
+      "student_record": {
+        "research_papers": [],
+        "certifications": [
+          {
+            "title": "Financial Modeling Certificate",
+            "description": "Excel-based financial modeling course.",
+            "points": 42
+          }
+        ],
+        "achievements": [
+          {
+            "title": "Intern of the Month",
+            "description": "Outstanding intern recognition.",
+            "points": 43
+          }
+        ],
+        "projects": [
+          {
+            "title": "Supply Chain Optimization Study",
+            "description": "Analysis of local supplier networks.",
+            "points": 41
+          }
+        ],
+        "experience": [
+          {
+            "title": "Business Analyst Intern - RetailCo",
+            "description": "Worked on sales forecasting (3 months)."
+          }
+        ]
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250020": {
+      "category": "student",
+      "name": "Shruti Deshmukh",
+      "student_id": "S20250020",
+      "email": "shruti.deshmukh20@student.univ.edu",
+      "password": "Sd2025#",
+      "dob": "2003-03-30",
+      "branch": "Computer Science",
+      "university": "Global Tech University",
+      "institute": "Technology",
+      "faculty_advisor": "F20250001",
+      "attendance": 91,
+      "current_semester": 6,
+      "start_year": 2022,
+      "graduate_year": 2025,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "CS101 - Programming Fundamentals",
+          "MA101 - Calculus I",
+          "PH101 - Physics I",
+          "EN101 - Communication",
+          "IT101 - Intro to IT"
+        ],
+        "sem2": [
+          "CS102 - Data Structures",
+          "MA102 - Calculus II",
+          "PH102 - Physics II",
+          "EN102 - Technical Writing",
+          "IT102 - Digital Logic"
+        ],
+        "sem3": [
+          "CS201 - Algorithms",
+          "CS202 - Computer Organization",
+          "MA201 - Discrete Math",
+          "CS203 - OOP",
+          "EE201 - Circuits"
+        ],
+        "sem4": [
+          "CS204 - OS",
+          "CS205 - DBMS",
+          "CS206 - Software Engineering",
+          "MA202 - Stats",
+          "CS207 - Networks"
+        ],
+        "sem5": [
+          "CS301 - AI",
+          "CS302 - Web Dev",
+          "CS303 - Mobile Dev",
+          "CS304 - Compiler",
+          "CS305 - Elective"
+        ],
+        "sem6": [
+          "CS401 - Distributed Systems",
+          "CS402 - Data Mining",
+          "CS403 - Cloud Computing",
+          "CS404 - Info Security",
+          "CS405 - Elective"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "CS101": 9,
+          "MA101": 8,
+          "PH101": 8,
+          "EN101": 9,
+          "IT101": 9
+        },
+        "sem2": {
+          "CS102": 9,
+          "MA102": 8,
+          "PH102": 7,
+          "EN102": 9,
+          "IT102": 8
+        },
+        "sem3": {
+          "CS201": 9,
+          "CS202": 8,
+          "MA201": 8,
+          "CS203": 9,
+          "EE201": 7
+        },
+        "sem4": {
+          "CS204": 9,
+          "CS205": 9,
+          "CS206": 8,
+          "MA202": 8,
+          "CS207": 9
+        },
+        "sem5": {
+          "CS301": 9,
+          "CS302": 9,
+          "CS303": 8,
+          "CS304": 8,
+          "CS305": 9
+        }
+      },
+      "student_record": {
+        "research_papers": [
+          {
+            "title": "Explainable AI techniques for small datasets",
+            "description": "Comparative study of model interpretability methods.",
+            "points": 46
+          }
+        ],
+        "certifications": [
+          {
+            "title": "Deep Learning Basics",
+            "description": "Intro to neural networks and architectures.",
+            "points": 45
+          }
+        ],
+        "achievements": [
+          {
+            "title": "AI Model Challenge Winner",
+            "description": "First place in campus ML competition.",
+            "points": 47
+          }
+        ],
+        "projects": [
+          {
+            "title": "Document Summarizer",
+            "description": "NLP based summarization tool.",
+            "points": 44
+          }
+        ],
+        "experience": [
+          {
+            "title": "Research Intern - AI Lab",
+            "description": "Worked on model explainability (4 months)."
+          }
+        ]
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250021": {
+      "category": "student",
+      "name": "Gaurav Yadav",
+      "student_id": "S20250021",
+      "email": "gaurav.yadav21@student.univ.edu",
+      "password": "Gy2025#",
+      "dob": "2002-04-17",
+      "branch": "Mathematics",
+      "university": "Global Tech University",
+      "institute": "Science",
+      "faculty_advisor": "F20250006",
+      "attendance": 88,
+      "current_semester": 6,
+      "start_year": 2021,
+      "graduate_year": 2025,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "MA101 - Calculus I",
+          "MA102 - Linear Algebra I",
+          "EN101 - Communication",
+          "CS101 - Programming Basics",
+          "PH101 - Basic Physics"
+        ],
+        "sem2": [
+          "MA201 - Calculus II",
+          "MA202 - Differential Equations",
+          "MA203 - Probability",
+          "EN102 - Academic Writing",
+          "Elective: Number Theory"
+        ],
+        "sem3": [
+          "MA301 - Real Analysis",
+          "MA302 - Abstract Algebra",
+          "MA303 - Complex Analysis",
+          "Elective: Topology",
+          "Seminar"
+        ],
+        "sem4": [
+          "MA401 - Numerical Methods",
+          "MA402 - Graph Theory",
+          "MA403 - Applied Statistics",
+          "Elective: Mathematical Modelling",
+          "Project"
+        ],
+        "sem5": [
+          "MA501 - Functional Analysis",
+          "MA502 - Partial Differential Equations",
+          "MA503 - Optimization",
+          "Elective: Cryptography",
+          "Project II"
+        ],
+        "sem6": [
+          "MA601 - Thesis",
+          "Seminar II",
+          "Elective: Advanced Topics",
+          "Elective: Boundary Value Problems",
+          "Project III"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "MA101": 9,
+          "MA102": 8,
+          "EN101": 8,
+          "CS101": 7,
+          "PH101": 7
+        },
+        "sem2": {
+          "MA201": 9,
+          "MA202": 8,
+          "MA203": 8,
+          "EN102": 8,
+          "Elective: Number Theory": 9
+        },
+        "sem3": {
+          "MA301": 9,
+          "MA302": 8,
+          "MA303": 8,
+          "Elective: Topology": 8,
+          "Seminar": 9
+        },
+        "sem4": {
+          "MA401": 8,
+          "MA402": 9,
+          "MA403": 8,
+          "Elective: Modelling": 8,
+          "Project": 9
+        },
+        "sem5": {
+          "MA501": 9,
+          "MA502": 8,
+          "MA503": 9,
+          "Elective: Cryptography": 8,
+          "Project II": 9
+        }
+      },
+      "student_record": {
+        "research_papers": [
+          {
+            "title": "Numerical solution methods for PDEs",
+            "description": "Comparing schemes for time-dependent PDEs.",
+            "points": 40
+          }
+        ],
+        "certifications": [],
+        "achievements": [
+          {
+            "title": "Math Olympiad Regional Winner",
+            "description": "Top performer in regional math competition.",
+            "points": 46
+          }
+        ],
+        "projects": [
+          {
+            "title": "PDE Solver Toolkit",
+            "description": "Open-source numerical solver package.",
+            "points": 42
+          }
+        ],
+        "experience": [
+          {
+            "title": "Teaching Assistant - Calculus",
+            "description": "Assisted undergraduate tutorials (1 semester)."
+          }
+        ]
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250022": {
+      "category": "student",
+      "name": "Nitin Rao",
+      "student_id": "S20250022",
+      "email": "nitin.rao22@student.univ.edu",
+      "password": "Nr2025#",
+      "dob": "2003-08-12",
+      "branch": "Computer Science",
+      "university": "Global Tech University",
+      "institute": "Technology",
+      "faculty_advisor": "F20250001",
+      "attendance": 80,
+      "current_semester": 1,
+      "start_year": 2025,
+      "graduate_year": 2029,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "CS101 - Programming Fundamentals",
+          "MA101 - Calculus I",
+          "PH101 - Physics",
+          "EN101 - Communication",
+          "IT101 - Intro to IT"
+        ]
+      },
+      "grades": {},
+      "student_record": {
+        "research_papers": [],
+        "certifications": [],
+        "achievements": [],
+        "projects": [],
+        "experience": []
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250023": {
+      "category": "student",
+      "name": "Priti Sharma",
+      "student_id": "S20250023",
+      "email": "priti.sharma23@student.univ.edu",
+      "password": "Ps2025#",
+      "dob": "2002-10-10",
+      "branch": "Economics",
+      "university": "Global Tech University",
+      "institute": "Science",
+      "faculty_advisor": "F20250006",
+      "attendance": 87,
+      "current_semester": 6,
+      "start_year": 2021,
+      "graduate_year": 2025,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "EC101 - Microeconomics",
+          "MA101 - Calculus I",
+          "EN101 - Communication",
+          "SS101 - Sociology",
+          "IT101 - Data Basics"
+        ],
+        "sem2": [
+          "EC102 - Macroeconomics",
+          "MA102 - Statistics I",
+          "EN102 - Research Writing",
+          "EC103 - Economic History",
+          "Elective: Public Policy"
+        ],
+        "sem3": [
+          "EC201 - Econometrics I",
+          "EC202 - Development Economics",
+          "MA201 - Probability",
+          "Elective: Labour Economics",
+          "Seminar"
+        ],
+        "sem4": [
+          "EC301 - International Economics",
+          "EC302 - Public Economics",
+          "EC303 - Industrial Organization",
+          "Elective: Game Theory",
+          "Project"
+        ],
+        "sem5": [
+          "EC401 - Advanced Econometrics",
+          "EC402 - Finance & Economy",
+          "Elective: Behavioural Economics",
+          "Project II",
+          "Seminar II"
+        ],
+        "sem6": [
+          "EC501 - Thesis",
+          "EC502 - Research Methods",
+          "Elective: Urban Economics",
+          "Elective: Environmental Economics",
+          "Project III"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "EC101": 8,
+          "MA101": 7,
+          "EN101": 8,
+          "SS101": 7,
+          "IT101": 8
+        },
+        "sem2": {
+          "EC102": 8,
+          "MA102": 8,
+          "EN102": 8,
+          "EC103": 7,
+          "Elective: Public Policy": 8
+        },
+        "sem3": {
+          "EC201": 9,
+          "EC202": 8,
+          "MA201": 8,
+          "Elective: Labour": 7,
+          "Seminar": 9
+        },
+        "sem4": {
+          "EC301": 8,
+          "EC302": 8,
+          "EC303": 7,
+          "Elective: Game Theory": 8,
+          "Project": 8
+        },
+        "sem5": {
+          "EC401": 9,
+          "EC402": 8,
+          "Elective: Behavioural": 8,
+          "Project II": 9,
+          "Seminar II": 8
+        }
+      },
+      "student_record": {
+        "research_papers": [
+          {
+            "title": "Impact of microfinance on rural incomes",
+            "description": "Survey-based impact evaluation.",
+            "points": 39
+          }
+        ],
+        "certifications": [],
+        "achievements": [
+          {
+            "title": "Research Fellowship Award",
+            "description": "Small fellowship for undergrad research.",
+            "points": 44
+          }
+        ],
+        "projects": [
+          {
+            "title": "Consumption Pattern Study",
+            "description": "Dataset analysis of household consumption.",
+            "points": 41
+          }
+        ],
+        "experience": [
+          {
+            "title": "Research Assistant - Econ Lab",
+            "description": "Data cleaning & analysis (3 months)."
+          }
+        ]
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250024": {
+      "category": "student",
+      "name": "Yashoda Rao",
+      "student_id": "S20250024",
+      "email": "yashoda.rao24@student.univ.edu",
+      "password": "Yr2025#",
+      "dob": "2004-06-04",
+      "branch": "Fine Arts",
+      "university": "Global Tech University",
+      "institute": "Arts",
+      "faculty_advisor": "F20250011",
+      "attendance": 96,
+      "current_semester": 3,
+      "start_year": 2023,
+      "graduate_year": 2027,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "FA101 - Drawing I",
+          "AR101 - Art History",
+          "EN101 - Communication",
+          "IT101 - Digital Tools",
+          "MA101 - Basic Design"
+        ],
+        "sem2": [
+          "FA102 - Painting I",
+          "FA103 - Sculpture Basics",
+          "AR102 - Contemporary Art",
+          "EN102 - Presentation",
+          "Elective: Printmaking"
+        ],
+        "sem3": [
+          "FA201 - Painting II",
+          "FA202 - Mixed Media",
+          "FA203 - Installation Art",
+          "Elective: Curatorial Studies",
+          "Seminar"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "FA101": 9,
+          "AR101": 9,
+          "EN101": 9,
+          "IT101": 8,
+          "MA101": 8
+        },
+        "sem2": {
+          "FA102": 9,
+          "FA103": 8,
+          "AR102": 8,
+          "EN102": 9,
+          "Elective: Printmaking": 8
+        }
+      },
+      "student_record": {
+        "research_papers": [],
+        "certifications": [],
+        "achievements": [
+          {
+            "title": "Local Gallery Feature",
+            "description": "Artwork displayed in city gallery.",
+            "points": 45
+          }
+        ],
+        "projects": [
+          {
+            "title": "Community Mural",
+            "description": "Designed and executed a public mural.",
+            "points": 44
+          }
+        ],
+        "experience": []
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250025": {
+      "category": "student",
+      "name": "Karan Mallick",
+      "student_id": "S20250025",
+      "email": "karan.mallick25@student.univ.edu",
+      "password": "Km2025#",
+      "dob": "2002-09-19",
+      "branch": "Physics",
+      "university": "Global Tech University",
+      "institute": "Science",
+      "faculty_advisor": "F20250006",
+      "attendance": 88,
+      "current_semester": 7,
+      "start_year": 2021,
+      "graduate_year": 2025,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "PH101 - Mechanics",
+          "MA101 - Calculus I",
+          "CH101 - Chemistry I",
+          "EN101 - Scientific Writing",
+          "IT101 - Lab Basics"
+        ],
+        "sem2": [
+          "PH102 - Electromagnetism I",
+          "MA102 - Calculus II",
+          "CH102 - Chemistry II",
+          "PH103 - Lab Techniques",
+          "EN102 - Communication"
+        ],
+        "sem3": [
+          "PH201 - Thermodynamics",
+          "PH202 - Quantum Mechanics I",
+          "MA201 - Linear Algebra",
+          "Elective: Optics",
+          "Seminar"
+        ],
+        "sem4": [
+          "PH301 - Quantum Mechanics II",
+          "PH302 - Statistical Mechanics",
+          "PH303 - Condensed Matter",
+          "Elective: Nanophysics",
+          "Project"
+        ],
+        "sem5": [
+          "PH401 - Advanced Lab",
+          "PH402 - Computational Physics",
+          "Elective: Particle Physics",
+          "Project II",
+          "Seminar II"
+        ],
+        "sem6": [
+          "PH501 - Thesis",
+          "Elective: Applied Physics",
+          "Elective: Photonics",
+          "Project III",
+          "Seminar III"
+        ],
+        "sem7": [
+          "PH601 - Major Research Project",
+          "PH602 - Advanced Topics",
+          "Elective: High Energy Physics",
+          "Elective: Quantum Optics",
+          "Seminar IV"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "PH101": 8,
+          "MA101": 8,
+          "CH101": 7,
+          "EN101": 8,
+          "IT101": 7
+        },
+        "sem2": {
+          "PH102": 8,
+          "MA102": 7,
+          "CH102": 8,
+          "PH103": 8,
+          "EN102": 8
+        },
+        "sem3": {
+          "PH201": 9,
+          "PH202": 8,
+          "MA201": 8,
+          "Elective: Optics": 7,
+          "Seminar": 9
+        },
+        "sem4": {
+          "PH301": 9,
+          "PH302": 8,
+          "PH303": 8,
+          "Elective: Nanophysics": 8,
+          "Project": 9
+        },
+        "sem5": {
+          "PH401": 8,
+          "PH402": 8,
+          "Elective: Particle": 7,
+          "Project II": 8,
+          "Seminar II": 8
+        },
+        "sem6": {
+          "PH501": 9,
+          "Elective: Applied": 8,
+          "Elective: Photonics": 8,
+          "Project III": 9,
+          "Seminar III": 9
+        }
+      },
+      "student_record": {
+        "research_papers": [
+          {
+            "title": "Computational modelling of nanoscale heat transfer",
+            "description": "Simulation-based study on nanoscale conduction.",
+            "points": 45
+          }
+        ],
+        "certifications": [],
+        "achievements": [],
+        "projects": [
+          {
+            "title": "Optical Sensor Prototype",
+            "description": "Designed low-cost optical sensing module.",
+            "points": 43
+          }
+        ],
+        "experience": [
+          {
+            "title": "Research Intern - Physics Lab",
+            "description": "Assisted in computational modelling (3 months)."
+          }
+        ]
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250026": {
+      "category": "student",
+      "name": "Siddharth Bansal",
+      "student_id": "S20250026",
+      "email": "siddharth.bansal26@student.univ.edu",
+      "password": "Sb2025#",
+      "dob": "2003-02-14",
+      "branch": "Information Technology",
+      "university": "Global Tech University",
+      "institute": "Technology",
+      "faculty_advisor": "F20250001",
+      "attendance": 90,
+      "current_semester": 4,
+      "start_year": 2022,
+      "graduate_year": 2026,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "IT101 - Intro to IT Systems",
+          "CS101 - Programming Fundamentals",
+          "MA101 - Calculus I",
+          "EN101 - Communication",
+          "PH101 - Physics"
+        ],
+        "sem2": [
+          "IT102 - Digital Logic",
+          "CS102 - Data Structures",
+          "MA102 - Discrete Math",
+          "EN102 - Technical Writing",
+          "IT103 - System Fundamentals"
+        ],
+        "sem3": [
+          "IT201 - DBMS",
+          "IT202 - Web Technologies",
+          "IT203 - Networking Fundamentals",
+          "CS201 - Algorithms",
+          "MA201 - Probability & Stats"
+        ],
+        "sem4": [
+          "IT204 - OS & Security",
+          "IT205 - Software Engineering",
+          "IT206 - Mobile App Dev",
+          "IT207 - Cloud Basics",
+          "Elective: DevOps"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "IT101": 9,
+          "CS101": 8,
+          "MA101": 8,
+          "EN101": 9,
+          "PH101": 8
+        },
+        "sem2": {
+          "IT102": 8,
+          "CS102": 9,
+          "MA102": 8,
+          "EN102": 8,
+          "IT103": 9
+        },
+        "sem3": {
+          "IT201": 9,
+          "IT202": 8,
+          "IT203": 8,
+          "CS201": 8,
+          "MA201": 8
+        }
+      },
+      "student_record": {
+        "research_papers": [],
+        "certifications": [
+          {
+            "title": "AWS Cloud Practitioner",
+            "description": "Intro to cloud fundamentals.",
+            "points": 44
+          }
+        ],
+        "achievements": [],
+        "projects": [
+          {
+            "title": "Campus Events Platform",
+            "description": "Web app to manage college events.",
+            "points": 42
+          }
+        ],
+        "experience": [
+          {
+            "title": "Frontend Intern - WebWorks",
+            "description": "Worked on UI components (2 months)."
+          }
+        ]
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250027": {
+      "category": "student",
+      "name": "Bhavya Jain",
+      "student_id": "S20250027",
+      "email": "bhavya.jain27@student.univ.edu",
+      "password": "Bj2025#",
+      "dob": "2004-11-02",
+      "branch": "Law",
+      "university": "Global Tech University",
+      "institute": "Law",
+      "faculty_advisor": "F20250009",
+      "attendance": 92,
+      "current_semester": 3,
+      "start_year": 2023,
+      "graduate_year": 2026,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "LW101 - Constitutional Law I",
+          "GS101 - Legal Methods",
+          "EN101 - Legal English",
+          "HS101 - History of Law",
+          "SS101 - Sociology"
+        ],
+        "sem2": [
+          "LW102 - Contract Law I",
+          "CR101 - Criminal Law I",
+          "EN102 - Drafting & Pleadings",
+          "EC101 - Economics for Law",
+          "PM101 - Political Science"
+        ],
+        "sem3": [
+          "LW201 - Constitutional Law II",
+          "LW202 - Tort Law",
+          "CR201 - Criminal Law II",
+          "LW203 - Administrative Law",
+          "LW204 - Family Law"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "LW101": 9,
+          "GS101": 8,
+          "EN101": 9,
+          "HS101": 8,
+          "SS101": 8
+        },
+        "sem2": {
+          "LW102": 8,
+          "CR101": 8,
+          "EN102": 9,
+          "EC101": 8,
+          "PM101": 8
+        }
+      },
+      "student_record": {
+        "research_papers": [],
+        "certifications": [],
+        "achievements": [],
+        "projects": [],
+        "experience": []
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250028": {
+      "category": "student",
+      "name": "Maya N.",
+      "student_id": "S20250028",
+      "email": "maya.n28@student.univ.edu",
+      "password": "Mn2025#",
+      "dob": "2003-06-06",
+      "branch": "Computer Science",
+      "university": "Global Tech University",
+      "institute": "Technology",
+      "faculty_advisor": "F20250001",
+      "attendance": 85,
+      "current_semester": 5,
+      "start_year": 2021,
+      "graduate_year": 2025,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "CS101 - Programming Fundamentals",
+          "MA101 - Calculus I",
+          "PH101 - Physics",
+          "EN101 - Communication",
+          "IT101 - Intro to IT"
+        ],
+        "sem2": [
+          "CS102 - Data Structures",
+          "MA102 - Calculus II",
+          "PH102 - Physics II",
+          "EN102 - Technical Writing",
+          "IT102 - Digital Logic"
+        ],
+        "sem3": [
+          "CS201 - Algorithms",
+          "CS202 - Computer Organization",
+          "MA201 - Discrete Math",
+          "CS203 - OOP",
+          "EE201 - Circuits"
+        ],
+        "sem4": [
+          "CS204 - OS",
+          "CS205 - DBMS",
+          "CS206 - Software Engineering",
+          "MA202 - Stats",
+          "CS207 - Networks"
+        ],
+        "sem5": [
+          "CS301 - AI",
+          "CS302 - Web Dev",
+          "CS303 - Mobile Dev",
+          "CS304 - Compiler",
+          "CS305 - Elective"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "CS101": 8,
+          "MA101": 7,
+          "PH101": 7,
+          "EN101": 8,
+          "IT101": 8
+        },
+        "sem2": {
+          "CS102": 9,
+          "MA102": 8,
+          "PH102": 7,
+          "EN102": 8,
+          "IT102": 8
+        },
+        "sem3": {
+          "CS201": 9,
+          "CS202": 8,
+          "MA201": 8,
+          "CS203": 9,
+          "EE201": 7
+        },
+        "sem4": {
+          "CS204": 8,
+          "CS205": 9,
+          "CS206": 8,
+          "MA202": 8,
+          "CS207": 8
+        }
+      },
+      "student_record": {
+        "research_papers": [
+          {
+            "title": "Lightweight neural networks for edge devices",
+            "description": "Model compression and pruning techniques.",
+            "points": 43
+          }
+        ],
+        "certifications": [
+          {
+            "title": "TensorFlow Basics",
+            "description": "Intro to building models using TensorFlow.",
+            "points": 41
+          }
+        ],
+        "achievements": [],
+        "projects": [
+          {
+            "title": "Edge Image Classifier",
+            "description": "Mobile-friendly image classification model.",
+            "points": 42
+          }
+        ],
+        "experience": []
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250029": {
+      "category": "student",
+      "name": "Leena Thomas",
+      "student_id": "S20250029",
+      "email": "leena.thomas29@student.univ.edu",
+      "password": "Lt2025#",
+      "dob": "2003-04-28",
+      "branch": "Nursing",
+      "university": "Global Tech University",
+      "institute": "Health Sciences",
+      "faculty_advisor": "F20250013",
+      "attendance": 94,
+      "current_semester": 4,
+      "start_year": 2022,
+      "graduate_year": 2026,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "NU101 - Fundamentals of Nursing",
+          "BI101 - Anatomy & Physiology",
+          "EN101 - Communication",
+          "CH101 - Chemistry Basics",
+          "HS101 - Health Science Intro"
+        ],
+        "sem2": [
+          "NU102 - Medical-Surgical Nursing I",
+          "BI102 - Microbiology",
+          "NU103 - Pharmacology Basics",
+          "EN102 - Therapeutic Communication",
+          "Elective: Community Health"
+        ],
+        "sem3": [
+          "NU201 - Pediatric Nursing",
+          "NU202 - Maternal Health Nursing",
+          "NU203 - Mental Health Nursing",
+          "NU204 - Clinical Practicum",
+          "Seminar"
+        ],
+        "sem4": [
+          "NU301 - Advanced Clinical Nursing",
+          "NU302 - Public Health Nursing",
+          "NU303 - Nursing Research",
+          "NU304 - Leadership in Nursing",
+          "Project"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "NU101": 9,
+          "BI101": 9,
+          "EN101": 9,
+          "CH101": 8,
+          "HS101": 8
+        },
+        "sem2": {
+          "NU102": 9,
+          "BI102": 9,
+          "NU103": 8,
+          "EN102": 9,
+          "Elective: Community": 8
+        },
+        "sem3": {
+          "NU201": 9,
+          "NU202": 8,
+          "NU203": 9,
+          "NU204": 9,
+          "Seminar": 9
+        }
+      },
+      "student_record": {
+        "research_papers": [],
+        "certifications": [
+          {
+            "title": "Basic Life Support (BLS)",
+            "description": "Certification in basic life support techniques.",
+            "points": 44
+          }
+        ],
+        "achievements": [],
+        "projects": [
+          {
+            "title": "Community Health Drive",
+            "description": "Organized a local health awareness camp.",
+            "points": 43
+          }
+        ],
+        "experience": [
+          {
+            "title": "Clinical Trainee - City Hospital",
+            "description": "Assisted in ward duties (2 months)."
+          }
+        ]
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    },
+    "S20250030": {
+      "category": "student",
+      "name": "Devika Menon",
+      "student_id": "S20250030",
+      "email": "devika.menon30@student.univ.edu",
+      "password": "Dm2025#",
+      "dob": "2002-08-08",
+      "branch": "Computer Science",
+      "university": "Global Tech University",
+      "institute": "Technology",
+      "faculty_advisor": "F20250001",
+      "attendance": 95,
+      "current_semester": 6,
+      "start_year": 2022,
+      "graduate_year": 2025,
+      "profile_photo": "",
+      "courses": {
+        "sem1": [
+          "CS101 - Programming Fundamentals",
+          "MA101 - Calculus I",
+          "PH101 - Physics",
+          "EN101 - Communication",
+          "IT101 - Intro to IT"
+        ],
+        "sem2": [
+          "CS102 - Data Structures",
+          "MA102 - Calculus II",
+          "PH102 - Physics II",
+          "EN102 - Technical Writing",
+          "IT102 - Digital Logic"
+        ],
+        "sem3": [
+          "CS201 - Algorithms",
+          "CS202 - Computer Organization",
+          "MA201 - Discrete Math",
+          "CS203 - OOP",
+          "EE201 - Circuits"
+        ],
+        "sem4": [
+          "CS204 - OS",
+          "CS205 - DBMS",
+          "CS206 - Software Engineering",
+          "MA202 - Stats",
+          "CS207 - Networks"
+        ],
+        "sem5": [
+          "CS301 - AI",
+          "CS302 - Web Dev",
+          "CS303 - Mobile Dev",
+          "CS304 - Compiler",
+          "CS305 - Elective"
+        ],
+        "sem6": [
+          "CS401 - Distributed Systems",
+          "CS402 - Data Mining",
+          "CS403 - Cloud Computing",
+          "CS404 - Info Security",
+          "CS405 - Elective"
+        ]
+      },
+      "grades": {
+        "sem1": {
+          "CS101": 9,
+          "MA101": 8,
+          "PH101": 8,
+          "EN101": 9,
+          "IT101": 9
+        },
+        "sem2": {
+          "CS102": 9,
+          "MA102": 8,
+          "PH102": 8,
+          "EN102": 9,
+          "IT102": 8
+        },
+        "sem3": {
+          "CS201": 9,
+          "CS202": 8,
+          "MA201": 8,
+          "CS203": 9,
+          "EE201": 8
+        },
+        "sem4": {
+          "CS204": 9,
+          "CS205": 9,
+          "CS206": 8,
+          "MA202": 9,
+          "CS207": 9
+        },
+        "sem5": {
+          "CS301": 9,
+          "CS302": 9,
+          "CS303": 9,
+          "CS304": 8,
+          "CS305": 9
+        }
+      },
+      "student_record": {
+        "research_papers": [
+          {
+            "title": "Federated learning for mobile devices",
+            "description": "Privacy-preserving distributed learning evaluation.",
+            "points": 46
+          }
+        ],
+        "certifications": [
+          {
+            "title": "Coursera Machine Learning",
+            "description": "Intro ML course (Andrew Ng).",
+            "points": 45
+          }
+        ],
+        "achievements": [
+          {
+            "title": "Topper - Data Structures",
+            "description": "Highest score in sem 2 Data Structures.",
+            "points": 47
+          }
+        ],
+        "projects": [
+          {
+            "title": "Privacy-preserving Chat App",
+            "description": "End-to-end encrypted messaging app prototype.",
+            "points": 44
+          }
+        ],
+        "experience": [
+          {
+            "title": "Software Intern - SecureApps",
+            "description": "Backend and security work (3 months)."
+          }
+        ]
+      },
+      "approval_list": [],
+      "approval_accepted": [],
+      "approval_rejected": [],
+      "approval_pending": [],
+      "domain1": "",
+      "domain2": ""
+    }
+  },
+  "faculty": {
+    "F20250001": {
+      "category": "faculty",
+      "name": "Dr. Neelesh Kapoor",
+      "faculty_id": "F20250001",
+      "email": "neelesh.kapoor@univ.edu",
+      "password": "Fk2025#",
+      "dob": "1978-03-15",
+      "designation": "Professor - Computer Science",
+      "department": "Computer Science",
+      "educational_qualifications": "Ph.D. Computer Science, M.Tech",
+      "faculty_record": {
+        "papers_and_publications": [
+          {
+            "title": "Scalable distributed systems",
+            "description": "Journal of Distributed Systems, 2021"
+          },
+          {
+            "title": "Security in Cloud Computing",
+            "description": "International Conference on Cloud 2019"
+          }
+        ],
+        "projects": [
+          {
+            "title": "Campus Cloud Infrastructure",
+            "description": "Led implementation of campus private cloud."
+          }
+        ]
+      },
+      "approval_section": [],
+      "approval_history": [],
+      "approval_analytics": {
+        "total_approved": 0,
+        "total_rejected": 0,
+        "approval_rate": 0,
+        "avg_points_awarded": 0
+      },
+      "approval_trends": []
+    },
+    "F20250002": {
+      "category": "faculty",
+      "name": "Prof. Maya Sengupta",
+      "faculty_id": "F20250002",
+      "email": "maya.sengupta@univ.edu",
+      "password": "Fk2025#",
+      "dob": "1980-10-21",
+      "designation": "Associate Professor - Mechanical Engineering",
+      "department": "Mechanical Engineering",
+      "educational_qualifications": "Ph.D. Mechanical Engineering, M.E.",
+      "faculty_record": {
+        "papers_and_publications": [
+          {
+            "title": "Advanced gearbox dynamics",
+            "description": "Mechanics Journal, 2020"
+          }
+        ],
+        "projects": [
+          {
+            "title": "Industrial Automation Lab Setup",
+            "description": "Funded lab setup for automation experiments."
+          }
+        ]
+      },
+      "approval_section": [],
+      "approval_history": [],
+      "approval_analytics": {
+        "total_approved": 0,
+        "total_rejected": 0,
+        "approval_rate": 0,
+        "avg_points_awarded": 0
+      },
+      "approval_trends": []
+    },
+    "F20250003": {
+      "category": "faculty",
+      "name": "Dr. Rohit Malhotra",
+      "faculty_id": "F20250003",
+      "email": "rohit.malhotra@univ.edu",
+      "password": "Fk2025#",
+      "dob": "1976-01-08",
+      "designation": "Professor - Electrical Engineering",
+      "department": "Electrical Engineering",
+      "educational_qualifications": "Ph.D. Electrical Engineering, M.Tech",
+      "faculty_record": {
+        "papers_and_publications": [
+          {
+            "title": "Smart Grid Analytics",
+            "description": "IEEE Transactions on Power Systems, 2022"
+          }
+        ],
+        "projects": [
+          {
+            "title": "Microgrid Control",
+            "description": "Research project on microgrid stability."
+          }
+        ]
+      },
+      "approval_section": [],
+      "approval_history": [],
+      "approval_analytics": {
+        "total_approved": 0,
+        "total_rejected": 0,
+        "approval_rate": 0,
+        "avg_points_awarded": 0
+      },
+      "approval_trends": []
+    },
+    "F20250004": {
+      "category": "faculty",
+      "name": "Dr. Sunita Rao",
+      "faculty_id": "F20250004",
+      "email": "sunita.rao@univ.edu",
+      "password": "Fk2025#",
+      "dob": "1975-11-12",
+      "designation": "Associate Professor - Civil & Chemical",
+      "department": "Civil Engineering",
+      "educational_qualifications": "Ph.D. Civil Engineering, M.Tech",
+      "faculty_record": {
+        "papers_and_publications": [
+          {
+            "title": "Seismic retrofit techniques",
+            "description": "Journal of Civil Engg, 2018"
+          }
+        ],
+        "projects": [
+          {
+            "title": "Urban Drainage Study",
+            "description": "City collaboration for drainage planning."
+          }
+        ]
+      },
+      "approval_section": [],
+      "approval_history": [],
+      "approval_analytics": {
+        "total_approved": 0,
+        "total_rejected": 0,
+        "approval_rate": 0,
+        "avg_points_awarded": 0
+      },
+      "approval_trends": []
+    },
+    "F20250005": {
+      "category": "faculty",
+      "name": "Prof. Anita Menon",
+      "faculty_id": "F20250005",
+      "email": "anita.menon@univ.edu",
+      "password": "Fk2025#",
+      "dob": "1982-06-05",
+      "designation": "Professor - Management",
+      "department": "Management",
+      "educational_qualifications": "Ph.D. Management, MBA",
+      "faculty_record": {
+        "papers_and_publications": [
+          {
+            "title": "Startup ecosystems in emerging markets",
+            "description": "Management Review, 2020"
+          }
+        ],
+        "projects": [
+          {
+            "title": "Industry-Academia Incubator",
+            "description": "Incubator setup and management."
+          }
+        ]
+      },
+      "approval_section": [],
+      "approval_history": [],
+      "approval_analytics": {
+        "total_approved": 0,
+        "total_rejected": 0,
+        "approval_rate": 0,
+        "avg_points_awarded": 0
+      },
+      "approval_trends": []
+    },
+    "F20250006": {
+      "category": "faculty",
+      "name": "Dr. Alok Verma",
+      "faculty_id": "F20250006",
+      "email": "alok.verma@univ.edu",
+      "password": "Fk2025#",
+      "dob": "1979-02-28",
+      "designation": "Associate Professor - Sciences",
+      "department": "Sciences",
+      "educational_qualifications": "Ph.D. in Biology, M.Sc.",
+      "faculty_record": {
+        "papers_and_publications": [
+          {
+            "title": "Genomic variations in local plants",
+            "description": "Plant Genetics Journal, 2019"
+          }
+        ],
+        "projects": [
+          {
+            "title": "Bioinformatics Facility",
+            "description": "Set up computational biology resources."
+          }
+        ]
+      },
+      "approval_section": [],
+      "approval_history": [],
+      "approval_analytics": {
+        "total_approved": 0,
+        "total_rejected": 0,
+        "approval_rate": 0,
+        "avg_points_awarded": 0
+      },
+      "approval_trends": []
+    },
+    "F20250007": {
+      "category": "faculty",
+      "name": "Prof. Anjali Desai",
+      "faculty_id": "F20250007",
+      "email": "anjali.desai@univ.edu",
+      "password": "Fa2025#",
+      "dob": "1984-03-18",
+      "designation": "Assistant Professor - Design",
+      "department": "Design",
+      "educational_qualifications": "M.Des, B.Des",
+      "faculty_record": {
+        "papers_and_publications": [
+          {
+            "title": "Inclusive product design",
+            "description": "Design Studies, 2021"
+          }
+        ],
+        "projects": [
+          {
+            "title": "Community Design Labs",
+            "description": "Student-led participatory design projects."
+          }
+        ]
+      },
+      "approval_section": [],
+      "approval_history": [],
+      "approval_analytics": {
+        "total_approved": 0,
+        "total_rejected": 0,
+        "approval_rate": 0,
+        "avg_points_awarded": 0
+      },
+      "approval_trends": []
+    },
+    "F20250008": {
+      "category": "faculty",
+      "name": "Dr. Priya Nair",
+      "faculty_id": "F20250008",
+      "email": "priya.nair@univ.edu",
+      "password": "Fp2025#",
+      "dob": "1977-08-28",
+      "designation": "Professor - Pharmacy",
+      "department": "Pharmacy",
+      "educational_qualifications": "Ph.D. Pharmacy, M.Pharm",
+      "faculty_record": {
+        "papers_and_publications": [
+          {
+            "title": "Pharmacokinetics of novel formulations",
+            "description": "Pharma Research Journal, 2020"
+          }
+        ],
+        "projects": [
+          {
+            "title": "Drug Stability Platform",
+            "description": "Stability testing and protocols."
+          }
+        ]
+      },
+      "approval_section": [],
+      "approval_history": [],
+      "approval_analytics": {
+        "total_approved": 0,
+        "total_rejected": 0,
+        "approval_rate": 0,
+        "avg_points_awarded": 0
+      },
+      "approval_trends": []
+    },
+    "F20250009": {
+      "category": "faculty",
+      "name": "Prof. Vikram Joshi",
+      "faculty_id": "F20250009",
+      "email": "vikram.joshi@univ.edu",
+      "password": "Fj2025#",
+      "dob": "1976-11-11",
+      "designation": "Assistant Professor - Law",
+      "department": "Law",
+      "educational_qualifications": "LL.M, B.A. LL.B",
+      "faculty_record": {
+        "papers_and_publications": [
+          {
+            "title": "Environmental law and policy",
+            "description": "Law & Society, 2019"
+          }
+        ],
+        "projects": [
+          {
+            "title": "Legal Aid Clinic",
+            "description": "Student clinic providing pro bono services."
+          }
+        ]
+      },
+      "approval_section": [],
+      "approval_history": [],
+      "approval_analytics": {
+        "total_approved": 0,
+        "total_rejected": 0,
+        "approval_rate": 0,
+        "avg_points_awarded": 0
+      },
+      "approval_trends": []
+    },
+    "F20250010": {
+      "category": "faculty",
+      "name": "Dr. Meera Patel",
+      "faculty_id": "F20250010",
+      "email": "meera.patel@univ.edu",
+      "password": "Fm1025#",
+      "dob": "1983-02-14",
+      "designation": "Associate Professor - Architecture",
+      "department": "Architecture",
+      "educational_qualifications": "Ph.D. Architecture, M.Arch",
+      "faculty_record": {
+        "papers_and_publications": [
+          {
+            "title": "Sustainable urban design",
+            "description": "Urban Studies Journal, 2021"
+          }
+        ],
+        "projects": [
+          {
+            "title": "Green Campus Masterplan",
+            "description": "Campus-wide sustainability initiative."
+          }
+        ]
+      },
+      "approval_section": [],
+      "approval_history": [],
+      "approval_analytics": {
+        "total_approved": 0,
+        "total_rejected": 0,
+        "approval_rate": 0,
+        "avg_points_awarded": 0
+      },
+      "approval_trends": []
+    },
+    "F20250011": {
+      "category": "faculty",
+      "name": "Prof. Rajesh Gupta",
+      "faculty_id": "F20250011",
+      "email": "rajesh.gupta@univ.edu",
+      "password": "Fg1125#",
+      "dob": "1974-06-21",
+      "designation": "Professor - Arts",
+      "department": "Arts",
+      "educational_qualifications": "Ph.D. Fine Arts, M.A.",
+      "faculty_record": {
+        "papers_and_publications": [
+          {
+            "title": "Contemporary mural art",
+            "description": "Art & Culture Review, 2018"
+          }
+        ],
+        "projects": [
+          {
+            "title": "Campus Mural Initiative",
+            "description": "Student-community mural projects."
+          }
+        ]
+      },
+      "approval_section": [],
+      "approval_history": [],
+      "approval_analytics": {
+        "total_approved": 0,
+        "total_rejected": 0,
+        "approval_rate": 0,
+        "avg_points_awarded": 0
+      },
+      "approval_trends": []
+    },
+    "F20250012": {
+      "category": "faculty",
+      "name": "Dr. Sujata Menon",
+      "faculty_id": "F20250012",
+      "email": "sujata.menon@univ.edu",
+      "password": "Fm1225#",
+      "dob": "1981-03-03",
+      "designation": "Assistant Professor - Psychology",
+      "department": "Psychology",
+      "educational_qualifications": "Ph.D. Psychology, M.Phil",
+      "faculty_record": {
+        "papers_and_publications": [
+          {
+            "title": "Adolescent mental health interventions",
+            "description": "Journal of Psychology, 2022"
+          }
+        ],
+        "projects": [
+          {
+            "title": "Counseling Outreach",
+            "description": "Campus mental health awareness program."
+          }
+        ]
+      },
+      "approval_section": [],
+      "approval_history": [],
+      "approval_analytics": {
+        "total_approved": 0,
+        "total_rejected": 0,
+        "approval_rate": 0,
+        "avg_points_awarded": 0
+      },
+      "approval_trends": []
+    },
+    "F20250013": {
+      "category": "faculty",
+      "name": "Prof. Amit Verma",
+      "faculty_id": "F20250013",
+      "email": "amit.verma@univ.edu",
+      "password": "Fv2025#",
+      "dob": "1972-09-09",
+      "designation": "Professor - Mathematics",
+      "department": "Mathematics",
+      "educational_qualifications": "Ph.D. Mathematics, M.Sc",
+      "faculty_record": {
+        "papers_and_publications": [
+          {
+            "title": "Graph theory applications",
+            "description": "Math Applications, 2019"
+          }
+        ],
+        "projects": [
+          {
+            "title": "Math Skill Lab",
+            "description": "Support lab for algorithmic thinking."
+          }
+        ]
+      },
+      "approval_section": [],
+      "approval_history": [],
+      "approval_analytics": {
+        "total_approved": 0,
+        "total_rejected": 0,
+        "approval_rate": 0,
+        "avg_points_awarded": 0
+      },
+      "approval_trends": []
+    },
+    "F20250014": {
+      "category": "faculty",
+      "name": "Dr. Sandeep Kumar",
+      "faculty_id": "F20250014",
+      "email": "sandeep.kumar@univ.edu",
+      "password": "Fk1425#",
+      "dob": "1984-12-12",
+      "designation": "Assistant Professor - Physics",
+      "department": "Physics",
+      "educational_qualifications": "Ph.D. Physics, M.Sc",
+      "faculty_record": {
+        "papers_and_publications": [
+          {
+            "title": "Nano-optics experiments",
+            "description": "Physics Letters, 2020"
+          }
+        ],
+        "projects": [
+          {
+            "title": "Undergrad Optics Lab",
+            "description": "Modernized optics lab equipment and curriculum."
+          }
+        ]
+      },
+      "approval_section": [],
+      "approval_history": [],
+      "approval_analytics": {
+        "total_approved": 0,
+        "total_rejected": 0,
+        "approval_rate": 0,
+        "avg_points_awarded": 0
+      },
+      "approval_trends": []
+    },
+    "F20250015": {
+      "category": "faculty",
+      "name": "Prof. Nidhi Shah",
+      "faculty_id": "F20250015",
+      "email": "nidhi.shah@univ.edu",
+      "password": "Fn1525#",
+      "dob": "1979-01-30",
+      "designation": "Associate Professor - Economics",
+      "department": "Economics",
+      "educational_qualifications": "Ph.D. Economics, M.A.",
+      "faculty_record": {
+        "papers_and_publications": [
+          {
+            "title": "Rural development indicators",
+            "description": "Economic Studies, 2021"
+          }
+        ],
+        "projects": [
+          {
+            "title": "Local Economy Survey",
+            "description": "Student-led regional economic survey project."
+          }
+        ]
+      },
+      "approval_section": [],
+      "approval_history": [],
+      "approval_analytics": {
+        "total_approved": 0,
+        "total_rejected": 0,
+        "approval_rate": 0,
+        "avg_points_awarded": 0
+      },
+      "approval_trends": []
+    }
+  },
+  "admin": {
+    "A20250001": {
+      "admin_id": "A20250001",
+      "email": "admin1@univ.edu",
+      "password": "Admin#2025a"
+    },
+    "A20250002": {
+      "admin_id": "A20250002",
+      "email": "admin2@univ.edu",
+      "password": "Admin#2025b"
+    },
+    "A20250003": {
+      "admin_id": "A20250003",
+      "email": "admin3@univ.edu",
+      "password": "Admin#2025c"
+    },
+    "A20250004": {
+      "admin_id": "A20250004",
+      "email": "admin4@univ.edu",
+      "password": "Admin#2025d"
+    },
+    "A20250005": {
+      "admin_id": "A20250005",
+      "email": "admin5@univ.edu",
+      "password": "Admin#2025e"
+    }
+  }
+}
