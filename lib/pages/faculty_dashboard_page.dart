@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -433,7 +434,7 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
                   radius: 40,
                   backgroundColor: colorScheme.primaryContainer,
                   backgroundImage: _userData?['profile_photo'] != null && _userData!['profile_photo'].toString().isNotEmpty
-                      ? NetworkImage(_userData!['profile_photo'])
+                      ? _getImageProvider(_userData!['profile_photo'])
                       : null,
                   child: _userData?['profile_photo'] == null || _userData!['profile_photo'].toString().isEmpty
                       ? Icon(Icons.person, size: 40, color: colorScheme.onPrimaryContainer)
@@ -470,11 +471,17 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
                 color: Colors.transparent,
                 child: InkWell(
                   borderRadius: BorderRadius.circular(20),
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    final result = await Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const FacultyEditProfilePage()),
                     );
+                    
+                    // If profile was updated, refresh the dashboard data
+                    if (result == true) {
+                      print('🔄 Profile was updated, refreshing faculty dashboard');
+                      refreshData();
+                    }
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
@@ -514,6 +521,17 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
         ],
       ),
     );
+  }
+
+  // Helper method to get appropriate image provider
+  ImageProvider _getImageProvider(String imagePath) {
+    if (imagePath.startsWith('http')) {
+      return NetworkImage(imagePath);
+    } else if (imagePath.startsWith('/') || imagePath.startsWith('C:')) {
+      return FileImage(File(imagePath));
+    } else {
+      return NetworkImage(imagePath);
+    }
   }
 
   Widget researchPapersCard(BuildContext context) {

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../pages/login_page.dart';
 import '../pages/semester_info_page.dart';
@@ -9,8 +10,8 @@ import '../pages/faculty_student_search_page.dart';
 import '../pages/faculty_approval_page.dart';
 import '../pages/faculty_approval_history_page.dart';
 import '../pages/faculty_approval_analytics_page.dart';
-import '../pages/faculty_edit_profile_page.dart';
 import '../data/approval_data.dart';
+import '../services/auth_service.dart';
 
 // ---------------- GLOBAL DRAWER ----------------
 class MainDrawer extends StatelessWidget {
@@ -75,6 +76,17 @@ class MainDrawer extends StatelessWidget {
     );
   }
 
+  // Helper method to get appropriate image provider
+  ImageProvider _getImageProvider(String imagePath) {
+    if (imagePath.startsWith('http')) {
+      return NetworkImage(imagePath);
+    } else if (imagePath.startsWith('/') || imagePath.startsWith('C:')) {
+      return FileImage(File(imagePath));
+    } else {
+      return NetworkImage(imagePath);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -89,34 +101,57 @@ class MainDrawer extends StatelessWidget {
                 end: Alignment.bottomRight,
               ),
             ),
-            child: const Center(
+            child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  CircleAvatar(
-                    radius: 40,
-                    backgroundColor: Colors.white,
-                    child: Icon(
-                      Icons.person,
-                      size: 40,
-                      color: Colors.indigo,
-                    ),
+                  Builder(
+                    builder: (context) {
+                      final userData = AuthService().getCurrentUser();
+                      final profilePhoto = userData?['profile_photo'];
+                      
+                      return CircleAvatar(
+                        radius: 40,
+                        backgroundColor: Colors.white,
+                        backgroundImage: profilePhoto != null && profilePhoto.toString().isNotEmpty
+                            ? _getImageProvider(profilePhoto.toString())
+                            : null,
+                        child: profilePhoto == null || profilePhoto.toString().isEmpty
+                            ? const Icon(
+                                Icons.person,
+                                size: 40,
+                                color: Colors.indigo,
+                              )
+                            : null,
+                      );
+                    },
                   ),
-                  SizedBox(height: 10),
-                  Text(
-                    "Smart Student Hub",
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    "Welcome, Faculty!",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white70,
-                    ),
+                  const SizedBox(height: 10),
+                  Builder(
+                    builder: (context) {
+                      final userData = AuthService().getCurrentUser();
+                      final userName = userData?['name'] ?? 'Faculty';
+                      
+                      return Column(
+                        children: [
+                          const Text(
+                            "Smart Student Hub",
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            "Welcome, $userName!",
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ],
               ),

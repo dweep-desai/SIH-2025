@@ -89,6 +89,22 @@ class AuthService {
                     'name': user['name'],
                     'email': user['email'],
                   };
+                  
+                  // Debug profile photo fetching
+                  print('🖼️ ==========================================');
+                  print('🖼️ AUTH SERVICE PROFILE PHOTO DEBUG');
+                  print('🖼️ ==========================================');
+                  print('🖼️ User ID: $userId');
+                  print('🖼️ Collection: $collectionName');
+                  print('🖼️ Raw profile_photo from Firebase: ${user['profile_photo']}');
+                  print('🖼️ Profile photo type: ${user['profile_photo'].runtimeType}');
+                  print('🖼️ Profile photo isNull: ${user['profile_photo'] == null}');
+                  if (user['profile_photo'] != null) {
+                    print('🖼️ Profile photo value: "${user['profile_photo']}"');
+                    print('🖼️ Profile photo length: ${user['profile_photo'].toString().length}');
+                    print('🖼️ Profile photo isEmpty: ${user['profile_photo'].toString().isEmpty}');
+                  }
+                  print('🖼️ ==========================================');
 
                           // Add category-specific fields
                           if (user['category'] == 'student') {
@@ -321,9 +337,28 @@ class AuthService {
   // Update user profile photo
   Future<void> updateProfilePhoto(String userId, String category, String photoUrl) async {
     try {
-      await _databaseRef.child(category).child(userId).child('profile_photo').set(photoUrl);
+      print('🖼️ ==========================================');
+      print('🖼️ AUTH SERVICE UPDATE PROFILE PHOTO DEBUG');
+      print('🖼️ ==========================================');
+      print('🖼️ User ID: $userId');
+      print('🖼️ Category: $category');
+      print('🖼️ Photo URL: "$photoUrl"');
+      
+      // Fix the database path - use plural form for the collection
+      String collectionName = category == 'student' ? 'students' : category;
+      print('🖼️ Collection Name: $collectionName');
+      print('🖼️ Database Path: ${_databaseRef.child(collectionName).child(userId).child('profile_photo').path}');
+      print('🖼️ ==========================================');
+      
+      await _databaseRef.child(collectionName).child(userId).child('profile_photo').set(photoUrl);
+      
+      print('🖼️ ==========================================');
+      print('🖼️ PROFILE PHOTO SAVED TO DATABASE');
+      print('🖼️ ==========================================');
+      
       if (_currentUser != null) {
         _currentUser!['profile_photo'] = photoUrl;
+        print('🖼️ Updated local _currentUser profile_photo');
       }
       print('✅ Profile photo updated successfully');
     } catch (e) {
@@ -621,6 +656,19 @@ class AuthService {
       if (freshUserData != null) {
         print('✅ Fresh user data retrieved from Firebase');
         print('✅ Fresh domains - domain1: "${freshUserData['domain1']}", domain2: "${freshUserData['domain2']}"');
+        
+        // Debug profile photo in refreshed data
+        print('🖼️ ==========================================');
+        print('🖼️ FORCE REFRESH PROFILE PHOTO DEBUG');
+        print('🖼️ ==========================================');
+        print('🖼️ Refreshed profile_photo: ${freshUserData['profile_photo']}');
+        print('🖼️ Profile photo type: ${freshUserData['profile_photo'].runtimeType}');
+        print('🖼️ Profile photo isNull: ${freshUserData['profile_photo'] == null}');
+        if (freshUserData['profile_photo'] != null) {
+          print('🖼️ Profile photo value: "${freshUserData['profile_photo']}"');
+          print('🖼️ Profile photo length: ${freshUserData['profile_photo'].toString().length}');
+        }
+        print('🖼️ ==========================================');
         
         // Update the current user with fresh data
         _currentUser = freshUserData;

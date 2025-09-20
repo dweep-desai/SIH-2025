@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../widgets/faculty_drawer.dart';
 import '../data/faculty_profile_data.dart';
+import '../services/auth_service.dart';
 import 'faculty_dashboard_page.dart';
 
 class FacultyEditProfilePage extends StatefulWidget {
@@ -16,15 +17,41 @@ class _FacultyEditProfilePageState extends State<FacultyEditProfilePage> {
   String? _primaryDomain;
   String? _secondaryDomain;
   ImageProvider? _avatar;
+  String? _selectedImagePath;
   final ImagePicker _picker = ImagePicker();
   bool _isLoading = false;
+  final AuthService _authService = AuthService();
+  Map<String, dynamic>? _userData;
 
   @override
   void initState() {
     super.initState();
-    _primaryDomain = FacultyProfileData.primaryDomain;
-    _secondaryDomain = FacultyProfileData.secondaryDomain;
-    _avatar = FacultyProfileData.getProfileImageProvider();
+    _loadUserData();
+  }
+
+  // Helper method to get appropriate image provider
+  ImageProvider _getImageProvider(String imagePath) {
+    if (imagePath.startsWith('http')) {
+      return NetworkImage(imagePath);
+    } else if (imagePath.startsWith('/') || imagePath.startsWith('C:')) {
+      return FileImage(File(imagePath));
+    } else {
+      return NetworkImage(imagePath);
+    }
+  }
+
+  Future<void> _loadUserData() async {
+    final userData = _authService.getCurrentUser();
+    if (userData != null) {
+      setState(() {
+        _userData = userData;
+        _primaryDomain = FacultyProfileData.primaryDomain;
+        _secondaryDomain = FacultyProfileData.secondaryDomain;
+        _avatar = userData['profile_photo'] != null && userData['profile_photo'].toString().isNotEmpty
+            ? _getImageProvider(userData['profile_photo'].toString())
+            : FacultyProfileData.getProfileImageProvider();
+      });
+    }
   }
 
   Future<void> _pickImage() async {
@@ -39,6 +66,7 @@ class _FacultyEditProfilePageState extends State<FacultyEditProfilePage> {
         setState(() {
           _avatar = FileImage(File(image.path));
         });
+        _selectedImagePath = image.path;
         FacultyProfileData.setProfileImagePath(image.path);
       }
     } catch (e) {
@@ -61,6 +89,18 @@ class _FacultyEditProfilePageState extends State<FacultyEditProfilePage> {
 
       FacultyProfileData.setPrimaryDomain(_primaryDomain);
       FacultyProfileData.setSecondaryDomain(_secondaryDomain);
+
+      // Update profile photo in database if a new image was selected
+      if (_selectedImagePath != null && _userData != null) {
+        await _authService.updateProfilePhoto(
+          _userData!['id'],
+          _userData!['category'],
+          _selectedImagePath!,
+        );
+      }
+
+      // Force refresh user data
+      await _authService.forceRefreshUserData();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

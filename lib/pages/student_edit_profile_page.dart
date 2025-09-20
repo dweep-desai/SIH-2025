@@ -16,6 +16,7 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
   String? _selectedDomain1;
   String? _selectedDomain2;
   ImageProvider? _avatar;
+  String? _selectedImagePath;
   final ImagePicker _picker = ImagePicker();
   bool _isLoading = false;
   final _formKey = GlobalKey<FormState>();
@@ -43,9 +44,31 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
     return null;
   }
 
+  // Helper method to get appropriate image provider
+  ImageProvider _getImageProvider(String imagePath) {
+    if (imagePath.startsWith('http')) {
+      return NetworkImage(imagePath);
+    } else if (imagePath.startsWith('/') || imagePath.startsWith('C:')) {
+      return FileImage(File(imagePath));
+    } else {
+      return NetworkImage(imagePath);
+    }
+  }
+
   Future<void> _loadUserData() async {
     final userData = _authService.getCurrentUser();
     if (userData != null) {
+      print('🖼️ ==========================================');
+      print('🖼️ STUDENT EDIT PROFILE LOAD DEBUG');
+      print('🖼️ ==========================================');
+      print('🖼️ User ID: ${userData['id']}');
+      print('🖼️ User Category: ${userData['category']}');
+      print('🖼️ Profile Photo Raw: ${userData['profile_photo']}');
+      print('🖼️ Profile Photo Type: ${userData['profile_photo'].runtimeType}');
+      print('🖼️ Profile Photo isNull: ${userData['profile_photo'] == null}');
+      print('🖼️ Profile Photo isEmpty: ${userData['profile_photo'].toString().isEmpty}');
+      print('🖼️ ==========================================');
+      
       setState(() {
         _userData = userData;
         // Handle empty strings and null values properly
@@ -57,7 +80,7 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
         _selectedDomain2 = _validateDomain(domain2.isEmpty ? null : domain2);
         
         _avatar = userData['profile_photo'] != null && userData['profile_photo'].toString().isNotEmpty
-            ? NetworkImage(userData['profile_photo'].toString())
+            ? _getImageProvider(userData['profile_photo'].toString())
             : null;
       });
     }
@@ -73,10 +96,24 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
       );
       
       if (image != null) {
+        print('🖼️ ==========================================');
+        print('🖼️ IMAGE PICKED SUCCESSFULLY');
+        print('🖼️ ==========================================');
+        print('🖼️ Image Path: "${image.path}"');
+        print('🖼️ Image Name: "${image.name}"');
+        print('🖼️ Image Size: ${await image.length()} bytes');
+        print('🖼️ ==========================================');
+        
         setState(() {
           _avatar = FileImage(File(image.path));
         });
-        // Store the image path locally (in a real app, you'd upload to Firebase Storage)
+        // Store the image path for saving to database
+        _selectedImagePath = image.path;
+        
+        print('🖼️ _selectedImagePath set to: "$_selectedImagePath"');
+        print('🖼️ _selectedImagePath length: ${_selectedImagePath?.length ?? 0}');
+        print('🖼️ _selectedImagePath isNull: ${_selectedImagePath == null}');
+        print('🖼️ _selectedImagePath isEmpty: ${_selectedImagePath?.isEmpty ?? true}');
       }
     } catch (e) {
       if (mounted) {
@@ -99,12 +136,50 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
         String domain1ToSave = _selectedDomain1 ?? '';
         String domain2ToSave = _selectedDomain2 ?? '';
         
+        // Debug _selectedImagePath before any operations
+        print('🖼️ ==========================================');
+        print('🖼️ SAVE PROFILE DEBUG - START');
+        print('🖼️ ==========================================');
+        print('🖼️ _selectedImagePath: "$_selectedImagePath"');
+        print('🖼️ _selectedImagePath isNull: ${_selectedImagePath == null}');
+        print('🖼️ _selectedImagePath isEmpty: ${_selectedImagePath?.isEmpty ?? true}');
+        print('🖼️ ==========================================');
+        
+        // Update domains
         await _authService.updateDomains(
           _userData!['id'],
           _userData!['category'],
           domain1ToSave,
           domain2ToSave,
         );
+        
+        // Update profile photo if a new image was selected
+        if (_selectedImagePath != null && _selectedImagePath!.isNotEmpty) {
+          print('🖼️ ==========================================');
+          print('🖼️ STUDENT EDIT PROFILE SAVE DEBUG');
+          print('🖼️ ==========================================');
+          print('🖼️ Selected Image Path: "$_selectedImagePath"');
+          print('🖼️ User ID: ${_userData!['id']}');
+          print('🖼️ User Category: ${_userData!['category']}');
+          print('🖼️ About to save profile photo to database...');
+          print('🖼️ ==========================================');
+          
+          // For now, we'll store the local file path
+          // In a production app, you'd upload to Firebase Storage and get a URL
+          await _authService.updateProfilePhoto(
+            _userData!['id'],
+            _userData!['category'],
+            _selectedImagePath!,
+          );
+          
+          print('🖼️ ==========================================');
+          print('🖼️ PROFILE PHOTO SAVE COMPLETED');
+          print('🖼️ ==========================================');
+        } else {
+          print('🖼️ ==========================================');
+          print('🖼️ NO IMAGE SELECTED - SKIPPING PROFILE PHOTO SAVE');
+          print('🖼️ ==========================================');
+        }
         
         // Force refresh user data directly from Firebase to get latest updates
         await _authService.forceRefreshUserData();

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import '../widgets/student_drawer.dart';
 import '../services/auth_service.dart';
@@ -203,6 +204,26 @@ class _DashboardPageState extends State<DashboardPage> {
           _isLoading = false;
         });
         
+        // Debug profile photo loading
+        print('🖼️ ==========================================');
+        print('🖼️ STUDENT DASHBOARD PROFILE PHOTO DEBUG');
+        print('🖼️ ==========================================');
+        print('🖼️ User ID: ${userData['id']}');
+        print('🖼️ User Category: ${userData['category']}');
+        print('🖼️ Profile Photo Raw: ${userData['profile_photo']}');
+        print('🖼️ Profile Photo Type: ${userData['profile_photo'].runtimeType}');
+        print('🖼️ Profile Photo isNull: ${userData['profile_photo'] == null}');
+        print('🖼️ Profile Photo isEmpty: ${userData['profile_photo'].toString().isEmpty}');
+        print('🖼️ Profile Photo isNotEmpty: ${userData['profile_photo'].toString().isNotEmpty}');
+        if (userData['profile_photo'] != null && userData['profile_photo'].toString().isNotEmpty) {
+          print('🖼️ Profile Photo Value: "${userData['profile_photo']}"');
+          print('🖼️ Profile Photo Length: ${userData['profile_photo'].toString().length}');
+          print('🖼️ Profile Photo startsWith http: ${userData['profile_photo'].toString().startsWith('http')}');
+          print('🖼️ Profile Photo startsWith /: ${userData['profile_photo'].toString().startsWith('/')}');
+          print('🖼️ Profile Photo startsWith C:: ${userData['profile_photo'].toString().startsWith('C:')}');
+        }
+        print('🖼️ ==========================================');
+        
         // Enhanced domain logging
         print('✅ Dashboard loaded - GPA: $_gpa');
         print('✅ User ID: ${userData['id']}');
@@ -390,7 +411,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   radius: 40,
                   backgroundColor: colorScheme.primaryContainer,
                   backgroundImage: _userData?['profile_photo'] != null && _userData!['profile_photo'].isNotEmpty
-                      ? NetworkImage(_userData!['profile_photo'])
+                      ? _getImageProvider(_userData!['profile_photo'])
                       : null,
                   child: _userData?['profile_photo'] == null || _userData!['profile_photo'].isEmpty
                       ? Icon(Icons.person, size: 40, color: colorScheme.onPrimaryContainer)
@@ -485,6 +506,34 @@ class _DashboardPageState extends State<DashboardPage> {
     if (domain == null) return 'Not set';
     if (domain.toString().isEmpty) return 'Not set';
     return domain.toString();
+  }
+
+  // Helper method to get appropriate image provider
+  ImageProvider _getImageProvider(String imagePath) {
+    print('🖼️ ==========================================');
+    print('🖼️ STUDENT DASHBOARD _getImageProvider DEBUG');
+    print('🖼️ ==========================================');
+    print('🖼️ Input imagePath: "$imagePath"');
+    print('🖼️ imagePath length: ${imagePath.length}');
+    print('🖼️ startsWith http: ${imagePath.startsWith('http')}');
+    print('🖼️ startsWith /: ${imagePath.startsWith('/')}');
+    print('🖼️ startsWith C:: ${imagePath.startsWith('C:')}');
+    
+    ImageProvider provider;
+    if (imagePath.startsWith('http')) {
+      provider = NetworkImage(imagePath);
+      print('🖼️ Using NetworkImage for HTTP URL');
+    } else if (imagePath.startsWith('/') || imagePath.startsWith('C:')) {
+      provider = FileImage(File(imagePath));
+      print('🖼️ Using FileImage for local path');
+    } else {
+      provider = NetworkImage(imagePath);
+      print('🖼️ Using NetworkImage as fallback');
+    }
+    
+    print('🖼️ Provider type: ${provider.runtimeType}');
+    print('🖼️ ==========================================');
+    return provider;
   }
 
   Widget gpaCard(BuildContext context) {
