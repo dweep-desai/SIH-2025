@@ -350,7 +350,7 @@ class _StudentAnalyticsPageState extends State<StudentAnalyticsPage> {
                               reservedSize: 30,
                               interval: 1,
                               getTitlesWidget: (double value, TitleMeta meta) {
-                                if (value.toInt() >= 1 && value.toInt() < _semesterGpaData.length + 1) {
+                                if (value.toInt() >= 1 && value.toInt() <= _semesterGpaData.length && value == value.toInt().toDouble()) {
                                   return Text(
                                     '${value.toInt()}',
                                     style: textTheme.bodySmall?.copyWith(
