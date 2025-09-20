@@ -5,6 +5,7 @@ import '../services/auth_service.dart';
 import 'semester_info_page.dart';
 import 'student_edit_profile_page.dart';
 import 'achievements_page.dart';
+import 'student_analytics_page.dart';
 
 // ---------------- DASHBOARD PAGE ----------------
 class DashboardPage extends StatefulWidget {
@@ -706,7 +707,12 @@ class _DashboardPageState extends State<DashboardPage> {
         const SizedBox(width: 12),
         Expanded(
           child: ElevatedButton.icon(
-            onPressed: () { /* TODO: Implement View Analytics */ },
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const StudentAnalyticsPage()),
+              );
+            },
             icon: const Icon(Icons.analytics, size: 20),
             label: Text("View Analytics", style: textTheme.labelLarge),
             style: ElevatedButton.styleFrom(
