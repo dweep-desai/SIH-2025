@@ -226,7 +226,7 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 labelText: 'Points to Award',
-                hintText: 'Enter points (1-100)',
+                hintText: 'Enter points (1-50)',
               ),
             ),
           ],
@@ -239,10 +239,10 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
           ElevatedButton(
             onPressed: () async {
               int points = int.tryParse(pointsController.text) ?? 0;
-              if (points < 1 || points > 100) {
+              if (points < 1 || points > 50) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
-                    content: Text('Please enter points between 1 and 100'),
+                    content: Text('Please enter points between 1 and 50'),
                     backgroundColor: Colors.red,
                   ),
                 );

@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -752,11 +753,13 @@ class AuthService {
       print('🎯 ==========================================');
       print('🎯 Student: $studentName ($studentId)');
       print('🎯 Student Department: $studentBranch');
-      print('🎯 Assigned Faculty: $facultyName ($assignedFacultyId)');
+      print('🎯 🎲 RANDOMLY ASSIGNED FACULTY: $facultyName ($assignedFacultyId)');
       print('🎯 Faculty Department: $facultyDepartment');
       print('🎯 Department Match: ${facultyDepartment == studentBranch ? "✅ YES" : "❌ NO"}');
       print('🎯 Request ID: $requestId');
       print('🎯 Request Title: ${requestData['title']}');
+      print('🎯 ==========================================');
+      print('🎯 📨 SENDING APPROVAL REQUEST TO: $facultyName');
       print('🎯 ==========================================');
       
       // Add to faculty's approval section
@@ -825,8 +828,10 @@ class AuthService {
         return null;
       }
       
-      // Return a random faculty member
-      String randomFaculty = matchingFaculty[DateTime.now().millisecondsSinceEpoch % matchingFaculty.length];
+      // Return a random faculty member using a more robust random selection
+      Random random = Random();
+      int randomIndex = random.nextInt(matchingFaculty.length);
+      String randomFaculty = matchingFaculty[randomIndex];
       
       // Get faculty details for better logging
       Map<String, dynamic> selectedFacultyData = Map<String, dynamic>.from(faculty[randomFaculty] as Map<dynamic, dynamic>);
@@ -838,10 +843,14 @@ class AuthService {
       print('🎯 ==========================================');
       print('🎯 Student Department: $department');
       print('🎯 Available faculty in same department: $matchingFaculty');
+      print('🎯 Random index selected: $randomIndex (out of ${matchingFaculty.length} faculty)');
       print('🎯 Selected faculty ID: $randomFaculty');
       print('🎯 Selected faculty name: $facultyName');
       print('🎯 Selected faculty department: $facultyDepartment');
       print('🎯 Department match: ${facultyDepartment == department ? "✅ YES" : "❌ NO"}');
+      print('🎯 ==========================================');
+      print('🎯 🎲 RANDOM ASSIGNMENT COMPLETE! 🎲');
+      print('🎯 📧 Approval request will be sent to: $facultyName ($randomFaculty)');
       print('🎯 ==========================================');
       return randomFaculty;
     } catch (e) {
