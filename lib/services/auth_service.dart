@@ -269,6 +269,20 @@ class AuthService {
     return allStudents.where((student) => student['branch'] == branch).toList();
   }
 
+  Future<Map<String, dynamic>?> getStudentData(String studentId) async {
+    try {
+      final snapshot = await _databaseRef.child('students').child(studentId).get();
+      if (snapshot.exists) {
+        final data = Map<String, dynamic>.from(snapshot.value as Map<dynamic, dynamic>);
+        return data;
+      }
+      return null;
+    } catch (e) {
+      print('Error getting student data: $e');
+      return null;
+    }
+  }
+
   // Get faculty by department (for students)
   Future<List<Map<String, dynamic>>> getFacultyByDepartment(String department) async {
     List<Map<String, dynamic>> allFaculty = await getAllFaculty();

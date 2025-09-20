@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/admin_drawer.dart';
+import '../services/auth_service.dart';
 
 class AdminFacultySearchPage extends StatefulWidget {
   const AdminFacultySearchPage({super.key});
@@ -11,44 +12,37 @@ class AdminFacultySearchPage extends StatefulWidget {
 class _AdminFacultySearchPageState extends State<AdminFacultySearchPage> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
+  
+  final AuthService _authService = AuthService();
+  List<Map<String, dynamic>> allFaculty = [];
+  bool _isLoading = true;
 
-  // Dummy data for faculty
-  final List<Map<String, dynamic>> allFaculty = [
-    {
-      'name': 'Dr. John Doe',
-      'id': 'FAC001',
-      'department': 'Computer Science',
-      'email': 'john.doe@nirmauni.ac.in',
-      'designation': 'Professor',
-    },
-    {
-      'name': 'Dr. Jane Smith',
-      'id': 'FAC002',
-      'department': 'Information Technology',
-      'email': 'jane.smith@nirmauni.ac.in',
-      'designation': 'Associate Professor',
-    },
-    {
-      'name': 'Dr. Bob Johnson',
-      'id': 'FAC003',
-      'department': 'Computer Science',
-      'email': 'bob.johnson@nirmauni.ac.in',
-      'designation': 'Assistant Professor',
-    },
-    {
-      'name': 'Dr. Alice Brown',
-      'id': 'FAC004',
-      'department': 'Electrical Engineering',
-      'email': 'alice.brown@nirmauni.ac.in',
-      'designation': 'Lecturer',
-    },
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _loadFacultyData();
+  }
+
+  Future<void> _loadFacultyData() async {
+    try {
+      final facultyList = await _authService.getAllFaculty();
+      setState(() {
+        allFaculty = facultyList;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error loading faculty data: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   List<Map<String, dynamic>> get filteredFaculty {
     if (_searchQuery.isEmpty) return [];
     return allFaculty.where((faculty) {
       return faculty['name'].toLowerCase().contains(_searchQuery.toLowerCase()) ||
-             faculty['id'].toLowerCase().contains(_searchQuery.toLowerCase());
+             faculty['faculty_id'].toLowerCase().contains(_searchQuery.toLowerCase());
     }).toList();
   }
 
@@ -57,6 +51,14 @@ class _AdminFacultySearchPageState extends State<AdminFacultySearchPage> {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
     final TextTheme textTheme = theme.textTheme;
+
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Faculty Search')),
+        drawer: AdminDrawer(context: context),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -115,7 +117,7 @@ class _AdminFacultySearchPageState extends State<AdminFacultySearchPage> {
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('ID: ${faculty['id']}', style: textTheme.bodyMedium),
+                                  Text('ID: ${faculty['faculty_id']}', style: textTheme.bodyMedium),
                                   Text('Department: ${faculty['department']}', style: textTheme.bodyMedium),
                                   Text('Designation: ${faculty['designation']}', style: textTheme.bodyMedium),
                                   Text('Email: ${faculty['email']}', style: textTheme.bodyMedium),

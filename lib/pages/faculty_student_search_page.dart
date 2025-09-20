@@ -1,9 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import '../widgets/faculty_drawer.dart';
-import '../data/approval_data.dart';
-import '../models/student.dart';
-import '../data/students_data.dart';
-import 'student_analytics_page.dart';
+import '../widgets/faculty_drawer.dart' as faculty_drawer;
+import '../widgets/student_drawer.dart' as student_drawer;
+import '../widgets/admin_drawer.dart';
+import '../services/auth_service.dart';
 
 class FacultyStudentSearchPage extends StatefulWidget {
   const FacultyStudentSearchPage({super.key});
@@ -13,288 +13,464 @@ class FacultyStudentSearchPage extends StatefulWidget {
 }
 
 class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
-  final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
+  final AuthService _authService = AuthService();
+  List<Map<String, dynamic>> _allStudents = [];
+  List<Map<String, dynamic>> _filteredStudents = [];
+  bool _isLoading = true;
   String _branchFilter = 'All';
   String _domainFilter = 'All';
-  String _sortBy = 'Name'; // Name or Roll No
+  String _sortBy = 'Name';
 
-  // Shared student dataset used across student and faculty sections
-  final List<StudentModel> allStudents = sampleStudents;
+  @override
+  void initState() {
+    super.initState();
+    _loadStudents();
+  }
 
-  List<StudentModel> get filteredStudents {
-    List<StudentModel> result = List<StudentModel>.from(allStudents);
-
-    // Branch filter
-    if (_branchFilter != 'All') {
-      result = result.where((s) => s.department == _branchFilter).toList();
+  Future<void> _loadStudents() async {
+    try {
+      final students = await _authService.getAllStudents();
+      setState(() {
+        _allStudents = students;
+        _filteredStudents = students;
+        _isLoading = false;
+      });
+      print('Loaded ${students.length} students');
+    } catch (e) {
+      print('Error loading students: $e');
+      setState(() {
+        _isLoading = false;
+      });
     }
+  }
 
-    // Domain filter
-    if (_domainFilter != 'All') {
-      result = result.where((s) => s.domains.contains(_domainFilter)).toList();
-    }
+  void _filterStudents() {
+    setState(() {
+      _filteredStudents = _allStudents.where((student) {
+        final branchMatch = _branchFilter == 'All' || student['branch'] == _branchFilter;
+        final domainMatch = _domainFilter == 'All' || 
+            student['domain1'] == _domainFilter || 
+            student['domain2'] == _domainFilter;
+        return branchMatch && domainMatch;
+      }).toList();
 
-    // Search by name, roll no, or domain
-    if (_searchQuery.isNotEmpty) {
-      final q = _searchQuery.toLowerCase();
-      result = result.where((s) =>
-        s.name.toLowerCase().contains(q) ||
-        s.id.toLowerCase().contains(q) ||
-        s.department.toLowerCase().contains(q) ||
-        s.domains.any((d) => d.toLowerCase().contains(q))
-      ).toList();
-    }
-
-    // Lexicographic sort
-    if (_sortBy == 'Name') {
-      result.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
-    } else {
-      result.sort((a, b) => a.id.toLowerCase().compareTo(b.id.toLowerCase()));
-    }
-
-    return result;
+      // Sort the filtered results
+      if (_sortBy == 'Name') {
+        _filteredStudents.sort((a, b) => (a['name'] ?? '').compareTo(b['name'] ?? ''));
+      } else if (_sortBy == 'Branch') {
+        _filteredStudents.sort((a, b) => (a['branch'] ?? '').compareTo(b['branch'] ?? ''));
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
-    final TextTheme textTheme = theme.textTheme;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Student Search'),
+        backgroundColor: Colors.blue.shade700,
+        foregroundColor: Colors.white,
       ),
-      drawer: MainDrawer(context: context, isFaculty: true),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
+      drawer: _getAppropriateDrawer(context),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
               children: [
-                // Search field - takes full width with consistent styling
-                TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                    labelText: 'Search by Name, Roll No, or Domain',
-                    hintText: 'Enter search terms...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: colorScheme.primary, width: 2),
-                ),
-                filled: true,
-                fillColor: colorScheme.surfaceContainerHighest,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
-                    isDense: true,
-              ),
-                  style: TextStyle(color: colorScheme.onSurface, fontSize: 14),
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
-                ),
-                const SizedBox(height: 12),
-                // Responsive filters - guaranteed no overflow with proper constraints
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    if (constraints.maxWidth > 700) {
-                      // Very wide screens: show all filters in a row
-                      return Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: _buildBranchFilter(),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            flex: 2,
-                            child: _buildDomainFilter(),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            flex: 1,
-                            child: _buildSortFilter(),
-                          ),
-                        ],
-                      );
-                    } else if (constraints.maxWidth > 500) {
-                      // Medium screens: two filters on top, one below
-                      return Column(
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(child: _buildBranchFilter()),
-                              const SizedBox(width: 8),
-                              Expanded(child: _buildDomainFilter()),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          _buildSortFilter(),
-                        ],
-                      );
-                    } else {
-                      // Narrow screens: all filters stacked vertically
-                      return Column(
-                        children: [
-                          _buildBranchFilter(),
-                          const SizedBox(height: 8),
-                          _buildDomainFilter(),
-                          const SizedBox(height: 8),
-                          _buildSortFilter(),
-                        ],
-                      );
-                    }
-                  },
+                _buildSearchAndFilters(),
+                Expanded(
+                  child: _buildStudentList(),
                 ),
               ],
             ),
+    );
+  }
+
+  Widget _getAppropriateDrawer(BuildContext context) {
+    final userCategory = _authService.getUserCategory();
+    switch (userCategory) {
+      case 'student':
+        return student_drawer.MainDrawer(context: context);
+      case 'faculty':
+        return faculty_drawer.MainDrawer(context: context);
+      case 'admin':
+        return AdminDrawer(context: context);
+      default:
+        return faculty_drawer.MainDrawer(context: context);
+    }
+  }
+
+  Widget _buildSearchAndFilters() {
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        children: [
+          TextField(
+            decoration: const InputDecoration(
+              hintText: 'Search students...',
+              prefixIcon: Icon(Icons.search),
+              border: OutlineInputBorder(),
+            ),
+            onChanged: (value) {
+              _filterStudents();
+            },
           ),
-          Expanded(
-            child: _searchQuery.isEmpty && _branchFilter == 'All' && _domainFilter == 'All'
-                ? Center(
-                    child: Text(
-                      'Use the search or filters to find students',
-                      style: textTheme.bodyLarge,
-                    ),
-                  )
-                : filteredStudents.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No students found',
-                          style: textTheme.bodyLarge,
-                        ),
-                      )
-                    : ListView.builder(
-                        padding: const EdgeInsets.all(16.0),
-                        itemCount: filteredStudents.length,
-                        itemBuilder: (context, index) {
-                          final student = filteredStudents[index];
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 12.0),
-                            child: ListTile(
-                              isThreeLine: true,
-                              title: Text(
-                                student.name,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Roll No: ${student.id}',
-                                    style: textTheme.bodyMedium,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    softWrap: false,
-                                  ),
-                                  Text(
-                                    'Branch: ${student.department}',
-                                    style: textTheme.bodyMedium,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    softWrap: false,
-                                  ),
-                                  Text(
-                                    'Domains: ${student.domains.join(', ')}',
-                                    style: textTheme.bodyMedium,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    softWrap: false,
-                                  ),
-                                  Text(
-                                    'Email: ${student.email}',
-                                    style: textTheme.bodyMedium,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    softWrap: false,
-                                  ),
-                                ],
-                              ),
-                              onTap: () => _showStudentQuickView(student),
-                              trailing: const Icon(Icons.chevron_right),
-                            ),
-                          );
-                        },
-                      ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(child: _buildBranchFilter()),
+              const SizedBox(width: 8),
+              Expanded(child: _buildDomainFilter()),
+              const SizedBox(width: 8),
+              Expanded(child: _buildSortFilter()),
+            ],
           ),
         ],
       ),
     );
   }
 
-  void _showStudentQuickView(StudentModel student) {
+  Widget _buildBranchFilter() {
+    final branches = ['All'] + _allStudents.map((s) => s['branch'] as String? ?? '').where((b) => b.isNotEmpty).toSet().toList();
+    
+    return DropdownButtonFormField<String>(
+      initialValue: _branchFilter,
+      decoration: const InputDecoration(
+        labelText: 'Branch',
+        border: OutlineInputBorder(),
+        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
+      items: branches.map((String branch) {
+        return DropdownMenuItem<String>(
+          value: branch,
+          child: Text(branch),
+        );
+      }).toList(),
+      onChanged: (String? value) {
+        setState(() {
+          _branchFilter = value ?? 'All';
+        });
+        _filterStudents();
+      },
+    );
+  }
+
+  Widget _buildDomainFilter() {
+    final domains = ['All'];
+    for (var student in _allStudents) {
+      final domain1 = student['domain1'] as String?;
+      final domain2 = student['domain2'] as String?;
+      if (domain1 != null && domain1.isNotEmpty) domains.add(domain1);
+      if (domain2 != null && domain2.isNotEmpty) domains.add(domain2);
+    }
+    final uniqueDomains = domains.toSet().toList();
+    
+    return DropdownButtonFormField<String>(
+      initialValue: _domainFilter,
+      decoration: const InputDecoration(
+        labelText: 'Domain',
+        border: OutlineInputBorder(),
+        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
+      items: uniqueDomains.map((String domain) {
+        return DropdownMenuItem<String>(
+          value: domain,
+          child: Text(domain),
+        );
+      }).toList(),
+      onChanged: (String? value) {
+        setState(() {
+          _domainFilter = value ?? 'All';
+        });
+        _filterStudents();
+      },
+    );
+  }
+
+  Widget _buildSortFilter() {
+    return DropdownButtonFormField<String>(
+      initialValue: _sortBy,
+      decoration: const InputDecoration(
+        labelText: 'Sort by',
+        border: OutlineInputBorder(),
+        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
+      items: ['Name', 'Branch'].map((String sort) {
+        return DropdownMenuItem<String>(
+          value: sort,
+          child: Text(sort),
+        );
+      }).toList(),
+      onChanged: (String? value) {
+        setState(() {
+          _sortBy = value ?? 'Name';
+        });
+        _filterStudents();
+      },
+    );
+  }
+
+  Widget _buildStudentList() {
+    if (_filteredStudents.isEmpty) {
+      return const Center(
+        child: Text('No students found'),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: _filteredStudents.length,
+      itemBuilder: (context, index) {
+        final student = _filteredStudents[index];
+        return Card(
+          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: Colors.blue.shade100,
+              child: Text(
+                (student['name'] as String? ?? 'N')[0].toUpperCase(),
+                style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.bold),
+              ),
+            ),
+            title: Text(student['name'] ?? 'Unknown'),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('ID: ${student['student_id'] ?? 'N/A'}'),
+                Text('Branch: ${student['branch'] ?? 'N/A'}'),
+                Text('Semester: ${student['current_semester'] ?? 'N/A'}'),
+              ],
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.visibility),
+                  onPressed: () => _showStudentQuickView(student),
+                ),
+                PopupMenuButton(
+                  itemBuilder: (context) => [
+                    PopupMenuItem(
+                      child: const Text('Student Dashboard'),
+                      onTap: () => _openStudentDetail(student, 'dashboard'),
+                    ),
+                    PopupMenuItem(
+                      child: const Text('Student Record'),
+                      onTap: () => _openStudentDetail(student, 'record'),
+                    ),
+                    PopupMenuItem(
+                      child: const Text('View Grades'),
+                      onTap: () => _openStudentDetail(student, 'grades'),
+                    ),
+                    PopupMenuItem(
+                      child: const Text('Semester Info'),
+                      onTap: () => _openStudentDetail(student, 'semester'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showStudentQuickView(Map<String, dynamic> student) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(student['name'] ?? 'Unknown'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Student ID: ${student['student_id'] ?? 'N/A'}'),
+            Text('Branch: ${student['branch'] ?? 'N/A'}'),
+            Text('Current Semester: ${student['current_semester'] ?? 'N/A'}'),
+            Text('Attendance: ${student['attendance'] ?? 'N/A'}%'),
+            Text('Email: ${student['email'] ?? 'N/A'}'),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _openStudentDetail(Map<String, dynamic> student, String type) {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      isScrollControlled: true,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.9,
+        minChildSize: 0.5,
+        maxChildSize: 0.9,
+        builder: (context, scrollController) => Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        _getDetailTitle(type, student['name'] ?? 'Unknown'),
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: SingleChildScrollView(
+                  controller: scrollController,
+                  child: _buildDetailContent(type, student['student_id']),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
-      builder: (ctx) {
-        final theme = Theme.of(ctx);
-        final colors = theme.colorScheme;
-        final texts = theme.textTheme;
-        return Padding(
+    );
+  }
+
+  String _getDetailTitle(String type, String studentName) {
+    switch (type) {
+      case 'dashboard':
+        return 'Student Dashboard - $studentName';
+      case 'record':
+        return 'Student Record - $studentName';
+      case 'grades':
+        return 'Student Grades - $studentName';
+      case 'semester':
+        return 'Semester Info - $studentName';
+      default:
+        return 'Student Details - $studentName';
+    }
+  }
+
+  Widget _buildDetailContent(String type, String? studentId) {
+    switch (type) {
+      case 'dashboard':
+        return _StudentDashboardView(studentId: studentId);
+      case 'record':
+        return _StudentRecordView(studentId ?? '');
+      case 'grades':
+        return _StudentGradesView(studentId ?? '');
+      case 'semester':
+        return _StudentSemesterInfoView(studentId ?? '');
+      default:
+        return const Center(child: Text('Unknown detail type'));
+    }
+  }
+
+  Widget _StudentRecordView(String studentId) {
+    return FutureBuilder<Map<String, dynamic>?>(
+      future: _authService.getStudentData(studentId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const Center(child: Text('Student data not found'));
+        }
+
+        final studentData = snapshot.data!;
+        final studentRecordRaw = studentData['student_record'];
+        final studentRecord = studentRecordRaw is Map 
+          ? Map<String, dynamic>.from(studentRecordRaw) 
+          : <String, dynamic>{};
+        
+        return SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 28,
-                    backgroundColor: colors.primaryContainer,
-                    child: Icon(Icons.person, color: colors.onPrimaryContainer, size: 28),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(student.name, style: texts.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                        Text('Roll No: ${student.id}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
-                        Text('Branch: ${student.department}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
-                      ],
+              // Student Record Header
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    gradient: LinearGradient(
+                      colors: [Colors.blue.shade600, Colors.blue.shade800],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                  )
-                ],
+                  ),
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundImage: _getImageProvider(studentData['profile_photo']),
+                        backgroundColor: Colors.white.withOpacity(0.2),
+                        child: _getImageProvider(studentData['profile_photo']) == null
+                          ? const Icon(Icons.person, size: 40, color: Colors.white)
+                          : null,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        studentData['name'] ?? 'N/A',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        studentData['student_id'] ?? 'N/A',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.white70,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      if (studentData['domain1'] != null || studentData['domain2'] != null)
+                        Wrap(
+                          spacing: 8,
+                          children: [
+                            if (studentData['domain1'] != null)
+                              Chip(
+                                label: Text(studentData['domain1']),
+                                backgroundColor: Colors.white.withOpacity(0.2),
+                                labelStyle: const TextStyle(color: Colors.white),
+                              ),
+                            if (studentData['domain2'] != null)
+                              Chip(
+                                label: Text(studentData['domain2']),
+                                backgroundColor: Colors.white.withOpacity(0.2),
+                                labelStyle: const TextStyle(color: Colors.white),
+                              ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
               ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () => Navigator.pop(ctx),
-                      icon: const Icon(Icons.close),
-                      label: const Text('Close'),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.pop(ctx);
-                        _openFacultyStudentDetail(student);
-                      },
-                      icon: const Icon(Icons.open_in_new),
-                      label: const Text('View Details'),
-                    ),
-                  ),
-                ],
-              )
+              const SizedBox(height: 20),
+              
+              // Record sections
+              _buildRecordSection('Certifications', studentRecord['certifications']),
+              _buildRecordSection('Achievements', studentRecord['achievements']),
+              _buildRecordSection('Projects', studentRecord['projects']),
+              _buildRecordSection('Research Papers', studentRecord['research_papers']),
+              _buildRecordSection('Experience', studentRecord['experience']),
             ],
           ),
         );
@@ -302,646 +478,1418 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
     );
   }
 
-  void _openFacultyStudentDetail(StudentModel student) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => FacultyStudentDetailPage(student: student),
-      ),
-    );
-  }
-
-  Widget _buildBranchFilter() {
-    final colorScheme = Theme.of(context).colorScheme;
-    return DropdownButtonFormField<String>(
-      initialValue: _branchFilter,
-      isDense: true,
-      decoration: InputDecoration(
-        labelText: 'Branch',
-        hintText: 'Select Branch',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colorScheme.primary, width: 2),
-        ),
-        filled: true,
-        fillColor: colorScheme.surfaceContainerHighest,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
-        isDense: true,
-      ),
-      dropdownColor: colorScheme.surfaceContainerHighest,
-      style: TextStyle(color: colorScheme.onSurface, fontSize: 14),
-      icon: Icon(Icons.keyboard_arrow_down_rounded, color: colorScheme.primary, size: 20),
-      items: const [
-        DropdownMenuItem(value: 'All', child: Text('All Branches', style: TextStyle(fontSize: 14))),
-        DropdownMenuItem(value: 'Computer Science', child: Text('Computer Science', style: TextStyle(fontSize: 14))),
-        DropdownMenuItem(value: 'Information Technology', child: Text('Information Technology', style: TextStyle(fontSize: 14))),
-      ],
-      onChanged: (v) {
-        setState(() { _branchFilter = v ?? 'All'; });
-      },
-    );
-  }
-
-  Widget _buildDomainFilter() {
-    final colorScheme = Theme.of(context).colorScheme;
-    return DropdownButtonFormField<String>(
-      initialValue: _domainFilter,
-      isDense: true,
-      decoration: InputDecoration(
-        labelText: 'Domain',
-        hintText: 'Select Domain',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colorScheme.primary, width: 2),
-        ),
-        filled: true,
-        fillColor: colorScheme.surfaceContainerHighest,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
-        isDense: true,
-      ),
-      dropdownColor: colorScheme.surfaceContainerHighest,
-      style: TextStyle(color: colorScheme.onSurface, fontSize: 14),
-      icon: Icon(Icons.keyboard_arrow_down_rounded, color: colorScheme.primary, size: 20),
-      items: const [
-        DropdownMenuItem(value: 'All', child: Text('All Domains', style: TextStyle(fontSize: 14))),
-        DropdownMenuItem(value: 'AI/ML', child: Text('AI/ML', style: TextStyle(fontSize: 14))),
-        DropdownMenuItem(value: 'Data Science', child: Text('Data Science', style: TextStyle(fontSize: 14))),
-        DropdownMenuItem(value: 'Cybersecurity', child: Text('Cybersecurity', style: TextStyle(fontSize: 14))),
-        DropdownMenuItem(value: 'Web Development', child: Text('Web Development', style: TextStyle(fontSize: 14))),
-      ],
-      onChanged: (v) { setState(() { _domainFilter = v ?? 'All'; }); },
-    );
-  }
-
-  Widget _buildSortFilter() {
-    final colorScheme = Theme.of(context).colorScheme;
-    return DropdownButtonFormField<String>(
-      initialValue: _sortBy,
-      isDense: true,
-      decoration: InputDecoration(
-        labelText: 'Sort By',
-        hintText: 'Sort Order',
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.3)),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: colorScheme.primary, width: 2),
-        ),
-        filled: true,
-        fillColor: colorScheme.surfaceContainerHighest,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        labelStyle: TextStyle(color: colorScheme.onSurfaceVariant),
-        isDense: true,
-      ),
-      dropdownColor: colorScheme.surfaceContainerHighest,
-      style: TextStyle(color: colorScheme.onSurface, fontSize: 14),
-      icon: Icon(Icons.keyboard_arrow_down_rounded, color: colorScheme.primary, size: 20),
-      items: const [
-        DropdownMenuItem(value: 'Name', child: Text('Name (A-Z)', style: TextStyle(fontSize: 14))),
-        DropdownMenuItem(value: 'Roll No', child: Text('Roll No (A-Z)', style: TextStyle(fontSize: 14))),
-      ],
-      onChanged: (v) {
-        setState(() { _sortBy = v ?? 'Name'; });
-      },
-    );
-  }
-}
-
-class FacultyStudentDetailPage extends StatelessWidget {
-  final StudentModel student;
-
-  const FacultyStudentDetailPage({super.key, required this.student});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-    final texts = theme.textTheme;
-    return Scaffold(
-      appBar: AppBar(title: const Text('Student Overview')),
-      drawer: MainDrawer(context: context, isFaculty: true),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 36,
-                      backgroundColor: colors.primaryContainer,
-                      child: Icon(Icons.person, color: colors.onPrimaryContainer, size: 32),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(student.name, style: texts.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 4),
-                          Text('Roll No: ${student.id}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
-                          Text('Branch: ${student.department}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
-                          Text('Email: ${student.email}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () => _openStudentDashboardSheet(context),
-                    icon: const Icon(Icons.dashboard_outlined),
-                    label: const Text('Open Student Dashboard'),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => _openStudentRecordSheetExact(context),
-                    icon: const Icon(Icons.workspace_premium_outlined),
-                    label: const Text('Student Record'),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => _openStudentGradesSheet(context),
-                    icon: const Icon(Icons.school_outlined),
-                    label: const Text('View Grades'),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => _openStudentAnalyticsSheet(context),
-                    icon: const Icon(Icons.analytics_outlined),
-                    label: const Text('View Analytics'),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Downloading profile...')));
-                    },
-                    icon: const Icon(Icons.download_outlined),
-                    label: const Text('Download Profile'),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-  
-  void _openStudentDashboardSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (ctx) {
-        final colors = Theme.of(ctx).colorScheme;
-        final texts = Theme.of(ctx).textTheme;
-        return DraggableScrollableSheet(
-          expand: false,
-          initialChildSize: 0.8,
-          minChildSize: 0.5,
-          maxChildSize: 0.95,
-          builder: (_, controller) => Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ListView(
-              controller: controller,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.dashboard_outlined, color: colors.primary),
-                    const SizedBox(width: 8),
-                    Text('Student Dashboard (Preview)', style: texts.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Current Semester: 3', style: texts.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('GPA: 8 / 10', style: texts.bodyLarge),
-                            Icon(Icons.show_chart, color: colors.primary),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        LinearProgressIndicator(value: 0.8, minHeight: 6, borderRadius: BorderRadius.circular(3)),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Attendance Overview', style: texts.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Overall: 85%', style: texts.bodyLarge),
-                            Icon(Icons.check_circle_outline, color: Colors.green.shade600),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        LinearProgressIndicator(value: 0.85, minHeight: 6, borderRadius: BorderRadius.circular(3)),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Icon(Icons.grade, color: colors.primary),
-                            const SizedBox(width: 8),
-                            Text('Recent Grades', style: texts.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                        const Divider(height: 16),
-                        const ListTile(title: Text('Data Structures - A')),
-                        const ListTile(title: Text('Object Oriented - B+')),
-                        const ListTile(title: Text('Digital Electronics - A-')),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  
-
-  
-
-  void _openStudentRecordSheetExact(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (ctx) {
-        final colors = Theme.of(ctx).colorScheme;
-        final texts = Theme.of(ctx).textTheme;
-        // Build EXACT record content same as AchievementsPage categories
-        const List<String> categoryOrder = [
-          'Certifications', 'Achievements', 'Experience', 'Research papers', 'Projects', 'Workshops'
-        ];
-        final Map<String, List> grouped = {};
-        for (final req in approvalRequests.where((r) => r.status == 'accepted')) {
-          grouped.putIfAbsent(req.category, () => []).add(req);
+  Widget _buildRecordSection(String title, dynamic items) {
+    if (items == null) return const SizedBox.shrink();
+    
+    List<Map<String, dynamic>> itemList = [];
+    if (items is Map) {
+      itemList = items.values.map((item) {
+        if (item is Map) {
+          return Map<String, dynamic>.from(item);
         }
-        for (final category in ['Research papers', 'Projects']) {
-          if (grouped.containsKey(category)) {
-            grouped[category]!.sort((a, b) => (b.points ?? 0).compareTo(a.points ?? 0));
-          }
+        return <String, dynamic>{};
+      }).toList();
+    } else if (items is List) {
+      itemList = items.map((item) {
+        if (item is Map) {
+          return Map<String, dynamic>.from(item);
         }
-
-        return DraggableScrollableSheet(
-          expand: false,
-          initialChildSize: 0.9,
-          minChildSize: 0.6,
-          maxChildSize: 0.98,
-          builder: (_, controller) => Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ListView(
-              controller: controller,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.workspace_premium_outlined, color: colors.primary),
-                    const SizedBox(width: 8),
-                    Text('Student Record', style: texts.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                ...categoryOrder.map((cat) {
-                  final realItems = grouped[cat] ?? [];
-                  final List<Map<String, String?>> itemsData = realItems
-                      .map<Map<String, String?>>((req) => {
-                            'title': req.title,
-                            'description': req.description,
-                            'points': req.points?.toString(),
-                          })
-                      .toList();
-                  final int limit = _getItemLimit(cat);
-                  final limitedItems = itemsData.take(limit).toList();
-                  return _RecordCategoryCard(title: cat, items: limitedItems);
-                }),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  int _getItemLimit(String category) {
-    switch (category) {
-      case 'Projects':
-      case 'Achievements':
-      case 'Research papers':
-      case 'Workshops':
-        return 3;
-      case 'Experience':
-        return 10;
-      default:
-        return 5;
+        return <String, dynamic>{};
+      }).toList();
     }
-  }
-
-  void _openStudentGradesSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (ctx) {
-        return _GradesBottomSheet(currentSemester: student.currentSemester);
-      },
-    );
-  }
-
-  void _openStudentAnalyticsSheet(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const StudentAnalyticsPage()),
-    );
-  }
-
-}
-
-class _RecordCategoryCard extends StatelessWidget {
-  final String title;
-  final List items; // List<Map<String,String?>>
-
-  const _RecordCategoryCard({required this.title, required this.items});
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final texts = Theme.of(context).textTheme;
-    IconData iconForCategory(String category) {
-      switch (category) {
-        case 'Certifications':
-          return Icons.verified_outlined;
-        case 'Achievements':
-          return Icons.emoji_events_outlined;
-        case 'Experience':
-          return Icons.work_outline;
-        case 'Research papers':
-          return Icons.menu_book_outlined;
-        case 'Projects':
-          return Icons.build_outlined;
-        case 'Workshops':
-          return Icons.school_outlined;
-        default:
-          return Icons.folder_open;
-      }
+    
+    if (itemList.isEmpty) return const SizedBox.shrink();
+    
+    // Apply sorting and limits
+    if (['Certifications', 'Achievements', 'Projects', 'Workshops'].contains(title)) {
+      itemList.sort((a, b) => (b['points'] ?? 0).compareTo(a['points'] ?? 0));
+      itemList = itemList.take(3).toList();
+    } else if (title == 'Research Papers') {
+      itemList.sort((a, b) => (b['points'] ?? 0).compareTo(a['points'] ?? 0));
+      itemList = itemList.take(5).toList();
+    } else if (title == 'Experience') {
+      itemList = itemList.take(5).toList();
     }
-
+    
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       margin: const EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ExpansionTile(
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        subtitle: Text('${itemList.length} item${itemList.length != 1 ? 's' : ''}'),
+        children: itemList.map((item) {
+          return ListTile(
+            title: Text(item['title'] ?? 'No Title'),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(iconForCategory(title), color: colors.primary),
-                const SizedBox(width: 8),
-                Text(title, style: texts.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                if (item['description'] != null)
+                  Text(item['description']),
+                if (item['points'] != null)
+                  Text('Points: ${item['points']}', style: const TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
-            const SizedBox(height: 8),
-            const Divider(height: 16),
-            ...items.map((req) => ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: Icon(Icons.description_outlined, color: colors.secondary),
-                  title: Text(req['title'] ?? ''),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(req['description'] ?? '', maxLines: 2, overflow: TextOverflow.ellipsis),
-                      if (req['points'] != null)
-                        Text('Points: ${req['points']}/50',
-                            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.green[700], fontSize: 12)),
-                    ],
-                  ),
-                  trailing: const Icon(Icons.chevron_right_rounded),
-                )),
-          ],
-        ),
+            trailing: item['points'] != null 
+              ? Chip(
+                  label: Text('${item['points']}'),
+                  backgroundColor: Colors.green.shade100,
+                )
+              : null,
+          );
+        }).toList(),
       ),
     );
   }
-}
 
-class _GradesBottomSheet extends StatefulWidget {
-  const _GradesBottomSheet({required this.currentSemester});
-  final int currentSemester;
+  Widget _StudentGradesView(String studentId) {
+    return FutureBuilder<Map<String, dynamic>?>(
+      future: _authService.getStudentData(studentId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const Center(child: Text('Student data not found'));
+        }
 
-  @override
-  State<_GradesBottomSheet> createState() => _GradesBottomSheetState();
-}
-
-class _GradesBottomSheetState extends State<_GradesBottomSheet> {
-  int _selectedSemester = 1;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-    final texts = theme.textTheme;
-
-    final int totalSemesters = (widget.currentSemester - 1).clamp(1, 8);
-
-    // Mock data mirroring Grades page style
-    final List<Map<String, dynamic>> grades = [
-      {"course": "Subject A - Sem $_selectedSemester", "grade": "A", "credits": 4},
-      {"course": "Subject B - Sem $_selectedSemester", "grade": "B+", "credits": 3},
-      {"course": "Subject C - Sem $_selectedSemester", "grade": "A-", "credits": 3},
-      {"course": "Subject D - Sem $_selectedSemester", "grade": "A", "credits": 3},
-    ];
-
-    return DraggableScrollableSheet(
-      expand: false,
-      initialChildSize: 0.9,
-      minChildSize: 0.6,
-      maxChildSize: 0.98,
-      builder: (_, controller) => Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          controller: controller,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.school_outlined, color: colors.primary),
-                const SizedBox(width: 8),
-                Text('Grades', style: texts.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
-              decoration: BoxDecoration(
-                color: colors.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(12.0),
-                border: Border.all(color: colors.outline.withOpacity(0.5)),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<int>(
-                  value: _selectedSemester,
-                  isExpanded: true,
-                  icon: Icon(Icons.arrow_drop_down_rounded, color: colors.primary, size: 30),
-                  dropdownColor: colors.surfaceContainerHighest,
-                  style: texts.titleMedium?.copyWith(color: colors.onSurface),
-                  items: List.generate(totalSemesters, (index) {
-                    return DropdownMenuItem<int>(
-                      value: index + 1,
-                      child: Text("Semester ${index + 1}"),
-                    );
-                  }),
-                  onChanged: (int? newValue) {
-                    if (newValue != null) {
-                      setState(() {
-                        _selectedSemester = newValue;
-                      });
-                    }
-                  },
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              color: colors.surfaceContainerLow,
+        final studentData = snapshot.data!;
+        final gradesRaw = studentData['grades'];
+        final grades = gradesRaw is Map 
+          ? Map<String, dynamic>.from(gradesRaw) 
+          : <String, dynamic>{};
+        
+        return StatefulBuilder(
+          builder: (context, setState) {
+            String selectedSemester = grades.keys.isNotEmpty ? grades.keys.first : '';
+            
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                    child: Row(
+                  // Academic Performance Header
+                  Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        gradient: LinearGradient(
+                          colors: [Colors.green.shade600, Colors.green.shade800],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ),
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          const Icon(Icons.school, size: 48, color: Colors.white),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Academic Performance',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            studentData['name'] ?? 'N/A',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  
+                  // Semester Selector
+                  if (grades.isNotEmpty) ...[
+                    Card(
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: DropdownButtonFormField<String>(
+                          value: selectedSemester,
+                          decoration: const InputDecoration(
+                            labelText: 'Select Semester',
+                            border: OutlineInputBorder(),
+                          ),
+                          items: grades.keys.map((semester) {
+                            return DropdownMenuItem<String>(
+                              value: semester,
+                              child: Text(semester),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() {
+                                selectedSemester = value;
+                              });
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Grades Display
+                    Card(
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Grades for $selectedSemester',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            if (grades[selectedSemester] != null)
+                              ...((grades[selectedSemester] as Map).entries.map((entry) {
+                                final subjectCode = entry.key;
+                                final grade = entry.value;
+                                final subjectName = _getSubjectName(subjectCode);
+                                final letterGrade = _getLetterGrade(grade);
+                                final gradeColor = _getGradeColor(grade);
+                                
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 12),
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: gradeColor.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: gradeColor.withOpacity(0.3)),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              subjectName,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            Text(
+                                              subjectCode,
+                                              style: TextStyle(
+                                                color: Colors.grey[600],
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          '$grade/10',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                            color: gradeColor,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: gradeColor,
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: Text(
+                                            letterGrade,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList()),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ] else
+                    const Card(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text('No grades available'),
+                      ),
+                    ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  String _getSubjectName(String subjectCode) {
+    final subjectMap = {
+      'CS101': 'Computer Science Fundamentals',
+      'CS102': 'Programming Principles',
+      'CS201': 'Data Structures',
+      'CS202': 'Algorithms',
+      'CS301': 'Database Systems',
+      'CS302': 'Software Engineering',
+      'CS401': 'Machine Learning',
+      'CS402': 'Artificial Intelligence',
+      'ME101': 'Engineering Mechanics',
+      'ME102': 'Thermodynamics',
+      'ME201': 'Fluid Mechanics',
+      'ME202': 'Heat Transfer',
+      'ME301': 'Machine Design',
+      'ME302': 'Manufacturing Processes',
+      'ME401': 'Control Systems',
+      'ME402': 'Robotics',
+    };
+    return subjectMap[subjectCode] ?? subjectCode;
+  }
+
+  String _getLetterGrade(dynamic grade) {
+    if (grade == null) return 'N/A';
+    final numGrade = grade is num ? grade.toDouble() : double.tryParse(grade.toString()) ?? 0.0;
+    
+    if (numGrade >= 9.0) return 'A+';
+    if (numGrade >= 8.0) return 'A';
+    if (numGrade >= 7.0) return 'B+';
+    if (numGrade >= 6.0) return 'B';
+    if (numGrade >= 5.0) return 'C+';
+    if (numGrade >= 4.0) return 'C';
+    return 'F';
+  }
+
+  Color _getGradeColor(dynamic grade) {
+    if (grade == null) return Colors.grey;
+    final numGrade = grade is num ? grade.toDouble() : double.tryParse(grade.toString()) ?? 0.0;
+    
+    if (numGrade >= 9.0) return Colors.green.shade700;
+    if (numGrade >= 8.0) return Colors.green;
+    if (numGrade >= 7.0) return Colors.lightGreen;
+    if (numGrade >= 6.0) return Colors.orange;
+    if (numGrade >= 5.0) return Colors.orange.shade700;
+    if (numGrade >= 4.0) return Colors.red.shade300;
+    return Colors.red;
+  }
+
+  Widget _StudentSemesterInfoView(String studentId) {
+    return FutureBuilder<Map<String, dynamic>?>(
+      future: _authService.getStudentData(studentId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const Center(child: Text('Student data not found'));
+        }
+
+        final studentData = snapshot.data!;
+        final currentSemester = studentData['current_semester'] ?? 'sem1';
+        final coursesRaw = studentData['courses'];
+        final courses = coursesRaw is Map 
+          ? Map<String, dynamic>.from(coursesRaw) 
+          : <String, dynamic>{};
+        final semesterCoursesRaw = courses[currentSemester];
+        final semesterCourses = semesterCoursesRaw is List 
+          ? List<dynamic>.from(semesterCoursesRaw) 
+          : <dynamic>[];
+        
+        return DefaultTabController(
+          length: 2,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Semester Info Header
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      gradient: LinearGradient(
+                        colors: [Colors.purple.shade600, Colors.purple.shade800],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
                       children: [
-                        Icon(Icons.school_outlined, color: colors.primary, size: 28),
-                        const SizedBox(width: 12),
+                        const Icon(Icons.calendar_today, size: 48, color: Colors.white),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Semester Information',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
                         Text(
-                          "Grades - Semester $_selectedSemester",
-                          style: texts.titleLarge?.copyWith(
-                            color: colors.onSurface,
-                            fontWeight: FontWeight.w600,
+                          currentSemester.toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.white70,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const Divider(height: 1, indent: 16, endIndent: 16),
-                  ...grades.map((g) => ListTile(
-                        title: Text(g['course'].toString(), style: texts.titleMedium?.copyWith(fontWeight: FontWeight.w500)),
-                        subtitle: Text("Credits: ${g['credits']}", style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
-                        trailing: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: colors.primaryContainer.withOpacity(0.7),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            g['grade'].toString(),
-                            style: texts.titleSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: colors.onPrimaryContainer,
-                            ),
-                          ),
+                ),
+                const SizedBox(height: 20),
+                
+                // Tab Bar
+                Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      )),
-                  const SizedBox(height: 8),
+                        child: TabBar(
+                          indicator: BoxDecoration(
+                            color: Colors.purple.shade600,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          labelColor: Colors.white,
+                          unselectedLabelColor: Colors.grey.shade600,
+                          tabs: const [
+                            Tab(
+                              icon: Icon(Icons.book),
+                              text: 'Courses',
+                            ),
+                            Tab(
+                              icon: Icon(Icons.check_circle_outline),
+                              text: 'Attendance',
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 400,
+                        child: TabBarView(
+                          children: [
+                            // Courses Tab
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: semesterCourses.isNotEmpty
+                                ? ListView.builder(
+                                    itemCount: semesterCourses.length,
+                                    itemBuilder: (context, index) {
+                                      final courseCode = semesterCourses[index].toString();
+                                      final courseName = _getSubjectName(courseCode);
+                                      
+                                      return Card(
+                                        elevation: 1,
+                                        margin: const EdgeInsets.only(bottom: 8),
+                                        child: ListTile(
+                                          leading: CircleAvatar(
+                                            backgroundColor: Colors.purple.shade100,
+                                            child: Text(
+                                              (index + 1).toString(),
+                                              style: TextStyle(
+                                                color: Colors.purple.shade800,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                          title: Text(
+                                            courseName,
+                                            style: const TextStyle(fontWeight: FontWeight.bold),
+                                          ),
+                                          subtitle: Text(courseCode),
+                                          trailing: Icon(
+                                            Icons.arrow_forward_ios,
+                                            size: 16,
+                                            color: Colors.grey.shade400,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : const Center(
+                                    child: Text('No courses available for this semester'),
+                                  ),
+                            ),
+                            
+                            // Attendance Tab
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: semesterCourses.isNotEmpty
+                                ? ListView.builder(
+                                    itemCount: semesterCourses.length,
+                                    itemBuilder: (context, index) {
+                                      final courseCode = semesterCourses[index].toString();
+                                      final courseName = _getSubjectName(courseCode);
+                                      final attendance = _generateCourseAttendance(
+                                        courseCode,
+                                        studentData['attendance'] as num? ?? 85,
+                                      );
+                                      
+                                      return Card(
+                                        elevation: 1,
+                                        margin: const EdgeInsets.only(bottom: 8),
+                                        child: ListTile(
+                                          leading: CircleAvatar(
+                                            backgroundColor: attendance >= 75 
+                                              ? Colors.green.shade100 
+                                              : Colors.red.shade100,
+                                            child: Text(
+                                              '${attendance.round()}%',
+                                              style: TextStyle(
+                                                color: attendance >= 75 
+                                                  ? Colors.green.shade800 
+                                                  : Colors.red.shade800,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                          title: Text(
+                                            courseName,
+                                            style: const TextStyle(fontWeight: FontWeight.bold),
+                                          ),
+                                          subtitle: Text('$courseCode - ${attendance.toStringAsFixed(1)}%'),
+                                          trailing: LinearProgressIndicator(
+                                            value: attendance / 100,
+                                            backgroundColor: Colors.grey.shade300,
+                                            valueColor: AlwaysStoppedAnimation<Color>(
+                                              attendance >= 75 ? Colors.green : Colors.red,
+                                            ),
+                                            minHeight: 6,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : const Center(
+                                    child: Text('No attendance data available'),
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  double _generateCourseAttendance(String courseCode, num overallAttendance) {
+    final baseAttendance = overallAttendance.toDouble();
+    final variation = (courseCode.hashCode % 21) - 10; // -10 to +10
+    final courseAttendance = baseAttendance + variation;
+    return courseAttendance.clamp(60.0, 100.0);
+  }
+
+  ImageProvider? _getImageProvider(String? imagePath) {
+    if (imagePath == null || imagePath.isEmpty) return null;
+    
+    if (imagePath.startsWith('http')) {
+      return NetworkImage(imagePath);
+    } else if (imagePath.startsWith('/data/')) {
+      return FileImage(File(imagePath));
+    }
+    return null;
+  }
+}
+class _StudentDashboardView extends StatefulWidget {
+  final String? studentId;
+
+  const _StudentDashboardView({required this.studentId});
+
+  @override
+  State<_StudentDashboardView> createState() => _StudentDashboardViewState();
+}
+
+class _StudentDashboardViewState extends State<_StudentDashboardView> {
+  final AuthService _authService = AuthService();
+  Map<String, dynamic>? _studentData;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadStudentData();
+  }
+
+  Future<void> _loadStudentData() async {
+    if (widget.studentId == null) return;
+    
+    try {
+      final studentData = await _authService.getStudentData(widget.studentId!);
+      setState(() {
+        _studentData = studentData;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error loading student data: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_studentData == null) {
+      return const Center(child: Text('Student data not found'));
+    }
+
+    return _buildStudentDashboardContent(_studentData!);
+  }
+
+  Widget _buildStudentDashboardContent(Map<String, dynamic> studentData) {
+    final colors = Theme.of(context).colorScheme;
+    final texts = Theme.of(context).textTheme;
+    
+    // Calculate GPA from grades
+    double gpa = _calculateGPA(studentData);
+    
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Student Profile Card
+          Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 32,
+                    backgroundColor: colors.primaryContainer,
+                    backgroundImage: _getImageProvider(studentData['profile_photo'] as String?),
+                    child: studentData['profile_photo'] == null || studentData['profile_photo'].toString().isEmpty
+                        ? Icon(Icons.person, color: colors.onPrimaryContainer, size: 28)
+                        : null,
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(studentData['name'] ?? 'Unknown', style: texts.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 4),
+                        Text('Student ID: ${studentData['student_id'] ?? 'N/A'}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
+                        Text('Branch: ${studentData['branch'] ?? 'N/A'}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
+                        Text('Current Semester: ${studentData['current_semester'] ?? 'N/A'}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 16),
+          
+          // Current Semester Card
+          Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.school, color: colors.primary),
+                      const SizedBox(width: 8),
+                      Text('Current Semester: ${studentData['current_semester'] ?? 'N/A'}', style: texts.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('GPA: ${gpa.toStringAsFixed(2)} / 10', style: texts.bodyLarge),
+                      Icon(Icons.trending_up, color: Colors.green.shade600),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  LinearProgressIndicator(
+                    value: gpa / 10.0,
+                    minHeight: 6,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          
+          // Attendance Card
+          Card(
+            elevation: 2,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.check_circle_outline, color: colors.primary),
+                      const SizedBox(width: 8),
+                      Text('Attendance Overview', style: texts.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Overall: ${studentData['attendance'] ?? 'N/A'}%', style: texts.bodyLarge),
+                      Icon(Icons.present_to_all, color: Colors.blue.shade600),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  LinearProgressIndicator(
+                    value: ((studentData['attendance'] as num?)?.toDouble() ?? 0.0) / 100.0,
+                    minHeight: 6,
+                    borderRadius: BorderRadius.circular(3),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
-}
 
+  double _calculateGPA(Map<String, dynamic> studentData) {
+    final gradesRaw = studentData['grades'];
+    final grades = gradesRaw is Map 
+      ? Map<String, dynamic>.from(gradesRaw) 
+      : <String, dynamic>{};
+    if (grades.isEmpty) return 0.0;
+    
+    double totalGrade = 0.0;
+    int totalSubjects = 0;
+    
+    grades.forEach((semester, semesterGrades) {
+      if (semesterGrades is Map<String, dynamic>) {
+        semesterGrades.forEach((subject, grade) {
+          if (grade is num) {
+            totalGrade += grade.toDouble();
+            totalSubjects++;
+          }
+        });
+      }
+    });
+    
+    return totalSubjects > 0 ? totalGrade / totalSubjects : 0.0;
+  }
+
+  ImageProvider? _getImageProvider(String? imagePath) {
+    if (imagePath == null || imagePath.isEmpty) return null;
+    
+    if (imagePath.startsWith('http')) {
+      return NetworkImage(imagePath);
+    } else if (imagePath.startsWith('/data/')) {
+      return FileImage(File(imagePath));
+    }
+    return null;
+  }
+
+  Widget _StudentRecordView(String studentId) {
+    return FutureBuilder<Map<String, dynamic>?>(
+      future: _authService.getStudentData(studentId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const Center(child: Text('Student data not found'));
+        }
+
+        final studentData = snapshot.data!;
+        final studentRecordRaw = studentData['student_record'];
+        final studentRecord = studentRecordRaw is Map 
+          ? Map<String, dynamic>.from(studentRecordRaw) 
+          : <String, dynamic>{};
+        
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Student Record Header
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    gradient: LinearGradient(
+                      colors: [Colors.blue.shade600, Colors.blue.shade800],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundImage: _getImageProvider(studentData['profile_photo']),
+                        backgroundColor: Colors.white.withOpacity(0.2),
+                        child: _getImageProvider(studentData['profile_photo']) == null
+                          ? const Icon(Icons.person, size: 40, color: Colors.white)
+                          : null,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        studentData['name'] ?? 'N/A',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        studentData['student_id'] ?? 'N/A',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.white70,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      if (studentData['domain1'] != null || studentData['domain2'] != null)
+                        Wrap(
+                          spacing: 8,
+                          children: [
+                            if (studentData['domain1'] != null)
+                              Chip(
+                                label: Text(studentData['domain1']),
+                                backgroundColor: Colors.white.withOpacity(0.2),
+                                labelStyle: const TextStyle(color: Colors.white),
+                              ),
+                            if (studentData['domain2'] != null)
+                              Chip(
+                                label: Text(studentData['domain2']),
+                                backgroundColor: Colors.white.withOpacity(0.2),
+                                labelStyle: const TextStyle(color: Colors.white),
+                              ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              
+              // Record sections
+              _buildRecordSection('Certifications', studentRecord['certifications']),
+              _buildRecordSection('Achievements', studentRecord['achievements']),
+              _buildRecordSection('Projects', studentRecord['projects']),
+              _buildRecordSection('Research Papers', studentRecord['research_papers']),
+              _buildRecordSection('Experience', studentRecord['experience']),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildRecordSection(String title, dynamic items) {
+    if (items == null) return const SizedBox.shrink();
+    
+    List<Map<String, dynamic>> itemList = [];
+    if (items is Map) {
+      itemList = items.values.map((item) {
+        if (item is Map) {
+          return Map<String, dynamic>.from(item);
+        }
+        return <String, dynamic>{};
+      }).toList();
+    } else if (items is List) {
+      itemList = items.map((item) {
+        if (item is Map) {
+          return Map<String, dynamic>.from(item);
+        }
+        return <String, dynamic>{};
+      }).toList();
+    }
+    
+    if (itemList.isEmpty) return const SizedBox.shrink();
+    
+    // Apply sorting and limits
+    if (['Certifications', 'Achievements', 'Projects', 'Workshops'].contains(title)) {
+      itemList.sort((a, b) => (b['points'] ?? 0).compareTo(a['points'] ?? 0));
+      itemList = itemList.take(3).toList();
+    } else if (title == 'Research Papers') {
+      itemList.sort((a, b) => (b['points'] ?? 0).compareTo(a['points'] ?? 0));
+      itemList = itemList.take(5).toList();
+    } else if (title == 'Experience') {
+      itemList = itemList.take(5).toList();
+    }
+    
+    return Card(
+      elevation: 2,
+      margin: const EdgeInsets.only(bottom: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ExpansionTile(
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+        ),
+        subtitle: Text('${itemList.length} item${itemList.length != 1 ? 's' : ''}'),
+        children: itemList.map((item) {
+          return ListTile(
+            title: Text(item['title'] ?? 'No Title'),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (item['description'] != null)
+                  Text(item['description']),
+                if (item['points'] != null)
+                  Text('Points: ${item['points']}', style: const TextStyle(fontWeight: FontWeight.bold)),
+              ],
+            ),
+            trailing: item['points'] != null 
+              ? Chip(
+                  label: Text('${item['points']}'),
+                  backgroundColor: Colors.green.shade100,
+                )
+              : null,
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _StudentGradesView(String studentId) {
+    return FutureBuilder<Map<String, dynamic>?>(
+      future: _authService.getStudentData(studentId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const Center(child: Text('Student data not found'));
+        }
+
+        final studentData = snapshot.data!;
+        final gradesRaw = studentData['grades'];
+        final grades = gradesRaw is Map 
+          ? Map<String, dynamic>.from(gradesRaw) 
+          : <String, dynamic>{};
+        
+        return StatefulBuilder(
+          builder: (context, setState) {
+            String selectedSemester = grades.keys.isNotEmpty ? grades.keys.first : '';
+            
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Academic Performance Header
+                  Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        gradient: LinearGradient(
+                          colors: [Colors.green.shade600, Colors.green.shade800],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                      ),
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        children: [
+                          const Icon(Icons.school, size: 48, color: Colors.white),
+                          const SizedBox(height: 16),
+                          const Text(
+                            'Academic Performance',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            studentData['name'] ?? 'N/A',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.white70,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  
+                  // Semester Selector
+                  if (grades.isNotEmpty) ...[
+                    Card(
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: DropdownButtonFormField<String>(
+                          value: selectedSemester,
+                          decoration: const InputDecoration(
+                            labelText: 'Select Semester',
+                            border: OutlineInputBorder(),
+                          ),
+                          items: grades.keys.map((semester) {
+                            return DropdownMenuItem<String>(
+                              value: semester,
+                              child: Text(semester),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            if (value != null) {
+                              setState(() {
+                                selectedSemester = value;
+                              });
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Grades Display
+                    Card(
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Grades for $selectedSemester',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            if (grades[selectedSemester] != null)
+                              ...((grades[selectedSemester] as Map).entries.map((entry) {
+                                final subjectCode = entry.key;
+                                final grade = entry.value;
+                                final subjectName = _getSubjectName(subjectCode);
+                                final letterGrade = _getLetterGrade(grade);
+                                final gradeColor = _getGradeColor(grade);
+                                
+                                return Container(
+                                  margin: const EdgeInsets.only(bottom: 12),
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: gradeColor.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: gradeColor.withOpacity(0.3)),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 3,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              subjectName,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            Text(
+                                              subjectCode,
+                                              style: TextStyle(
+                                                color: Colors.grey[600],
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Text(
+                                          '$grade/10',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                            color: gradeColor,
+                                          ),
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: gradeColor,
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: Text(
+                                            letterGrade,
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }).toList()),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ] else
+                    const Card(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text('No grades available'),
+                      ),
+                    ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  String _getSubjectName(String subjectCode) {
+    final subjectMap = {
+      'CS101': 'Computer Science Fundamentals',
+      'CS102': 'Programming Principles',
+      'CS201': 'Data Structures',
+      'CS202': 'Algorithms',
+      'CS301': 'Database Systems',
+      'CS302': 'Software Engineering',
+      'CS401': 'Machine Learning',
+      'CS402': 'Artificial Intelligence',
+      'ME101': 'Engineering Mechanics',
+      'ME102': 'Thermodynamics',
+      'ME201': 'Fluid Mechanics',
+      'ME202': 'Heat Transfer',
+      'ME301': 'Machine Design',
+      'ME302': 'Manufacturing Processes',
+      'ME401': 'Control Systems',
+      'ME402': 'Robotics',
+    };
+    return subjectMap[subjectCode] ?? subjectCode;
+  }
+
+  String _getLetterGrade(dynamic grade) {
+    if (grade == null) return 'N/A';
+    final numGrade = grade is num ? grade.toDouble() : double.tryParse(grade.toString()) ?? 0.0;
+    
+    if (numGrade >= 9.0) return 'A+';
+    if (numGrade >= 8.0) return 'A';
+    if (numGrade >= 7.0) return 'B+';
+    if (numGrade >= 6.0) return 'B';
+    if (numGrade >= 5.0) return 'C+';
+    if (numGrade >= 4.0) return 'C';
+    return 'F';
+  }
+
+  Color _getGradeColor(dynamic grade) {
+    if (grade == null) return Colors.grey;
+    final numGrade = grade is num ? grade.toDouble() : double.tryParse(grade.toString()) ?? 0.0;
+    
+    if (numGrade >= 9.0) return Colors.green.shade700;
+    if (numGrade >= 8.0) return Colors.green;
+    if (numGrade >= 7.0) return Colors.lightGreen;
+    if (numGrade >= 6.0) return Colors.orange;
+    if (numGrade >= 5.0) return Colors.orange.shade700;
+    if (numGrade >= 4.0) return Colors.red.shade300;
+    return Colors.red;
+  }
+
+  Widget _StudentSemesterInfoView(String studentId) {
+    return FutureBuilder<Map<String, dynamic>?>(
+      future: _authService.getStudentData(studentId),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        
+        if (!snapshot.hasData || snapshot.data == null) {
+          return const Center(child: Text('Student data not found'));
+        }
+
+        final studentData = snapshot.data!;
+        final currentSemester = studentData['current_semester'] ?? 'sem1';
+        final coursesRaw = studentData['courses'];
+        final courses = coursesRaw is Map 
+          ? Map<String, dynamic>.from(coursesRaw) 
+          : <String, dynamic>{};
+        final semesterCoursesRaw = courses[currentSemester];
+        final semesterCourses = semesterCoursesRaw is List 
+          ? List<dynamic>.from(semesterCoursesRaw) 
+          : <dynamic>[];
+        
+        return DefaultTabController(
+          length: 2,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Semester Info Header
+                Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  child: Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      gradient: LinearGradient(
+                        colors: [Colors.purple.shade600, Colors.purple.shade800],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      children: [
+                        const Icon(Icons.calendar_today, size: 48, color: Colors.white),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Semester Information',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          currentSemester.toUpperCase(),
+                          style: const TextStyle(
+                            fontSize: 16,
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                
+                // Tab Bar
+                Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: Column(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: TabBar(
+                          indicator: BoxDecoration(
+                            color: Colors.purple.shade600,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          labelColor: Colors.white,
+                          unselectedLabelColor: Colors.grey.shade600,
+                          tabs: const [
+                            Tab(
+                              icon: Icon(Icons.book),
+                              text: 'Courses',
+                            ),
+                            Tab(
+                              icon: Icon(Icons.check_circle_outline),
+                              text: 'Attendance',
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: 400,
+                        child: TabBarView(
+                          children: [
+                            // Courses Tab
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: semesterCourses.isNotEmpty
+                                ? ListView.builder(
+                                    itemCount: semesterCourses.length,
+                                    itemBuilder: (context, index) {
+                                      final courseCode = semesterCourses[index].toString();
+                                      final courseName = _getSubjectName(courseCode);
+                                      
+                                      return Card(
+                                        elevation: 1,
+                                        margin: const EdgeInsets.only(bottom: 8),
+                                        child: ListTile(
+                                          leading: CircleAvatar(
+                                            backgroundColor: Colors.purple.shade100,
+                                            child: Text(
+                                              (index + 1).toString(),
+                                              style: TextStyle(
+                                                color: Colors.purple.shade800,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                          title: Text(
+                                            courseName,
+                                            style: const TextStyle(fontWeight: FontWeight.bold),
+                                          ),
+                                          subtitle: Text(courseCode),
+                                          trailing: Icon(
+                                            Icons.arrow_forward_ios,
+                                            size: 16,
+                                            color: Colors.grey.shade400,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : const Center(
+                                    child: Text('No courses available for this semester'),
+                                  ),
+                            ),
+                            
+                            // Attendance Tab
+                            Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: semesterCourses.isNotEmpty
+                                ? ListView.builder(
+                                    itemCount: semesterCourses.length,
+                                    itemBuilder: (context, index) {
+                                      final courseCode = semesterCourses[index].toString();
+                                      final courseName = _getSubjectName(courseCode);
+                                      final attendance = _generateCourseAttendance(
+                                        courseCode,
+                                        studentData['attendance'] as num? ?? 85,
+                                      );
+                                      
+                                      return Card(
+                                        elevation: 1,
+                                        margin: const EdgeInsets.only(bottom: 8),
+                                        child: ListTile(
+                                          leading: CircleAvatar(
+                                            backgroundColor: attendance >= 75 
+                                              ? Colors.green.shade100 
+                                              : Colors.red.shade100,
+                                            child: Text(
+                                              '${attendance.round()}%',
+                                              style: TextStyle(
+                                                color: attendance >= 75 
+                                                  ? Colors.green.shade800 
+                                                  : Colors.red.shade800,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                          title: Text(
+                                            courseName,
+                                            style: const TextStyle(fontWeight: FontWeight.bold),
+                                          ),
+                                          subtitle: Text('$courseCode - ${attendance.toStringAsFixed(1)}%'),
+                                          trailing: LinearProgressIndicator(
+                                            value: attendance / 100,
+                                            backgroundColor: Colors.grey.shade300,
+                                            valueColor: AlwaysStoppedAnimation<Color>(
+                                              attendance >= 75 ? Colors.green : Colors.red,
+                                            ),
+                                            minHeight: 6,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : const Center(
+                                    child: Text('No attendance data available'),
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  double _generateCourseAttendance(String courseCode, num overallAttendance) {
+    final baseAttendance = overallAttendance.toDouble();
+    final variation = (courseCode.hashCode % 21) - 10; // -10 to +10
+    final courseAttendance = baseAttendance + variation;
+    return courseAttendance.clamp(60.0, 100.0);
+  }
+}

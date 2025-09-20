@@ -1,5 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import '../widgets/faculty_drawer.dart';
+import '../widgets/faculty_drawer.dart' as faculty_drawer;
+import '../widgets/student_drawer.dart' as student_drawer;
+import '../widgets/admin_drawer.dart';
+import '../services/auth_service.dart';
 
 class FacultySearchPage extends StatefulWidget {
   const FacultySearchPage({super.key});
@@ -13,55 +17,33 @@ class _FacultySearchPageState extends State<FacultySearchPage> {
   String _deptFilter = 'All';
   String _domainFilter = 'All';
   String _sortBy = 'Name'; // Name or Department
-
-  final List<Map<String, dynamic>> _allFaculty = [
-    {
-      'name': 'Dr. John Smith',
-      'department': 'Computer Science',
-      'domain': 'AI/ML',
-      'papers': [
-        'Deep Learning for Edge Devices (IEEE 2022)',
-        'Efficient CNN Architectures (ACM 2023)'
-      ],
-      'research': [
-        {'topic': 'Edge AI', 'conference': 'IEEE Edge 2023', 'students': 'Alice, Bob'},
-      ],
-    },
-    {
-      'name': 'Prof. Jane Doe',
-      'department': 'Information Technology',
-      'domain': 'Data Science',
-      'papers': [
-        'Privacy in Federated Learning (Springer 2021)'
-      ],
-      'research': [
-        {'topic': 'Federated Learning', 'conference': 'NeurIPS 2023', 'students': 'Charlie'},
-      ],
-    },
-    {
-      'name': 'Dr. Emily Johnson',
-      'department': 'Computer Science',
-      'domain': 'Cybersecurity',
-      'papers': [],
-      'research': [],
-    },
-    {
-      'name': 'Prof. Michael Brown',
-      'department': 'IT',
-      'domain': 'Web Development',
-      'papers': ['Network Security Advances (Elsevier 2020)'],
-      'research': [
-        {'topic': 'Network Security', 'conference': 'BlackHat 2022', 'students': 'David, Erin'},
-      ],
-    },
-  ];
+  
+  final AuthService _authService = AuthService();
+  List<Map<String, dynamic>> _allFaculty = [];
   List<Map<String, dynamic>> _filteredFaculty = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _filteredFaculty = _allFaculty;
+    _loadFacultyData();
     _searchController.addListener(_filterFaculty);
+  }
+
+  Future<void> _loadFacultyData() async {
+    try {
+      final facultyList = await _authService.getAllFaculty();
+      setState(() {
+        _allFaculty = facultyList;
+        _filteredFaculty = facultyList;
+        _isLoading = false;
+      });
+    } catch (e) {
+      print('Error loading faculty data: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   void _filterFaculty() {
@@ -107,15 +89,39 @@ class _FacultySearchPageState extends State<FacultySearchPage> {
     super.dispose();
   }
 
+  Widget _getAppropriateDrawer(BuildContext context) {
+    final userCategory = _authService.getUserCategory();
+    
+    switch (userCategory) {
+      case 'student':
+        return student_drawer.MainDrawer(context: context);
+      case 'faculty':
+        return faculty_drawer.MainDrawer(context: context, isFaculty: true);
+      case 'admin':
+        return AdminDrawer(context: context);
+      default:
+        return student_drawer.MainDrawer(context: context);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final texts = Theme.of(context).textTheme;
+    
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Faculty Search')),
+        drawer: _getAppropriateDrawer(context),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Faculty Search'),
       ),
-      drawer: MainDrawer(context: context, isFaculty: true),
+      drawer: _getAppropriateDrawer(context),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -193,7 +199,7 @@ class _FacultySearchPageState extends State<FacultySearchPage> {
                             ),
                             title: Text(faculty['name'], style: texts.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
                             subtitle: Text('Department: ${faculty['department']}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
-                            trailing: const Icon(Icons.chevron_right),
+                            trailing: const Icon(Icons.info_outline),
                             onTap: () => _openFacultyDetailSheet(context, faculty),
                           ),
                         );
@@ -218,8 +224,17 @@ class _FacultySearchPageState extends State<FacultySearchPage> {
   void _openFacultyDetailSheet(BuildContext context, Map<String, dynamic> faculty) {
     final colors = Theme.of(context).colorScheme;
     final texts = Theme.of(context).textTheme;
-    final papers = faculty['papers'] as List? ?? [];
-    final research = faculty['research'] as List? ?? [];
+    
+    // Get faculty_record data with proper type casting
+    final facultyRecordRaw = faculty['faculty_record'];
+    final facultyRecord = facultyRecordRaw is Map ? Map<String, dynamic>.from(facultyRecordRaw) : <String, dynamic>{};
+    
+    final papersRaw = facultyRecord['papers_and_publications'];
+    final papers = papersRaw is List ? List<Map<String, dynamic>>.from(papersRaw.map((item) => item is Map ? Map<String, dynamic>.from(item) : <String, dynamic>{})) : <Map<String, dynamic>>[];
+    
+    final projectsRaw = facultyRecord['projects'];
+    final projects = projectsRaw is List ? List<Map<String, dynamic>>.from(projectsRaw.map((item) => item is Map ? Map<String, dynamic>.from(item) : <String, dynamic>{})) : <Map<String, dynamic>>[];
+    
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -236,31 +251,70 @@ class _FacultySearchPageState extends State<FacultySearchPage> {
           child: ListView(
             controller: controller,
             children: [
-              // Personal header (similar to faculty dashboard)
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 32,
-                    backgroundColor: colors.primaryContainer,
-                    child: Icon(Icons.person, color: colors.onPrimaryContainer, size: 28),
+              // Faculty Profile Header
+              Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 32,
+                        backgroundColor: colors.primaryContainer,
+                        backgroundImage: faculty['profile_photo'] != null && faculty['profile_photo'].toString().isNotEmpty
+                            ? _getImageProvider(faculty['profile_photo'])
+                            : null,
+                        child: faculty['profile_photo'] == null || faculty['profile_photo'].toString().isEmpty
+                            ? Icon(Icons.person, color: colors.onPrimaryContainer, size: 28)
+                            : null,
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(faculty['name'] ?? 'Unknown', style: texts.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 4),
+                            Text('Faculty ID: ${faculty['faculty_id'] ?? 'N/A'}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
+                            Text('Department: ${faculty['department'] ?? 'N/A'}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
+                            Text('Designation: ${faculty['designation'] ?? 'N/A'}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
+                            Text('Email: ${faculty['email'] ?? 'N/A'}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
+                ),
+              ),
+              const SizedBox(height: 16),
+              
+              // Educational Qualifications
+              if (faculty['educational_qualifications'] != null)
+                Card(
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(faculty['name'], style: texts.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
-                        const SizedBox(height: 4),
-                        Text('Department: ${faculty['department']}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
-                        if ((faculty['domain'] as String?) != null)
-                          Text('Domain: ${faculty['domain']}', style: texts.bodyMedium?.copyWith(color: colors.onSurfaceVariant)),
+                        Row(
+                          children: [
+                            Icon(Icons.school, color: colors.primary),
+                            const SizedBox(width: 8),
+                            Text('Educational Qualifications', style: texts.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                        const Divider(height: 16),
+                        Text(faculty['educational_qualifications'].toString(), style: texts.bodyMedium),
                       ],
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // Papers & Publications card
+                ),
+              const SizedBox(height: 12),
+              
+              // Papers & Publications
               Card(
                 elevation: 2,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -279,17 +333,19 @@ class _FacultySearchPageState extends State<FacultySearchPage> {
                       const Divider(height: 16),
                       if (papers.isEmpty)
                         Center(child: Text('No papers available', style: texts.bodyMedium))
-                      else ...papers.map((p) => ListTile(
+                      else ...papers.take(5).map((paper) => ListTile(
                             dense: true,
                             leading: Icon(Icons.description_outlined, color: colors.secondary),
-                            title: Text(p.toString()),
+                            title: Text(paper['title']?.toString() ?? 'Untitled'),
+                            subtitle: Text(paper['description']?.toString() ?? 'No description'),
                           )),
                     ],
                   ),
                 ),
               ),
               const SizedBox(height: 12),
-              // Student Research card
+              
+              // Projects
               Card(
                 elevation: 2,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -300,19 +356,19 @@ class _FacultySearchPageState extends State<FacultySearchPage> {
                     children: [
                       Row(
                         children: [
-                          Icon(Icons.group, color: colors.primary),
+                          Icon(Icons.work_outline, color: colors.primary),
                           const SizedBox(width: 8),
-                          Text('Student Research', style: texts.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                          Text('Projects', style: texts.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
                         ],
                       ),
                       const Divider(height: 16),
-                      if (research.isEmpty)
-                        Center(child: Text('No student research available', style: texts.bodyMedium))
-                      else ...research.map((r) => ListTile(
+                      if (projects.isEmpty)
+                        Center(child: Text('No projects available', style: texts.bodyMedium))
+                      else ...projects.take(5).map((project) => ListTile(
                             dense: true,
-                            leading: Icon(Icons.topic_outlined, color: colors.secondary),
-                            title: Text('${r['topic']} - ${r['conference']}'),
-                            subtitle: Text('Students: ${r['students']}'),
+                            leading: Icon(Icons.work_outline, color: colors.secondary),
+                            title: Text(project['title']?.toString() ?? 'Untitled'),
+                            subtitle: Text(project['description']?.toString() ?? 'No description'),
                           )),
                     ],
                   ),
@@ -325,9 +381,23 @@ class _FacultySearchPageState extends State<FacultySearchPage> {
     );
   }
 
+  // Helper method to get appropriate image provider
+  ImageProvider _getImageProvider(String imagePath) {
+    if (imagePath.startsWith('http')) {
+      return NetworkImage(imagePath);
+    } else if (imagePath.startsWith('/') || imagePath.startsWith('C:')) {
+      return FileImage(File(imagePath));
+    } else {
+      return NetworkImage(imagePath);
+    }
+  }
+
   Widget _buildDeptFilter(ColorScheme colors) {
+    // Get unique departments from faculty data
+    final departments = ['All', ..._allFaculty.map((f) => f['department'] as String).toSet().toList()..sort()];
+    
     return DropdownButtonFormField<String>(
-      value: _deptFilter,
+      initialValue: _deptFilter,
       decoration: InputDecoration(
         labelText: 'Department',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -336,12 +406,7 @@ class _FacultySearchPageState extends State<FacultySearchPage> {
         isDense: true,
         contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
-      items: const [
-        DropdownMenuItem(value: 'All', child: Text('All')),
-        DropdownMenuItem(value: 'Computer Science', child: Text('Computer Science')),
-        DropdownMenuItem(value: 'Information Technology', child: Text('Information Technology')),
-        DropdownMenuItem(value: 'IT', child: Text('IT')),
-      ],
+      items: departments.map((dept) => DropdownMenuItem(value: dept, child: Text(dept))).toList(),
       onChanged: (v) {
         _deptFilter = v ?? 'All';
         _filterFaculty();
@@ -351,7 +416,7 @@ class _FacultySearchPageState extends State<FacultySearchPage> {
 
   Widget _buildDomainFilter(ColorScheme colors) {
     return DropdownButtonFormField<String>(
-      value: _domainFilter,
+      initialValue: _domainFilter,
       decoration: InputDecoration(
         labelText: 'Domain',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -376,7 +441,7 @@ class _FacultySearchPageState extends State<FacultySearchPage> {
 
   Widget _buildSortFilter(ColorScheme colors) {
     return DropdownButtonFormField<String>(
-      value: _sortBy,
+      initialValue: _sortBy,
       decoration: InputDecoration(
         labelText: 'Sort By',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),

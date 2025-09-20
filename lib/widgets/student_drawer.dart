@@ -52,7 +52,7 @@ class MainDrawer extends StatelessWidget {
   }
 
   void _searchFaculty() {
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const FacultySearchPage()),
     );
