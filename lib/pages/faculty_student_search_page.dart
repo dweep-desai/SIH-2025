@@ -3,6 +3,7 @@ import '../widgets/faculty_drawer.dart';
 import '../data/approval_data.dart';
 import '../models/student.dart';
 import '../data/students_data.dart';
+import 'student_analytics_page.dart';
 
 class FacultyStudentSearchPage extends StatefulWidget {
   const FacultyStudentSearchPage({super.key});
@@ -509,9 +510,7 @@ class FacultyStudentDetailPage extends StatelessWidget {
                 const SizedBox(width: 12),
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Opening analytics...')));
-                    },
+                    onPressed: () => _openStudentAnalyticsSheet(context),
                     icon: const Icon(Icons.analytics_outlined),
                     label: const Text('View Analytics'),
                   ),
@@ -736,6 +735,13 @@ class FacultyStudentDetailPage extends StatelessWidget {
       builder: (ctx) {
         return _GradesBottomSheet(currentSemester: student.currentSemester);
       },
+    );
+  }
+
+  void _openStudentAnalyticsSheet(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const StudentAnalyticsPage()),
     );
   }
 
