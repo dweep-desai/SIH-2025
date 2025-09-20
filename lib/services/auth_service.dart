@@ -373,10 +373,6 @@ class AuthService {
         print('❌ Verification failed - no data found at path');
       }
       
-      // Additional verification after a short delay
-      print('🔄 Additional verification after delay...');
-      await Future.delayed(const Duration(milliseconds: 500));
-      await verifyDomainsInFirebase(userId, category);
       
       // Update local data
       if (_currentUser != null) {
@@ -619,127 +615,6 @@ class AuthService {
     }
   }
 
-  // Method to test Firebase write permissions
-  Future<void> testFirebaseWrite(String userId, String category) async {
-    try {
-      print('🧪 Testing Firebase write permissions...');
-      print('🧪 Path: $category/$userId/test_field');
-      
-      // Check authentication status
-      print('🧪 Current user: ${_auth.currentUser?.uid}');
-      print('🧪 Is authenticated: ${_auth.currentUser != null}');
-      
-      // Try to write a test field
-      await _databaseRef.child(category).child(userId).child('test_field').set('test_value_${DateTime.now().millisecondsSinceEpoch}');
-      print('✅ Test write successful');
-      
-      // Try to read it back
-      DataSnapshot snapshot = await _databaseRef.child(category).child(userId).child('test_field').get();
-      if (snapshot.exists) {
-        print('✅ Test read successful: ${snapshot.value}');
-      } else {
-        print('❌ Test read failed - no data found');
-      }
-      
-      // Clean up test field
-      await _databaseRef.child(category).child(userId).child('test_field').remove();
-      print('✅ Test field cleaned up');
-      
-    } catch (e) {
-      print('❌ Firebase write test failed: $e');
-      print('❌ Error type: ${e.runtimeType}');
-      print('❌ Error details: ${e.toString()}');
-    }
-  }
-
-  // Method to test domain write specifically
-  Future<void> testDomainWrite(String userId, String category) async {
-    try {
-      print('🧪 Testing domain write specifically...');
-      print('🧪 Path: $category/$userId');
-      
-      // Test writing domain1
-      print('🧪 Testing domain1 write...');
-      await _databaseRef.child(category).child(userId).child('domain1').set('TEST_DOMAIN_1');
-      print('✅ Domain1 write successful');
-      
-      // Test writing domain2
-      print('🧪 Testing domain2 write...');
-      await _databaseRef.child(category).child(userId).child('domain2').set('TEST_DOMAIN_2');
-      print('✅ Domain2 write successful');
-      
-      // Read back immediately
-      print('🧪 Reading back domains...');
-      DataSnapshot snapshot = await _databaseRef.child(category).child(userId).get();
-      if (snapshot.exists) {
-        Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
-        print('🧪 Read back - domain1: "${data['domain1']}", domain2: "${data['domain2']}"');
-        print('🧪 Domain1 type: ${data['domain1'].runtimeType}');
-        print('🧪 Domain2 type: ${data['domain2'].runtimeType}');
-        print('🧪 Domain1 isEmpty: ${data['domain1'].toString().isEmpty}');
-        print('🧪 Domain2 isEmpty: ${data['domain2'].toString().isEmpty}');
-      }
-      
-      // Clean up test domains
-      print('🧪 Cleaning up test domains...');
-      await _databaseRef.child(category).child(userId).child('domain1').remove();
-      await _databaseRef.child(category).child(userId).child('domain2').remove();
-      print('✅ Test domains cleaned up');
-      
-    } catch (e) {
-      print('❌ Domain write test failed: $e');
-      print('❌ Error type: ${e.runtimeType}');
-      print('❌ Error details: ${e.toString()}');
-    }
-  }
-
-  // Method to verify domains in Firebase after update
-  Future<void> verifyDomainsInFirebase(String userId, String category) async {
-    try {
-      print('🔍 Verifying domains in Firebase...');
-      print('🔍 Path: $category/$userId');
-      
-      DataSnapshot snapshot = await _databaseRef.child(category).child(userId).get();
-      if (snapshot.exists) {
-        Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
-        print('🔍 Raw Firebase data: $data');
-        print('🔍 All keys in Firebase data: ${data.keys.toList()}');
-        
-        // Check for domain1
-        if (data.containsKey('domain1')) {
-          print('🔍 Domain1 exists in Firebase');
-          print('🔍 Domain1 value: "${data['domain1']}"');
-          print('🔍 Domain1 type: ${data['domain1'].runtimeType}');
-          print('🔍 Domain1 toString: "${data['domain1'].toString()}"');
-          print('🔍 Domain1 isEmpty: ${data['domain1'].toString().isEmpty}');
-          print('🔍 Domain1 == null: ${data['domain1'] == null}');
-        } else {
-          print('❌ Domain1 field not found in Firebase data');
-        }
-        
-        // Check for domain2
-        if (data.containsKey('domain2')) {
-          print('🔍 Domain2 exists in Firebase');
-          print('🔍 Domain2 value: "${data['domain2']}"');
-          print('🔍 Domain2 type: ${data['domain2'].runtimeType}');
-          print('🔍 Domain2 toString: "${data['domain2'].toString()}"');
-          print('🔍 Domain2 isEmpty: ${data['domain2'].toString().isEmpty}');
-          print('🔍 Domain2 == null: ${data['domain2'] == null}');
-        } else {
-          print('❌ Domain2 field not found in Firebase data');
-        }
-        
-        // Check for any domain-related fields
-        List<String> domainFields = data.keys.where((key) => key.toString().toLowerCase().contains('domain')).map((key) => key.toString()).toList();
-        print('🔍 All domain-related fields: $domainFields');
-        
-      } else {
-        print('❌ No data found at path: $category/$userId');
-      }
-    } catch (e) {
-      print('❌ Error verifying domains in Firebase: $e');
-    }
-  }
 
   // Method to force refresh user data directly from Firebase
   Future<Map<String, dynamic>?> forceRefreshUserData() async {
@@ -853,13 +728,4 @@ class AuthService {
     }
   }
 
-  // Method to check authentication status
-  void checkAuthStatus() {
-    print('🔍 Authentication Status Check:');
-    print('🔍 Current user: ${_auth.currentUser?.uid}');
-    print('🔍 Is authenticated: ${_auth.currentUser != null}');
-    print('🔍 User email: ${_auth.currentUser?.email}');
-    print('🔍 User display name: ${_auth.currentUser?.displayName}');
-    print('🔍 User email verified: ${_auth.currentUser?.emailVerified}');
-  }
 }

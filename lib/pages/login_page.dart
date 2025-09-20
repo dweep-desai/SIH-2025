@@ -5,7 +5,6 @@ import '../services/auth_service.dart';
 import 'dashboard_page.dart';
 import 'faculty_dashboard_page.dart';
 import 'admin_dashboard_page.dart';
-import 'import_database_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -21,6 +20,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   bool _obscurePassword = true;
+  bool _hasNetworkError = false;
 
   String get _expectedCategory {
     if (selectedIndex == 1) return 'faculty';
@@ -131,11 +131,17 @@ class _LoginPageState extends State<LoginPage> {
           default:
             errorMessage = 'Authentication failed: ${e.message ?? 'Unknown error'}';
         }
-      } else if (e.toString().contains('Query#get')) {
-        errorMessage = 'Database connection error. Please check your internet connection and try again.';
-      } else if (e.toString().contains('timeout')) {
-        errorMessage = 'Connection timeout. Please check your internet connection.';
-      }
+              } else if (e.toString().contains('Query#get')) {
+                errorMessage = 'Database connection error. Please check your internet connection and try again.';
+              } else if (e.toString().contains('timeout')) {
+                errorMessage = 'Connection timeout. Please check your internet connection.';
+              } else if (e.toString().contains('network-request-failed')) {
+                errorMessage = 'Network error. Please check your internet connection and try again.';
+                _hasNetworkError = true;
+              } else if (e.toString().contains('unreachable host')) {
+                errorMessage = 'Cannot reach Firebase servers. Please check your internet connection.';
+                _hasNetworkError = true;
+              }
       
       _showSnack(errorMessage);
     } finally {
@@ -398,85 +404,52 @@ class _LoginPageState extends State<LoginPage> {
                                 child: const Text('Developer Login'),
                               ),
                               
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 16),
                               
-                              // Import Database Button
-                              OutlinedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (_) => const ImportDatabasePage()),
-                                  );
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: Colors.orange,
-                                  side: const BorderSide(color: Colors.orange),
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
+                              // Network Error Retry Button
+                              if (_hasNetworkError)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      setState(() {
+                                        _hasNetworkError = false;
+                                      });
+                                      _login();
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.orange,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(vertical: 16),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    icon: const Icon(Icons.refresh),
+                                    label: const Text('Retry Login'),
                                   ),
                                 ),
-                                child: const Text('Import Database'),
+                              
+                              // Forgot Password
+                              TextButton(
+                                onPressed: () {
+                                  _showSnack('Please contact your administrator for password reset.');
+                                },
+                                child: const Text(
+                                  'Forgot Password?',
+                                  style: TextStyle(color: Color(0xFF1976D2)),
+                                ),
                               ),
-                      
-                      const SizedBox(height: 16),
-                      
-                      // Forgot Password
-                      TextButton(
-                        onPressed: () {
-                          _showSnack('Please contact your administrator for password reset.');
-                        },
-                        child: const Text(
-                          'Forgot Password?',
-                          style: TextStyle(color: Color(0xFF1976D2)),
-                        ),
-                      ),
                     ],
                   ),
                 ),
                 
-                const SizedBox(height: 30),
-                
-                // Sample Credentials Card
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.blue[50],
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.blue[200]!),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'Sample Credentials:',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1976D2),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      const Text('Student: aarav.sharma01@student.univ.edu / As#2025!'),
-                      const Text('Faculty: neelesh.kapoor@univ.edu / Fk2025#'),
-                      const Text('Admin: admin1@univ.edu / Admin#2025a'),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'Note: Users must be registered in Firebase Auth',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontStyle: FontStyle.italic,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
               ],
             ),
           ),
         ),
       ),
-    );
+    );    
   }
 
   Widget _buildCategoryButton(int index, String label, IconData icon) {
