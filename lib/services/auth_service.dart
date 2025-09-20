@@ -417,9 +417,9 @@ class AuthService {
       print('🔍 approval_rejected value: ${rejectedSnapshot.value}');
       
       // Check approval_history directly
-      DataSnapshot historySnapshot = await _databaseRef.child('students').child(studentId).child('approval_history').get();
-      print('🔍 approval_history exists: ${historySnapshot.exists}');
-      print('🔍 approval_history value: ${historySnapshot.value}');
+      DataSnapshot historySnapshot = await _databaseRef.child('students').child(studentId).child('approval_list').get();
+      print('🔍 approval_list exists: ${historySnapshot.exists}');
+      print('🔍 approval_list value: ${historySnapshot.value}');
       
       return {
         'accepted': acceptedSnapshot.value,
@@ -485,10 +485,10 @@ class AuthService {
         print('🔍 No rejected requests found');
       }
       
-      // Load pending requests (from approval_history with status 'pending')
-      DataSnapshot pendingSnapshot = await _databaseRef.child('students').child(studentId).child('approval_history').get();
-      print('🔍 Raw approval_history data: ${pendingSnapshot.value}');
-      print('🔍 Approval_history exists: ${pendingSnapshot.exists}');
+      // Load pending requests (from approval_list with status 'pending')
+      DataSnapshot pendingSnapshot = await _databaseRef.child('students').child(studentId).child('approval_list').get();
+      print('🔍 Raw approval_list data: ${pendingSnapshot.value}');
+      print('🔍 Approval_list exists: ${pendingSnapshot.exists}');
       
       if (pendingSnapshot.exists && pendingSnapshot.value != null) {
         Map<dynamic, dynamic> pendingData = pendingSnapshot.value as Map<dynamic, dynamic>;
@@ -504,7 +504,7 @@ class AuthService {
             pendingCount++;
           }
         });
-        print('🔍 Loaded $pendingCount pending requests from approval_history');
+        print('🔍 Loaded $pendingCount pending requests from approval_list');
       } else {
         print('🔍 No pending requests found');
       }
@@ -768,14 +768,14 @@ class AuthService {
       DataSnapshot verifySnapshot = await _databaseRef.child('faculty').child(assignedFacultyId).child('approval_section').get();
       print('🔍 Verification - Faculty approval section now contains: ${verifySnapshot.value}');
       
-      // Add to student's approval history
-      print('🔄 Adding to student approval history...');
-      await _databaseRef.child('students').child(studentId).child('approval_history').child(requestId).set({
+      // Add to student's approval list
+      print('🔄 Adding to student approval list...');
+      await _databaseRef.child('students').child(studentId).child('approval_list').child(requestId).set({
         ...requestData,
         'assigned_faculty_id': assignedFacultyId,
         'status': 'pending',
       });
-      print('✅ Added to student approval history');
+      print('✅ Added to student approval list');
       
       print('✅ Approval request submitted successfully');
     } catch (e) {
@@ -883,7 +883,7 @@ class AuthService {
       await _databaseRef.child('faculty').child(facultyId).child('approval_history').child(requestId).set(approvalHistory);
       
       // Add to student's approval history
-      await _databaseRef.child('students').child(studentId).child('approval_history').child(requestId).set(approvalHistory);
+      await _databaseRef.child('students').child(studentId).child('approval_list').child(requestId).set(approvalHistory);
       
       // Update student's approval status sections
       if (approved) {
@@ -895,6 +895,10 @@ class AuthService {
         await _databaseRef.child('students').child(studentId).child('approval_rejected').child(requestId).set(approvalHistory);
         print('✅ Added to student approval_rejected section');
       }
+      
+      // Remove from student's approval_list since it's now processed
+      await _databaseRef.child('students').child(studentId).child('approval_list').child(requestId).remove();
+      print('✅ Removed from student approval_list');
       
       // Remove from faculty's approval section
       await _databaseRef.child('faculty').child(facultyId).child('approval_section').child(requestId).remove();

@@ -26,16 +26,25 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
 
   Future<void> _loadUserData() async {
     try {
+      print('🔍 ==========================================');
+      print('🔍 FACULTY APPROVAL ANALYTICS PAGE - LOADING USER DATA');
+      print('🔍 ==========================================');
+      
       // Force refresh user data from Firebase to get latest updates
       print('🔄 Loading faculty user data...');
       final userData = await _authService.forceRefreshUserData();
       if (userData != null) {
         print('✅ Faculty user data loaded: ${userData['name']}');
+        print('✅ Faculty ID: ${userData['id']}');
+        print('✅ Faculty Category: ${userData['category']}');
+        print('✅ Faculty Department: ${userData['department']}');
+        
         setState(() {
           _userData = userData;
           _isLoading = false;
         });
         
+        print('🔄 Now loading approval analytics from Firebase...');
         // Load approval analytics directly from Firebase
         await _loadApprovalAnalyticsFromFirebase();
       } else {
@@ -51,8 +60,13 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
   // Method to load approval analytics directly from Firebase
   Future<void> _loadApprovalAnalyticsFromFirebase() async {
     try {
+      print('🔍 ==========================================');
+      print('🔍 LOADING APPROVAL ANALYTICS FROM FIREBASE');
+      print('🔍 ==========================================');
+      
       String facultyId = _userData!['id'];
-      print('🔍 Loading approval analytics directly from Firebase for faculty: $facultyId');
+      print('🔍 Faculty ID: $facultyId');
+      print('🔍 Firebase Path: /faculty/$facultyId/approval_analytics');
       
       // Get Firebase Database reference
       final DatabaseReference databaseRef = FirebaseDatabase.instanceFor(
@@ -60,17 +74,45 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
         databaseURL: 'https://ssh-project-7ebc3-default-rtdb.asia-southeast1.firebasedatabase.app',
       ).ref();
       
-      // Get approval analytics directly from Firebase
+      print('🔍 Firebase Database Reference created');
+      print('🔍 Database URL: https://ssh-project-7ebc3-default-rtdb.asia-southeast1.firebasedatabase.app');
+      
+      // Get approval_analytics directly from Firebase
+      print('🔍 Fetching data from Firebase...');
       DataSnapshot analyticsSnapshot = await databaseRef.child('faculty').child(facultyId).child('approval_analytics').get();
       
-      print('🔍 Raw approval analytics from Firebase: ${analyticsSnapshot.value}');
-      print('🔍 Approval analytics exists: ${analyticsSnapshot.exists}');
+      print('🔍 ==========================================');
+      print('🔍 FIREBASE RESPONSE ANALYSIS');
+      print('🔍 ==========================================');
+      print('🔍 Raw approval_analytics from Firebase: ${analyticsSnapshot.value}');
+      print('🔍 Approval_analytics exists: ${analyticsSnapshot.exists}');
+      print('🔍 Data type: ${analyticsSnapshot.value.runtimeType}');
+      print('🔍 Data is null: ${analyticsSnapshot.value == null}');
       
       if (analyticsSnapshot.exists && analyticsSnapshot.value != null) {
         _approvalAnalytics = Map<String, dynamic>.from(analyticsSnapshot.value as Map<dynamic, dynamic>);
-        print('🔍 Loaded approval analytics from Firebase: $_approvalAnalytics');
+        
+        print('🔍 ==========================================');
+        print('🔍 PROCESSED APPROVAL ANALYTICS');
+        print('🔍 ==========================================');
+        print('🔍 Loaded approval_analytics from Firebase: $_approvalAnalytics');
+        print('🔍 Total Approved: ${_approvalAnalytics['total_approved']}');
+        print('🔍 Total Rejected: ${_approvalAnalytics['total_rejected']}');
+        print('🔍 Approval Rate: ${_approvalAnalytics['approval_rate']}');
+        print('🔍 Avg Points Awarded: ${_approvalAnalytics['avg_points_awarded']}');
+        print('🔍 Total Points Awarded: ${_approvalAnalytics['total_points_awarded']}');
+        
+        // Log each analytics field for debugging
+        _approvalAnalytics.forEach((key, value) {
+          print('🔍 Analytics Field: $key = $value (${value.runtimeType})');
+        });
       } else {
-        print('🔍 No approval analytics found in Firebase, using defaults');
+        print('🔍 No approval_analytics found in Firebase, using defaults');
+        print('🔍 This could mean:');
+        print('🔍   1. No approval analytics exist for this faculty');
+        print('🔍   2. The path is incorrect');
+        print('🔍   3. Firebase connection issue');
+        
         _approvalAnalytics = {
           'total_approved': 0,
           'total_rejected': 0,
@@ -78,26 +120,54 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
           'avg_points_awarded': 0.0,
         };
       }
+      
+      print('🔍 ==========================================');
+      print('🔍 FINAL RESULT');
+      print('🔍 ==========================================');
+      print('🔍 _approvalAnalytics: $_approvalAnalytics');
+      print('🔍 _approvalAnalytics.isEmpty: ${_approvalAnalytics.isEmpty}');
+      print('🔍 ==========================================');
+      
+      // Update the UI with the loaded data
+      setState(() {});
+      
     } catch (e) {
-      print('❌ Error loading approval analytics from Firebase: $e');
+      print('❌ ==========================================');
+      print('❌ ERROR LOADING APPROVAL ANALYTICS');
+      print('❌ ==========================================');
+      print('❌ Error: $e');
+      print('❌ Error type: ${e.runtimeType}');
+      print('❌ Stack trace: ${StackTrace.current}');
+      print('❌ ==========================================');
+      
       _approvalAnalytics = {
         'total_approved': 0,
         'total_rejected': 0,
         'approval_rate': 0.0,
         'avg_points_awarded': 0.0,
       };
+      setState(() {});
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    print('🔍 ==========================================');
+    print('🔍 FACULTY APPROVAL ANALYTICS PAGE - BUILD METHOD');
+    print('🔍 ==========================================');
+    print('🔍 _isLoading: $_isLoading');
+    print('🔍 _userData: $_userData');
+    print('🔍 _approvalAnalytics: $_approvalAnalytics');
+    print('🔍 _approvalAnalytics.isEmpty: ${_approvalAnalytics.isEmpty}');
+    print('🔍 ==========================================');
+    
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final texts = theme.textTheme;
     // Faculty theme: green
     final Color facultyPrimary = Colors.green.shade700;
 
     if (_isLoading) {
+      print('🔍 Showing loading screen...');
       return Scaffold(
         appBar: AppBar(
           title: const Text('Approval Analytics'),
@@ -114,6 +184,13 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
     final approvalRate = _approvalAnalytics['approval_rate'] ?? 0.0;
     final avgPoints = _approvalAnalytics['avg_points_awarded'] ?? 0.0;
 
+    print('🔍 Showing main content screen...');
+    print('🔍 Analytics values:');
+    print('🔍   - totalApproved: $totalApproved');
+    print('🔍   - totalRejected: $totalRejected');
+    print('🔍   - approvalRate: $approvalRate');
+    print('🔍   - avgPoints: $avgPoints');
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Approval Analytics'),
@@ -121,7 +198,10 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
         foregroundColor: Colors.white,
         actions: [
           IconButton(
-            onPressed: _loadApprovalAnalyticsFromFirebase,
+            onPressed: () {
+              print('🔍 Refresh button pressed - reloading approval analytics...');
+              _loadApprovalAnalyticsFromFirebase();
+            },
             icon: const Icon(Icons.refresh),
             tooltip: 'Refresh Approval Analytics',
           ),

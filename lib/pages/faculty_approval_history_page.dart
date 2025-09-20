@@ -25,16 +25,25 @@ class _FacultyApprovalHistoryPageState extends State<FacultyApprovalHistoryPage>
 
   Future<void> _loadUserData() async {
     try {
+      print('🔍 ==========================================');
+      print('🔍 FACULTY APPROVAL HISTORY PAGE - LOADING USER DATA');
+      print('🔍 ==========================================');
+      
       // Force refresh user data from Firebase to get latest updates
       print('🔄 Loading faculty user data...');
       final userData = await _authService.forceRefreshUserData();
       if (userData != null) {
         print('✅ Faculty user data loaded: ${userData['name']}');
+        print('✅ Faculty ID: ${userData['id']}');
+        print('✅ Faculty Category: ${userData['category']}');
+        print('✅ Faculty Department: ${userData['department']}');
+        
         setState(() {
           _userData = userData;
           _isLoading = false;
         });
         
+        print('🔄 Now loading approval history from Firebase...');
         // Load approval history directly from Firebase
         await _loadApprovalHistoryFromFirebase();
       } else {
@@ -50,8 +59,13 @@ class _FacultyApprovalHistoryPageState extends State<FacultyApprovalHistoryPage>
   // Method to load approval history directly from Firebase
   Future<void> _loadApprovalHistoryFromFirebase() async {
     try {
+      print('🔍 ==========================================');
+      print('🔍 LOADING APPROVAL HISTORY FROM FIREBASE');
+      print('🔍 ==========================================');
+      
       String facultyId = _userData!['id'];
-      print('🔍 Loading approval history directly from Firebase for faculty: $facultyId');
+      print('🔍 Faculty ID: $facultyId');
+      print('🔍 Firebase Path: /faculty/$facultyId/approval_history');
       
       // Get Firebase Database reference
       final DatabaseReference databaseRef = FirebaseDatabase.instanceFor(
@@ -59,41 +73,104 @@ class _FacultyApprovalHistoryPageState extends State<FacultyApprovalHistoryPage>
         databaseURL: 'https://ssh-project-7ebc3-default-rtdb.asia-southeast1.firebasedatabase.app',
       ).ref();
       
-      // Get approval history directly from Firebase
+      print('🔍 Firebase Database Reference created');
+      print('🔍 Database URL: https://ssh-project-7ebc3-default-rtdb.asia-southeast1.firebasedatabase.app');
+      
+      // Get approval_history directly from Firebase
+      print('🔍 Fetching data from Firebase...');
       DataSnapshot historySnapshot = await databaseRef.child('faculty').child(facultyId).child('approval_history').get();
       
-      print('🔍 Raw approval history from Firebase: ${historySnapshot.value}');
-      print('🔍 Approval history exists: ${historySnapshot.exists}');
+      print('🔍 ==========================================');
+      print('🔍 FIREBASE RESPONSE ANALYSIS');
+      print('🔍 ==========================================');
+      print('🔍 Raw approval_history from Firebase: ${historySnapshot.value}');
+      print('🔍 Approval_history exists: ${historySnapshot.exists}');
+      print('🔍 Data type: ${historySnapshot.value.runtimeType}');
+      print('🔍 Data is null: ${historySnapshot.value == null}');
       
       if (historySnapshot.exists && historySnapshot.value != null) {
         if (historySnapshot.value is Map) {
           Map<dynamic, dynamic> historyMap = historySnapshot.value as Map<dynamic, dynamic>;
+          print('🔍 Approval_history is a Map with ${historyMap.length} entries');
+          print('🔍 Map keys: ${historyMap.keys.toList()}');
+          
           _approvalHistory = historyMap.entries.map((entry) {
             Map<String, dynamic> item = Map<String, dynamic>.from(entry.value as Map<dynamic, dynamic>);
             item['request_id'] = entry.key; // Add the request ID
             return item;
           }).toList();
+          
+          print('🔍 ==========================================');
+          print('🔍 PROCESSED APPROVAL HISTORY');
+          print('🔍 ==========================================');
           print('🔍 Loaded ${_approvalHistory.length} approval history items from Firebase');
+          
+          // Log each history item for debugging
+          for (int i = 0; i < _approvalHistory.length; i++) {
+            var item = _approvalHistory[i];
+            print('🔍 History Item $i:');
+            print('🔍   - ID: ${item['request_id']}');
+            print('🔍   - Student: ${item['student_name']}');
+            print('🔍   - Project: ${item['project_name']}');
+            print('🔍   - Status: ${item['status']}');
+            print('🔍   - Points Awarded: ${item['points_awarded']}');
+            print('🔍   - Reason: ${item['reason']}');
+            print('🔍   - Approved At: ${item['approved_at']}');
+            print('🔍   - Full data: $item');
+          }
         } else {
-          print('🔍 Approval history is not a Map: ${historySnapshot.value.runtimeType}');
+          print('🔍 Approval_history is not a Map: ${historySnapshot.value.runtimeType}');
+          print('🔍 Actual value: ${historySnapshot.value}');
           _approvalHistory = [];
         }
       } else {
-        print('🔍 No approval history found in Firebase');
+        print('🔍 No approval_history found in Firebase');
+        print('🔍 This could mean:');
+        print('🔍   1. No approval history exists for this faculty');
+        print('🔍   2. The path is incorrect');
+        print('🔍   3. Firebase connection issue');
         _approvalHistory = [];
       }
+      
+      print('🔍 ==========================================');
+      print('🔍 FINAL RESULT');
+      print('🔍 ==========================================');
+      print('🔍 _approvalHistory.length: ${_approvalHistory.length}');
+      print('🔍 _approvalHistory.isEmpty: ${_approvalHistory.isEmpty}');
+      print('🔍 ==========================================');
+      
+      // Update the UI with the loaded data
+      setState(() {});
+      
     } catch (e) {
-      print('❌ Error loading approval history from Firebase: $e');
+      print('❌ ==========================================');
+      print('❌ ERROR LOADING APPROVAL HISTORY');
+      print('❌ ==========================================');
+      print('❌ Error: $e');
+      print('❌ Error type: ${e.runtimeType}');
+      print('❌ Stack trace: ${StackTrace.current}');
+      print('❌ ==========================================');
       _approvalHistory = [];
+      setState(() {});
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    print('🔍 ==========================================');
+    print('🔍 FACULTY APPROVAL HISTORY PAGE - BUILD METHOD');
+    print('🔍 ==========================================');
+    print('🔍 _isLoading: $_isLoading');
+    print('🔍 _userData: $_userData');
+    print('🔍 _approvalHistory.length: ${_approvalHistory.length}');
+    print('🔍 _approvalHistory.isEmpty: ${_approvalHistory.isEmpty}');
+    print('🔍 ==========================================');
+    
     // Faculty theme: green
     final Color facultyPrimary = Colors.green.shade700;
 
     if (_isLoading) {
+      print('🔍 Showing loading screen...');
       return Scaffold(
         appBar: AppBar(
           title: const Text('Approval History'),
@@ -105,6 +182,9 @@ class _FacultyApprovalHistoryPageState extends State<FacultyApprovalHistoryPage>
       );
     }
 
+    print('🔍 Showing main content screen...');
+    print('🔍 _approvalHistory.isEmpty: ${_approvalHistory.isEmpty}');
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Approval History'),
@@ -112,7 +192,10 @@ class _FacultyApprovalHistoryPageState extends State<FacultyApprovalHistoryPage>
         foregroundColor: Colors.white,
         actions: [
           IconButton(
-            onPressed: _loadApprovalHistoryFromFirebase,
+            onPressed: () {
+              print('🔍 Refresh button pressed - reloading approval history...');
+              _loadApprovalHistoryFromFirebase();
+            },
             icon: const Icon(Icons.refresh),
             tooltip: 'Refresh Approval History',
           ),
@@ -136,6 +219,13 @@ class _FacultyApprovalHistoryPageState extends State<FacultyApprovalHistoryPage>
                       color: Colors.grey[600],
                     ),
                   ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Debug: _approvalHistory.length = ${_approvalHistory.length}',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.grey[500],
+                    ),
+                  ),
                 ],
               ),
             )
@@ -144,6 +234,7 @@ class _FacultyApprovalHistoryPageState extends State<FacultyApprovalHistoryPage>
               itemCount: _approvalHistory.length,
               itemBuilder: (context, index) {
                 final item = _approvalHistory[index];
+                print('🔍 Building ListTile for history item $index: ${item['project_name']}');
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12.0),
                   child: ListTile(
