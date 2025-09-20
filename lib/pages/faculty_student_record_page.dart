@@ -20,7 +20,8 @@ class FacultyStudentRecordPage extends StatelessWidget {
     for (final req in approvalRequests.where((r) => r.status == 'accepted')) {
       grouped.putIfAbsent(req.category, () => []).add(req);
     }
-    for (final category in ['Research papers', 'Projects']) {
+    // Sort by points (highest first) for categories that need top items
+    for (final category in ['Certifications', 'Achievements', 'Research papers', 'Projects', 'Workshops']) {
       if (grouped.containsKey(category)) {
         grouped[category]!.sort((a, b) => (b.points ?? 0).compareTo(a.points ?? 0));
       }
@@ -55,13 +56,15 @@ class FacultyStudentRecordPage extends StatelessWidget {
 
   int _getItemLimit(String category) {
     switch (category) {
-      case 'Projects':
+      case 'Certifications':
       case 'Achievements':
-      case 'Research papers':
+      case 'Projects':
       case 'Workshops':
-        return 3;
+        return 3; // Top 3 (highest points)
+      case 'Research papers':
+        return 5; // Top 5 (highest points)
       case 'Experience':
-        return 10;
+        return 5; // Any 5 (not necessarily highest points)
       default:
         return 5;
     }

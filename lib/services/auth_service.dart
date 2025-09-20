@@ -282,8 +282,8 @@ class AuthService {
       return 0.0;
     }
     
-    double totalPoints = 0;
-    int totalCredits = 0;
+    double totalGradePoints = 0;
+    int totalCourses = 0;
 
     try {
       print('🔍 Calculating GPA from grades: $grades');
@@ -295,15 +295,13 @@ class AuthService {
             print('🔍 Processing semester $semester: $semesterGrades');
             
             for (String course in semesterGrades.keys) {
-              // Convert numeric grade (1-10) to points
+              // Grades are already on 1-10 scale, no conversion needed
               int numericGrade = semesterGrades[course] as int? ?? 0;
-              int points = _getNumericGradePoints(numericGrade);
-              int credits = 3; // Assuming 3 credits per course, adjust as needed
               
-              print('🔍 Course $course: Grade $numericGrade -> Points $points');
+              print('🔍 Course $course: Grade $numericGrade');
               
-              totalPoints += points * credits;
-              totalCredits += credits;
+              totalGradePoints += numericGrade;
+              totalCourses++;
             }
           }
         } catch (e) {
@@ -311,8 +309,8 @@ class AuthService {
         }
       }
       
-      double gpa = totalCredits > 0 ? totalPoints / totalCredits : 0.0;
-      print('✅ GPA calculated: $gpa (Total Points: $totalPoints, Total Credits: $totalCredits)');
+      double gpa = totalCourses > 0 ? totalGradePoints / totalCourses : 0.0;
+      print('✅ GPA calculated: $gpa (Total Grade Points: $totalGradePoints, Total Courses: $totalCourses)');
       return gpa;
     } catch (e) {
       print('❌ Error calculating GPA: $e');
@@ -321,18 +319,6 @@ class AuthService {
   }
 
 
-  // Convert numeric grade (1-10) to points for GPA calculation
-  int _getNumericGradePoints(int numericGrade) {
-    if (numericGrade >= 9) return 10; // A+
-    if (numericGrade >= 8) return 9;  // A
-    if (numericGrade >= 7) return 8;  // B+
-    if (numericGrade >= 6) return 7;  // B
-    if (numericGrade >= 5) return 6;  // C+
-    if (numericGrade >= 4) return 5;  // C
-    if (numericGrade >= 3) return 4;  // D
-    if (numericGrade >= 2) return 3;  // E
-    return 1; // F
-  }
 
   // Update user profile photo
   Future<void> updateProfilePhoto(String userId, String category, String photoUrl) async {
