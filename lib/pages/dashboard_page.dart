@@ -55,6 +55,95 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
+  // Test method to submit an approval request
+  Future<void> _testApprovalRequest() async {
+    try {
+      Map<String, dynamic> testRequest = {
+        'title': 'Test Project - ${DateTime.now().millisecondsSinceEpoch}',
+        'description': 'This is a test approval request to verify the system is working correctly.',
+        'category': 'project',
+        'link': 'https://example.com/test-project',
+      };
+      
+      print('🧪 ==========================================');
+      print('🧪 SUBMITTING TEST APPROVAL REQUEST');
+      print('🧪 ==========================================');
+      print('🧪 Student: ${_userData?['name']} (${_userData?['id']})');
+      print('🧪 Department: ${_userData?['branch']}');
+      print('🧪 Request: $testRequest');
+      print('🧪 ==========================================');
+      
+      await _authService.submitApprovalRequest(testRequest);
+      
+      print('🧪 ==========================================');
+      print('🧪 TEST REQUEST COMPLETED SUCCESSFULLY');
+      print('🧪 ==========================================');
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Test approval request submitted! Check console and faculty dashboard.'),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 5),
+        ),
+      );
+    } catch (e) {
+      print('❌ ==========================================');
+      print('❌ ERROR SUBMITTING TEST REQUEST');
+      print('❌ ==========================================');
+      print('❌ Error: $e');
+      print('❌ ==========================================');
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error submitting test request: $e'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 5),
+        ),
+      );
+    }
+  }
+
+  // Test method to check faculty selection
+  Future<void> _testFacultySelection() async {
+    try {
+      print('🔍 ==========================================');
+      print('🔍 TESTING FACULTY SELECTION');
+      print('🔍 ==========================================');
+      print('🔍 Student Department: ${_userData?['branch']}');
+      
+      // This will trigger the faculty selection logic
+      Map<String, dynamic> testRequest = {
+        'title': 'Faculty Selection Test',
+        'description': 'Testing faculty selection logic',
+        'category': 'test',
+        'link': 'https://example.com/test',
+      };
+      
+      await _authService.submitApprovalRequest(testRequest);
+      
+      print('🔍 ==========================================');
+      print('🔍 FACULTY SELECTION TEST COMPLETED');
+      print('🔍 ==========================================');
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Faculty selection test completed! Check console for details.'),
+          backgroundColor: Colors.blue,
+          duration: Duration(seconds: 5),
+        ),
+      );
+    } catch (e) {
+      print('❌ Faculty selection test error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Faculty selection test error: $e'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 5),
+        ),
+      );
+    }
+  }
+
 
   @override
   void initState() {
@@ -254,11 +343,31 @@ class _DashboardPageState extends State<DashboardPage> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _forceRefresh,
-        tooltip: 'Refresh Dashboard',
-        child: const Icon(Icons.refresh),
-      ),
+              floatingActionButton: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FloatingActionButton(
+                    onPressed: _testFacultySelection,
+                    tooltip: 'Test Faculty Selection',
+                    child: const Icon(Icons.people),
+                    heroTag: "test_faculty",
+                  ),
+                  const SizedBox(height: 8),
+                  FloatingActionButton(
+                    onPressed: _testApprovalRequest,
+                    tooltip: 'Test Approval Request',
+                    child: const Icon(Icons.send),
+                    heroTag: "test_approval",
+                  ),
+                  const SizedBox(height: 8),
+                  FloatingActionButton(
+                    onPressed: _forceRefresh,
+                    tooltip: 'Refresh Dashboard',
+                    child: const Icon(Icons.refresh),
+                    heroTag: "refresh",
+                  ),
+                ],
+              ),
     );
   }
 

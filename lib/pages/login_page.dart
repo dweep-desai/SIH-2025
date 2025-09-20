@@ -5,6 +5,7 @@ import '../services/auth_service.dart';
 import 'dashboard_page.dart';
 import 'faculty_dashboard_page.dart';
 import 'admin_dashboard_page.dart';
+import 'push_to_firebase_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -402,6 +403,27 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                 ),
                                 child: const Text('Developer Login'),
+                              ),
+                              
+                              const SizedBox(height: 8),
+                              
+                              // Push to Firebase Button
+                              OutlinedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (_) => const PushToFirebasePage()),
+                                  );
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.orange,
+                                  side: const BorderSide(color: Colors.orange),
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                child: const Text('Push to Firebase'),
                               ),
                               
                               const SizedBox(height: 16),

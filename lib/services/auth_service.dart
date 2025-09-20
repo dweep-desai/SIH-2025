@@ -392,38 +392,43 @@ class AuthService {
     }
   }
 
-  // Submit approval request
-  Future<void> submitApprovalRequest(Map<String, dynamic> requestData) async {
+
+  // Method to directly check Firebase approval data
+  Future<Map<String, dynamic>> debugStudentApprovalData() async {
     try {
-      String requestId = DateTime.now().millisecondsSinceEpoch.toString();
-      
-      // Add to student's approval history
-      String studentId = _currentUser!['id'];
-      await _databaseRef.child('students').child(studentId).child('approval_history').child(requestId).set(requestData);
-      
-      // Find faculty in same department and add to their approval list
-      DataSnapshot facultySnapshot = await _databaseRef.child('faculty').get();
-      if (facultySnapshot.exists) {
-        Map<dynamic, dynamic> faculty = facultySnapshot.value as Map<dynamic, dynamic>;
-        
-        for (String facultyId in faculty.keys) {
-          Map<String, dynamic> facultyData = Map<String, dynamic>.from(faculty[facultyId]);
-          if (facultyData['department'] == _currentUser!['branch']) {
-            await _databaseRef.child('faculty').child(facultyId).child('approval_list').child(requestId).set({
-              ...requestData,
-              'student_id': studentId,
-              'student_name': _currentUser!['name'],
-              'status': 'pending',
-            });
-            break; // Add to first faculty found in same department
-          }
-        }
+      if (_currentUser == null) {
+        print('❌ No current user found');
+        return {};
       }
       
-      print('✅ Approval request submitted successfully');
+      String studentId = _currentUser!['id'];
+      print('🔍 ==========================================');
+      print('🔍 DIRECT FIREBASE CHECK FOR STUDENT: $studentId');
+      print('🔍 ==========================================');
+      
+      // Check approval_accepted directly
+      DataSnapshot acceptedSnapshot = await _databaseRef.child('students').child(studentId).child('approval_accepted').get();
+      print('🔍 approval_accepted exists: ${acceptedSnapshot.exists}');
+      print('🔍 approval_accepted value: ${acceptedSnapshot.value}');
+      
+      // Check approval_rejected directly
+      DataSnapshot rejectedSnapshot = await _databaseRef.child('students').child(studentId).child('approval_rejected').get();
+      print('🔍 approval_rejected exists: ${rejectedSnapshot.exists}');
+      print('🔍 approval_rejected value: ${rejectedSnapshot.value}');
+      
+      // Check approval_history directly
+      DataSnapshot historySnapshot = await _databaseRef.child('students').child(studentId).child('approval_list').get();
+      print('🔍 approval_list exists: ${historySnapshot.exists}');
+      print('🔍 approval_list value: ${historySnapshot.value}');
+      
+      return {
+        'accepted': acceptedSnapshot.value,
+        'rejected': rejectedSnapshot.value,
+        'history': historySnapshot.value,
+      };
     } catch (e) {
-      print('❌ Error submitting approval request: $e');
-      throw e;
+      print('❌ Error checking Firebase data: $e');
+      return {};
     }
   }
 
@@ -436,19 +441,75 @@ class AuthService {
       }
       
       String studentId = _currentUser!['id'];
-      DataSnapshot snapshot = await _databaseRef.child('students').child(studentId).child('approval_history').get();
+      print('🔍 Loading approval history for student: $studentId');
       
       List<Map<String, dynamic>> history = [];
-      if (snapshot.exists) {
-        Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
-        data.forEach((key, value) {
+      
+      // Load approved requests
+      DataSnapshot approvedSnapshot = await _databaseRef.child('students').child(studentId).child('approval_accepted').get();
+      print('🔍 Raw approval_accepted data: ${approvedSnapshot.value}');
+      print('🔍 Approval_accepted exists: ${approvedSnapshot.exists}');
+      
+      if (approvedSnapshot.exists && approvedSnapshot.value != null) {
+        Map<dynamic, dynamic> approvedData = approvedSnapshot.value as Map<dynamic, dynamic>;
+        approvedData.forEach((key, value) {
+          Map<String, dynamic> requestData = Map<String, dynamic>.from(value as Map<dynamic, dynamic>);
           history.add({
             'id': key,
-            ...Map<String, dynamic>.from(value as Map<dynamic, dynamic>),
+            'status': requestData['status'] ?? 'approved', // Use the actual status from Firebase
+            ...requestData,
           });
         });
+        print('🔍 Loaded ${approvedData.length} approved requests');
+      } else {
+        print('🔍 No approved requests found');
       }
       
+      // Load rejected requests
+      DataSnapshot rejectedSnapshot = await _databaseRef.child('students').child(studentId).child('approval_rejected').get();
+      print('🔍 Raw approval_rejected data: ${rejectedSnapshot.value}');
+      print('🔍 Approval_rejected exists: ${rejectedSnapshot.exists}');
+      
+      if (rejectedSnapshot.exists && rejectedSnapshot.value != null) {
+        Map<dynamic, dynamic> rejectedData = rejectedSnapshot.value as Map<dynamic, dynamic>;
+        rejectedData.forEach((key, value) {
+          Map<String, dynamic> requestData = Map<String, dynamic>.from(value as Map<dynamic, dynamic>);
+          history.add({
+            'id': key,
+            'status': requestData['status'] ?? 'rejected', // Use the actual status from Firebase
+            ...requestData,
+          });
+        });
+        print('🔍 Loaded ${rejectedData.length} rejected requests');
+      } else {
+        print('🔍 No rejected requests found');
+      }
+      
+      // Load pending requests (from approval_list with status 'pending')
+      DataSnapshot pendingSnapshot = await _databaseRef.child('students').child(studentId).child('approval_list').get();
+      print('🔍 Raw approval_list data: ${pendingSnapshot.value}');
+      print('🔍 Approval_list exists: ${pendingSnapshot.exists}');
+      
+      if (pendingSnapshot.exists && pendingSnapshot.value != null) {
+        Map<dynamic, dynamic> pendingData = pendingSnapshot.value as Map<dynamic, dynamic>;
+        int pendingCount = 0;
+        pendingData.forEach((key, value) {
+          Map<String, dynamic> requestData = Map<String, dynamic>.from(value as Map<dynamic, dynamic>);
+          if (requestData['status'] == 'pending') {
+            history.add({
+              'id': key,
+              'status': 'pending',
+              ...requestData,
+            });
+            pendingCount++;
+          }
+        });
+        print('🔍 Loaded $pendingCount pending requests from approval_list');
+      } else {
+        print('🔍 No pending requests found');
+      }
+      
+      print('🔍 Total history loaded: ${history.length} requests');
       return history;
     } catch (e) {
       print('❌ Error getting approval history: $e');
@@ -485,83 +546,6 @@ class AuthService {
     }
   }
 
-  // Approve or reject a request
-  Future<void> handleApprovalRequest(String requestId, bool approved, int points, String comment) async {
-    try {
-      if (_currentUser == null || _currentUser!['category'] != 'faculty') {
-        throw Exception('Only faculty can handle approval requests');
-      }
-      
-      String facultyId = _currentUser!['id'];
-      String facultyName = _currentUser!['name'];
-      
-      // Get the request details
-      DataSnapshot requestSnapshot = await _databaseRef.child('faculty').child(facultyId).child('approval_list').child(requestId).get();
-      
-      if (!requestSnapshot.exists) {
-        throw Exception('Request not found');
-      }
-      
-      Map<String, dynamic> requestData = Map<String, dynamic>.from(requestSnapshot.value as Map<dynamic, dynamic>);
-      String studentId = requestData['student_id'];
-      
-      // Update request status
-      Map<String, dynamic> updatedRequest = {
-        ...requestData,
-        'status': approved ? 'approved' : 'rejected',
-        'points_awarded': approved ? points : 0,
-        'faculty_comment': comment,
-        'approved_by': facultyName,
-        'approved_at': DateTime.now().toIso8601String(),
-      };
-      
-      // Move to approval history
-      await _databaseRef.child('faculty').child(facultyId).child('approval_history').child(requestId).set(updatedRequest);
-      
-      // Remove from approval list
-      await _databaseRef.child('faculty').child(facultyId).child('approval_list').child(requestId).remove();
-      
-      // Update student's approval history
-      await _databaseRef.child('students').child(studentId).child('approval_history').child(requestId).set(updatedRequest);
-      
-      // Update faculty analytics
-      await _updateFacultyAnalytics(facultyId, approved);
-      
-      print('✅ Approval request handled successfully');
-    } catch (e) {
-      print('❌ Error handling approval request: $e');
-      throw e;
-    }
-  }
-
-  // Update faculty approval analytics
-  Future<void> _updateFacultyAnalytics(String facultyId, bool approved) async {
-    try {
-      DataSnapshot analyticsSnapshot = await _databaseRef.child('faculty').child(facultyId).child('approval_analytics').get();
-      
-      Map<String, dynamic> analytics = analyticsSnapshot.exists 
-          ? Map<String, dynamic>.from(analyticsSnapshot.value as Map<dynamic, dynamic>)
-          : {
-              'total_approved': 0,
-              'total_rejected': 0,
-              'approval_rate': 0.0,
-              'avg_points_awarded': 0.0,
-            };
-      
-      if (approved) {
-        analytics['total_approved'] = (analytics['total_approved'] ?? 0) + 1;
-      } else {
-        analytics['total_rejected'] = (analytics['total_rejected'] ?? 0) + 1;
-      }
-      
-      int total = (analytics['total_approved'] ?? 0) + (analytics['total_rejected'] ?? 0);
-      analytics['approval_rate'] = total > 0 ? (analytics['total_approved'] ?? 0) / total : 0.0;
-      
-      await _databaseRef.child('faculty').child(facultyId).child('approval_analytics').set(analytics);
-    } catch (e) {
-      print('❌ Error updating faculty analytics: $e');
-    }
-  }
 
   // Refresh current user data from Firebase
   Future<void> refreshCurrentUser() async {
@@ -725,6 +709,249 @@ class AuthService {
     } catch (e) {
       print('❌ Error fetching domains from student branch: $e');
       return {'domain1': '', 'domain2': ''};
+    }
+  }
+
+  // Method to submit approval request (for students)
+  Future<void> submitApprovalRequest(Map<String, dynamic> requestData) async {
+    try {
+      if (_currentUser == null) {
+        throw Exception('No current user found');
+      }
+      
+      String requestId = DateTime.now().millisecondsSinceEpoch.toString();
+      String studentId = _currentUser!['id'];
+      String studentName = _currentUser!['name'];
+      String studentBranch = _currentUser!['branch'];
+      
+      // Add student info to request
+      requestData['student_id'] = studentId;
+      requestData['student_name'] = studentName;
+      requestData['project_name'] = requestData['title'] ?? 'Untitled';
+      
+      // Find a random faculty member in the same department
+      String? assignedFacultyId = await _findRandomFacultyInDepartment(studentBranch);
+      
+      if (assignedFacultyId == null) {
+        throw Exception('No faculty found in the same department');
+      }
+      
+      // Get faculty details for better logging
+      DataSnapshot facultySnapshot = await _databaseRef.child('faculty').child(assignedFacultyId).get();
+      String facultyName = 'Unknown';
+      String facultyDepartment = 'Unknown';
+      
+      if (facultySnapshot.exists) {
+        Map<String, dynamic> facultyData = Map<String, dynamic>.from(facultySnapshot.value as Map<dynamic, dynamic>);
+        facultyName = facultyData['name'] ?? 'Unknown';
+        facultyDepartment = facultyData['department'] ?? 'Unknown';
+      }
+      
+      print('🎯 ==========================================');
+      print('🎯 ASSIGNING APPROVAL REQUEST TO FACULTY');
+      print('🎯 ==========================================');
+      print('🎯 Student: $studentName ($studentId)');
+      print('🎯 Student Department: $studentBranch');
+      print('🎯 Assigned Faculty: $facultyName ($assignedFacultyId)');
+      print('🎯 Faculty Department: $facultyDepartment');
+      print('🎯 Department Match: ${facultyDepartment == studentBranch ? "✅ YES" : "❌ NO"}');
+      print('🎯 Request ID: $requestId');
+      print('🎯 Request Title: ${requestData['title']}');
+      print('🎯 ==========================================');
+      
+      // Add to faculty's approval section
+      print('🔄 Adding to faculty approval section...');
+      await _databaseRef.child('faculty').child(assignedFacultyId).child('approval_section').child(requestId).set(requestData);
+      print('✅ Added to faculty approval section');
+      
+      // Verify the addition
+      DataSnapshot verifySnapshot = await _databaseRef.child('faculty').child(assignedFacultyId).child('approval_section').get();
+      print('🔍 Verification - Faculty approval section now contains: ${verifySnapshot.value}');
+      
+      // Add to student's approval list
+      print('🔄 Adding to student approval list...');
+      await _databaseRef.child('students').child(studentId).child('approval_list').child(requestId).set({
+        ...requestData,
+        'assigned_faculty_id': assignedFacultyId,
+        'status': 'pending',
+      });
+      print('✅ Added to student approval list');
+      
+      print('✅ Approval request submitted successfully');
+    } catch (e) {
+      print('❌ Error submitting approval request: $e');
+      throw e;
+    }
+  }
+
+  // Method to find a random faculty member in the same department
+  Future<String?> _findRandomFacultyInDepartment(String department) async {
+    try {
+      print('🔍 Searching for faculty in department: $department');
+      
+      DataSnapshot facultySnapshot = await _databaseRef.child('faculty').get();
+      
+      if (!facultySnapshot.exists) {
+        print('❌ No faculty data found in Firebase');
+        return null;
+      }
+      
+      Map<dynamic, dynamic> faculty = facultySnapshot.value as Map<dynamic, dynamic>;
+      List<String> matchingFaculty = [];
+      List<String> allFaculty = [];
+      
+      print('🔍 Total faculty in database: ${faculty.length}');
+      
+      for (String facultyId in faculty.keys) {
+        Map<String, dynamic> facultyData = Map<String, dynamic>.from(faculty[facultyId] as Map<dynamic, dynamic>);
+        String facultyDept = facultyData['department'] ?? 'Unknown';
+        String facultyName = facultyData['name'] ?? 'Unknown';
+        
+        allFaculty.add('$facultyId ($facultyName - $facultyDept)');
+        
+        if (facultyDept == department) {
+          matchingFaculty.add(facultyId);
+          print('✅ Found matching faculty: $facultyId ($facultyName - $facultyDept)');
+        } else {
+          print('❌ Faculty not in same department: $facultyId ($facultyName - $facultyDept)');
+        }
+      }
+      
+      print('🔍 All faculty: $allFaculty');
+      print('🔍 Matching faculty count: ${matchingFaculty.length}');
+      
+      if (matchingFaculty.isEmpty) {
+        print('❌ No faculty found in department: $department');
+        return null;
+      }
+      
+      // Return a random faculty member
+      String randomFaculty = matchingFaculty[DateTime.now().millisecondsSinceEpoch % matchingFaculty.length];
+      
+      // Get faculty details for better logging
+      Map<String, dynamic> selectedFacultyData = Map<String, dynamic>.from(faculty[randomFaculty] as Map<dynamic, dynamic>);
+      String facultyName = selectedFacultyData['name'] ?? 'Unknown';
+      String facultyDepartment = selectedFacultyData['department'] ?? 'Unknown';
+      
+      print('🎯 ==========================================');
+      print('🎯 RANDOM FACULTY SELECTION');
+      print('🎯 ==========================================');
+      print('🎯 Student Department: $department');
+      print('🎯 Available faculty in same department: $matchingFaculty');
+      print('🎯 Selected faculty ID: $randomFaculty');
+      print('🎯 Selected faculty name: $facultyName');
+      print('🎯 Selected faculty department: $facultyDepartment');
+      print('🎯 Department match: ${facultyDepartment == department ? "✅ YES" : "❌ NO"}');
+      print('🎯 ==========================================');
+      return randomFaculty;
+    } catch (e) {
+      print('❌ Error finding faculty in department: $e');
+      return null;
+    }
+  }
+
+  // Method to handle approval (for faculty)
+  Future<void> handleApprovalRequest(String requestId, bool approved, int points, String reason) async {
+    try {
+      if (_currentUser == null || _currentUser!['category'] != 'faculty') {
+        throw Exception('Only faculty can handle approval requests');
+      }
+      
+      String facultyId = _currentUser!['id'];
+      
+      // Get the request from approval section
+      DataSnapshot requestSnapshot = await _databaseRef.child('faculty').child(facultyId).child('approval_section').child(requestId).get();
+      
+      if (!requestSnapshot.exists) {
+        throw Exception('Request not found');
+      }
+      
+      Map<String, dynamic> requestData = Map<String, dynamic>.from(requestSnapshot.value as Map<dynamic, dynamic>);
+      String studentId = requestData['student_id'];
+      
+      // Create approval history entry
+      Map<String, dynamic> approvalHistory = {
+        ...requestData,
+        'status': approved ? 'accepted' : 'rejected',
+        'points_awarded': approved ? points : 0,
+        'reason': approved ? '' : reason,
+        'faculty_id': facultyId,
+        'approved_at': DateTime.now().toIso8601String(),
+      };
+      
+      // Add to faculty's approval history
+      await _databaseRef.child('faculty').child(facultyId).child('approval_history').child(requestId).set(approvalHistory);
+      
+      // Add to student's approval history
+      await _databaseRef.child('students').child(studentId).child('approval_list').child(requestId).set(approvalHistory);
+      
+      // Update student's approval status sections
+      if (approved) {
+        // Add to student's approval_accepted section
+        await _databaseRef.child('students').child(studentId).child('approval_accepted').child(requestId).set(approvalHistory);
+        print('✅ Added to student approval_accepted section');
+      } else {
+        // Add to student's approval_rejected section
+        await _databaseRef.child('students').child(studentId).child('approval_rejected').child(requestId).set(approvalHistory);
+        print('✅ Added to student approval_rejected section');
+      }
+      
+      // Remove from student's approval_list since it's now processed
+      await _databaseRef.child('students').child(studentId).child('approval_list').child(requestId).remove();
+      print('✅ Removed from student approval_list');
+      
+      // Remove from faculty's approval section
+      await _databaseRef.child('faculty').child(facultyId).child('approval_section').child(requestId).remove();
+      print('✅ Removed from faculty approval section');
+      
+      // Update faculty analytics
+      await _updateFacultyAnalytics(facultyId, approved, points);
+      
+      print('✅ Approval request handled successfully');
+      print('🎯 Student $studentId - Request $requestId ${approved ? "APPROVED" : "REJECTED"}');
+      print('🎯 Points awarded: ${approved ? points : 0}');
+      print('🎯 Reason: ${approved ? "Approved" : reason}');
+    } catch (e) {
+      print('❌ Error handling approval request: $e');
+      throw e;
+    }
+  }
+
+  // Method to update faculty analytics
+  Future<void> _updateFacultyAnalytics(String facultyId, bool approved, int points) async {
+    try {
+      DataSnapshot analyticsSnapshot = await _databaseRef.child('faculty').child(facultyId).child('approval_analytics').get();
+      
+      Map<String, dynamic> analytics = analyticsSnapshot.exists 
+          ? Map<String, dynamic>.from(analyticsSnapshot.value as Map<dynamic, dynamic>)
+          : {
+              'total_approved': 0,
+              'total_rejected': 0,
+              'approval_rate': 0.0,
+              'avg_points_awarded': 0.0,
+            };
+      
+      if (approved) {
+        analytics['total_approved'] = (analytics['total_approved'] ?? 0) + 1;
+      } else {
+        analytics['total_rejected'] = (analytics['total_rejected'] ?? 0) + 1;
+      }
+      
+      int total = (analytics['total_approved'] ?? 0) + (analytics['total_rejected'] ?? 0);
+      analytics['approval_rate'] = total > 0 ? (analytics['total_approved'] ?? 0) / total : 0.0;
+      
+      // Calculate average points awarded
+      if (approved && points > 0) {
+        int currentTotalPoints = (analytics['total_points_awarded'] ?? 0) + points;
+        analytics['total_points_awarded'] = currentTotalPoints;
+        analytics['avg_points_awarded'] = (analytics['total_approved'] ?? 0) > 0 
+            ? currentTotalPoints / (analytics['total_approved'] ?? 1) 
+            : 0.0;
+      }
+      
+      await _databaseRef.child('faculty').child(facultyId).child('approval_analytics').set(analytics);
+    } catch (e) {
+      print('❌ Error updating faculty analytics: $e');
     }
   }
 
