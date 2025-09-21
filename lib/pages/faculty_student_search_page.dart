@@ -34,9 +34,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
         _filteredStudents = students;
         _isLoading = false;
       });
-      print('Loaded ${students.length} students');
     } catch (e) {
-      print('Error loading students: $e');
       setState(() {
         _isLoading = false;
       });
@@ -261,7 +259,6 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                 ),
                 PopupMenuButton<String>(
                   onSelected: (String value) {
-                    print('🔍 Faculty Search - Menu item selected: $value for student: ${student['name']}');
                     _openStudentDetail(student, value);
                   },
                   itemBuilder: (context) => [
@@ -318,19 +315,16 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
   }
 
   void _openStudentDetail(Map<String, dynamic> student, String type) {
-    print('🔍 Faculty Search - Opening student detail for type: $type, student: ${student['name']}');
     
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       builder: (context) {
-        print('🔍 Faculty Search - Modal builder called for type: $type');
         return DraggableScrollableSheet(
           initialChildSize: 0.9,
           minChildSize: 0.5,
           maxChildSize: 0.9,
           builder: (context, scrollController) {
-            print('🔍 Faculty Search - DraggableScrollableSheet builder called');
             return Container(
               decoration: const BoxDecoration(
                 color: Colors.white,
@@ -350,7 +344,6 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                         ),
                         IconButton(
                           onPressed: () {
-                            print('🔍 Faculty Search - Close button pressed');
                             Navigator.pop(context);
                           },
                       icon: const Icon(Icons.close),
@@ -371,7 +364,6 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
     );
       },
     ).then((value) {
-      print('🔍 Faculty Search - Modal closed');
     });
   }
 
@@ -391,19 +383,14 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
   }
 
   Widget _buildDetailContent(String type, String? studentId) {
-    print('🔍 Faculty Search - Building detail content for type: $type, studentId: $studentId');
     switch (type) {
       case 'dashboard':
-        print('🔍 Faculty Search - Creating _StudentDashboardView with studentId: $studentId');
         return _StudentDashboardView(studentId: studentId);
       case 'record':
-        print('🔍 Faculty Search - Creating _StudentRecordView with studentId: ${studentId ?? ''}');
         return _StudentRecordView(studentId ?? '');
       case 'grades':
-        print('🔍 Faculty Search - Creating _StudentGradesView with studentId: ${studentId ?? ''}');
         return _StudentGradesView(studentId ?? '');
       case 'semester':
-        print('🔍 Faculty Search - Creating _StudentSemesterInfoView with studentId: ${studentId ?? ''}');
         return _StudentSemesterInfoView(studentId ?? '');
       default:
         return const Center(child: Text('Unknown detail type'));
@@ -423,27 +410,21 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
         }
 
         final studentData = snapshot.data!;
-        print('🔍 Semester Info - Student data keys: ${studentData.keys.toList()}');
-        print('🔍 Semester Info - Current semester raw: ${studentData['current_semester']}');
         
         final currentSemesterRaw = studentData['current_semester'] ?? 1;
         final currentSemester = currentSemesterRaw is int 
           ? 'sem$currentSemesterRaw' 
           : currentSemesterRaw.toString();
-        print('🔍 Semester Info - Processed current semester: $currentSemester');
         
         final coursesRaw = studentData['courses'];
         final courses = coursesRaw is Map 
           ? Map<String, dynamic>.from(coursesRaw) 
           : <String, dynamic>{};
-        print('🔍 Semester Info - Courses keys: ${courses.keys.toList()}');
         
         final semesterCoursesRaw = courses[currentSemester];
-        print('🔍 Semester Info - Semester courses raw: $semesterCoursesRaw');
         final semesterCourses = semesterCoursesRaw is List 
           ? List<dynamic>.from(semesterCoursesRaw) 
           : <dynamic>[];
-        print('🔍 Semester Info - Processed semester courses: $semesterCourses');
         
         return DefaultTabController(
           length: 2,
@@ -580,12 +561,10 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                                       final courseCode = semesterCourses[index].toString();
                                       final courseName = _getSubjectName(courseCode);
                                       final overallAttendance = studentData['attendance'] as num? ?? 85;
-                                      print('🔍 Attendance - Course: $courseCode, Overall: $overallAttendance');
                                       final attendance = _generateCourseAttendance(
                                         courseCode,
                                         overallAttendance,
                                       );
-                                      print('🔍 Attendance - Generated: $attendance');
                                       
                                       return Card(
                                         elevation: 1,
@@ -700,17 +679,13 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
         }
 
         final studentData = snapshot.data!;
-        print('🔍 Student Record - Full student data keys: ${studentData.keys.toList()}');
-        print('🔍 Student Record - Student name: ${studentData['name']}');
         
         final studentRecordRaw = studentData['student_record'];
-        print('🔍 Student Record - Raw student_record: $studentRecordRaw');
         
         final studentRecord = studentRecordRaw is Map 
           ? Map<String, dynamic>.from(studentRecordRaw) 
           : <String, dynamic>{};
         
-        print('🔍 Student Record - Processed student_record keys: ${studentRecord.keys.toList()}');
         
         return SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -955,9 +930,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
   }
 
   Widget _buildRecordSection(String title, dynamic items) {
-    print('🔍 Building record section: $title with items: $items');
     if (items == null) {
-      print('❌ No items for $title');
       return const SizedBox.shrink();
     }
     
@@ -1078,7 +1051,6 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
         });
       }
     } catch (e) {
-      print('Error loading student data: $e');
       setState(() {
         _isLoading = false;
       });
@@ -1174,11 +1146,9 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
                   }).toList(),
                   onChanged: (value) {
                     if (value != null) {
-                      print('🔍 Grades - Semester changed to: $value');
                       setState(() {
                         _selectedSemester = value;
                       });
-                      print('🔍 Grades - Selected semester after setState: $_selectedSemester');
                     }
                   },
                 ),
@@ -1227,9 +1197,6 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
         final courses = semesterData['courses'] as List<dynamic>? ?? [];
         final grades = semesterData['grades'] as Map<String, dynamic>? ?? {};
 
-        print('🔍 Dynamic Grades - Semester: $selectedSemester');
-        print('🔍 Dynamic Grades - Courses: $courses');
-        print('🔍 Dynamic Grades - Grades: $grades');
 
         return Card(
                   elevation: 2,
@@ -1255,7 +1222,6 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
                     final grade = grades[subjectCode] ?? 0;
                     final letterGrade = _getLetterGrade(grade);
                     final gradeColor = _getGradeColor(grade);
-                    print('🔍 Course: $courseString -> Code: $subjectCode, Grade: $grade');
                     
                     return Container(
                       margin: const EdgeInsets.only(bottom: 12),
@@ -1339,7 +1305,6 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
 
   Future<Map<String, dynamic>> _fetchSemesterData(String studentId, String semester) async {
     try {
-      print('🔍 Fetching semester data for student: $studentId, semester: $semester');
       
       // Fetch courses for the specific semester
       final coursesSnapshot = await FirebaseDatabase.instance.ref()
@@ -1362,16 +1327,12 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
       
       if (coursesSnapshot.exists) {
         courses = List<dynamic>.from(coursesSnapshot.value as List<dynamic>);
-        print('✅ Courses fetched: $courses');
       } else {
-        print('❌ No courses found for semester: $semester');
       }
       
       if (gradesSnapshot.exists) {
         grades = Map<String, dynamic>.from(gradesSnapshot.value as Map<dynamic, dynamic>);
-        print('✅ Grades fetched: $grades');
       } else {
-        print('❌ No grades found for semester: $semester');
       }
       
       return {
@@ -1379,7 +1340,6 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
         'grades': grades,
       };
     } catch (e) {
-      print('❌ Error fetching semester data: $e');
       return {
         'courses': <dynamic>[],
         'grades': <String, dynamic>{},
@@ -1448,27 +1408,21 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
         }
 
         final studentData = snapshot.data!;
-        print('🔍 Semester Info - Student data keys: ${studentData.keys.toList()}');
-        print('🔍 Semester Info - Current semester raw: ${studentData['current_semester']}');
         
         final currentSemesterRaw = studentData['current_semester'] ?? 1;
         final currentSemester = currentSemesterRaw is int 
           ? 'sem$currentSemesterRaw' 
           : currentSemesterRaw.toString();
-        print('🔍 Semester Info - Processed current semester: $currentSemester');
         
         final coursesRaw = studentData['courses'];
         final courses = coursesRaw is Map 
           ? Map<String, dynamic>.from(coursesRaw) 
           : <String, dynamic>{};
-        print('🔍 Semester Info - Courses keys: ${courses.keys.toList()}');
         
         final semesterCoursesRaw = courses[currentSemester];
-        print('🔍 Semester Info - Semester courses raw: $semesterCoursesRaw');
         final semesterCourses = semesterCoursesRaw is List 
           ? List<dynamic>.from(semesterCoursesRaw) 
           : <dynamic>[];
-        print('🔍 Semester Info - Processed semester courses: $semesterCourses');
         
         return DefaultTabController(
           length: 2,
@@ -1605,12 +1559,10 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
                                       final courseCode = semesterCourses[index].toString();
                                       final courseName = _getSubjectName(courseCode);
                                       final overallAttendance = studentData['attendance'] as num? ?? 85;
-                                      print('🔍 Attendance - Course: $courseCode, Overall: $overallAttendance');
                                       final attendance = _generateCourseAttendance(
                                         courseCode,
                                         overallAttendance,
                                       );
-                                      print('🔍 Attendance - Generated: $attendance');
                                       
                                       return Card(
                                         elevation: 1,
@@ -1698,7 +1650,6 @@ class _StudentDashboardView extends StatefulWidget {
 
   @override
   State<_StudentDashboardView> createState() {
-    print('🔍 Faculty Search - _StudentDashboardView created with studentId: $studentId');
     return _StudentDashboardViewState();
   }
 }
@@ -1724,7 +1675,6 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
         _isLoading = false;
       });
     } catch (e) {
-      print('Error loading student data: $e');
       setState(() {
         _isLoading = false;
       });
@@ -1733,7 +1683,6 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
 
   @override
   Widget build(BuildContext context) {
-    print('🔍 Faculty Search - _StudentDashboardView build called, isLoading: $_isLoading, studentData: ${_studentData != null}');
     
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -1743,7 +1692,6 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
       return const Center(child: Text('Student data not found'));
     }
 
-    print('🔍 Faculty Search - Building student dashboard content for: ${_studentData!['name']}');
     return _buildStudentDashboardContent(_studentData!);
   }
 
@@ -1752,25 +1700,19 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
     final texts = Theme.of(context).textTheme;
     
     // Debug: Print student data to see what's being fetched
-    print('🔍 Faculty Search - Student Data Keys: ${studentData.keys.toList()}');
-    print('🔍 Faculty Search - Grades Data: ${studentData['grades']}');
-    print('🔍 Faculty Search - Student Name: ${studentData['name']}');
     
     // Calculate GPA from grades - try local method first, then fallback to AuthService
     double gpa = _calculateGPA(studentData);
     
     // If local calculation returns 0, try using AuthService method
     if (gpa == 0.0 && studentData['grades'] != null) {
-      print('🔄 Faculty Search - Local GPA calculation returned 0, trying AuthService method...');
       try {
         final gradesRaw = studentData['grades'];
         if (gradesRaw is Map) {
           final grades = Map<String, dynamic>.from(gradesRaw);
           gpa = _authService.calculateGPA(grades);
-          print('✅ Faculty Search - AuthService GPA: $gpa');
         }
       } catch (e) {
-        print('❌ Faculty Search - AuthService GPA calculation failed: $e');
       }
     }
     
@@ -1896,7 +1838,6 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
       : <String, dynamic>{};
     
     if (grades.isEmpty) {
-      print('❌ No grades data available for GPA calculation in faculty search');
       return 0.0;
     }
     
@@ -1904,34 +1845,28 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
     int totalCourses = 0;
 
     try {
-      print('🔍 Faculty Search - Calculating GPA from grades: $grades');
       
       for (String semester in grades.keys) {
         try {
           if (grades[semester] is Map) {
             Map<String, dynamic> semesterGrades = Map<String, dynamic>.from(grades[semester] as Map<dynamic, dynamic>);
-            print('🔍 Faculty Search - Processing semester $semester: $semesterGrades');
             
             for (String course in semesterGrades.keys) {
               // Grades are already on 1-10 scale, no conversion needed
               int numericGrade = semesterGrades[course] as int? ?? 0;
               
-              print('🔍 Faculty Search - Course $course: Grade $numericGrade');
               
               totalGradePoints += numericGrade;
               totalCourses++;
             }
           }
         } catch (e) {
-          print('❌ Faculty Search - Error processing semester $semester: $e');
         }
       }
       
       double gpa = totalCourses > 0 ? totalGradePoints / totalCourses : 0.0;
-      print('✅ Faculty Search - GPA calculated: $gpa (Total Grade Points: $totalGradePoints, Total Courses: $totalCourses)');
       return gpa;
     } catch (e) {
-      print('❌ Faculty Search - Error calculating GPA: $e');
       return 0.0;
     }
   }
@@ -1992,17 +1927,13 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
         }
 
         final studentData = snapshot.data!;
-        print('🔍 Student Record - Full student data keys: ${studentData.keys.toList()}');
-        print('🔍 Student Record - Student name: ${studentData['name']}');
         
         final studentRecordRaw = studentData['student_record'];
-        print('🔍 Student Record - Raw student_record: $studentRecordRaw');
         
         final studentRecord = studentRecordRaw is Map 
           ? Map<String, dynamic>.from(studentRecordRaw) 
           : <String, dynamic>{};
         
-        print('🔍 Student Record - Processed student_record keys: ${studentRecord.keys.toList()}');
         
         return SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -2247,9 +2178,7 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
   }
 
   Widget _buildRecordSection(String title, dynamic items) {
-    print('🔍 Building record section: $title with items: $items');
     if (items == null) {
-      print('❌ No items for $title');
       return const SizedBox.shrink();
     }
     
@@ -2379,27 +2308,21 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
         }
 
         final studentData = snapshot.data!;
-        print('🔍 Semester Info - Student data keys: ${studentData.keys.toList()}');
-        print('🔍 Semester Info - Current semester raw: ${studentData['current_semester']}');
         
         final currentSemesterRaw = studentData['current_semester'] ?? 1;
         final currentSemester = currentSemesterRaw is int 
           ? 'sem$currentSemesterRaw' 
           : currentSemesterRaw.toString();
-        print('🔍 Semester Info - Processed current semester: $currentSemester');
         
         final coursesRaw = studentData['courses'];
         final courses = coursesRaw is Map 
           ? Map<String, dynamic>.from(coursesRaw) 
           : <String, dynamic>{};
-        print('🔍 Semester Info - Courses keys: ${courses.keys.toList()}');
         
         final semesterCoursesRaw = courses[currentSemester];
-        print('🔍 Semester Info - Semester courses raw: $semesterCoursesRaw');
         final semesterCourses = semesterCoursesRaw is List 
           ? List<dynamic>.from(semesterCoursesRaw) 
           : <dynamic>[];
-        print('🔍 Semester Info - Processed semester courses: $semesterCourses');
         
         return DefaultTabController(
           length: 2,
@@ -2536,12 +2459,10 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
                                       final courseCode = semesterCourses[index].toString();
                                       final courseName = _getSubjectName(courseCode);
                                       final overallAttendance = studentData['attendance'] as num? ?? 85;
-                                      print('🔍 Attendance - Course: $courseCode, Overall: $overallAttendance');
                                       final attendance = _generateCourseAttendance(
                                         courseCode,
                                         overallAttendance,
                                       );
-                                      print('🔍 Attendance - Generated: $attendance');
                                       
                                       return Card(
                                         elevation: 1,

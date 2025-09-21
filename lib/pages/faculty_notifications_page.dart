@@ -31,14 +31,12 @@ class _FacultyNotificationsPageState extends State<FacultyNotificationsPage> {
       if (userData == null) return;
 
       final facultyId = userData['faculty_id'] ?? userData['id'];
-      print('🔔 Loading notifications for faculty: $facultyId');
 
       // Get approval requests from faculty's approval_section
       final snapshot = await _databaseRef.child('faculty').child(facultyId).child('approval_section').get();
       
       if (snapshot.exists) {
         final approvalData = Map<String, dynamic>.from(snapshot.value as Map<dynamic, dynamic>);
-        print('🔔 Raw approval data: $approvalData');
         
         _notifications = [];
         
@@ -59,15 +57,12 @@ class _FacultyNotificationsPageState extends State<FacultyNotificationsPage> {
         // Sort by timestamp (newest first)
         _notifications.sort((a, b) => (b['timestamp'] as int).compareTo(a['timestamp'] as int));
         
-        print('🔔 Loaded ${_notifications.length} notifications');
       } else {
-        print('🔔 No approval section found');
         _notifications = [];
       }
       
       setState(() => _isLoading = false);
     } catch (e) {
-      print('❌ Error loading notifications: $e');
       setState(() => _isLoading = false);
     }
   }

@@ -74,29 +74,16 @@ class MainDrawer extends StatelessWidget {
 
   // Helper method to get appropriate image provider
   ImageProvider _getImageProvider(String imagePath) {
-    print('🖼️ ==========================================');
-    print('🖼️ STUDENT DRAWER _getImageProvider DEBUG');
-    print('🖼️ ==========================================');
-    print('🖼️ Input imagePath: "$imagePath"');
-    print('🖼️ imagePath length: ${imagePath.length}');
-    print('🖼️ startsWith http: ${imagePath.startsWith('http')}');
-    print('🖼️ startsWith /: ${imagePath.startsWith('/')}');
-    print('🖼️ startsWith C:: ${imagePath.startsWith('C:')}');
     
     ImageProvider provider;
     if (imagePath.startsWith('http')) {
       provider = NetworkImage(imagePath);
-      print('🖼️ Using NetworkImage for HTTP URL');
     } else if (imagePath.startsWith('/') || imagePath.startsWith('C:')) {
       provider = FileImage(File(imagePath));
-      print('🖼️ Using FileImage for local path');
     } else {
       provider = NetworkImage(imagePath);
-      print('🖼️ Using NetworkImage as fallback');
     }
     
-    print('🖼️ Provider type: ${provider.runtimeType}');
-    print('🖼️ ==========================================');
     return provider;
   }
 
@@ -124,20 +111,8 @@ class MainDrawer extends StatelessWidget {
                       final profilePhoto = userData?['profile_photo'];
                       
                       // Debug profile photo in drawer
-                      print('🖼️ ==========================================');
-                      print('🖼️ STUDENT DRAWER PROFILE PHOTO DEBUG');
-                      print('🖼️ ==========================================');
-                      print('🖼️ User Data: ${userData?['id']}');
-                      print('🖼️ Profile Photo Raw: $profilePhoto');
-                      print('🖼️ Profile Photo Type: ${profilePhoto.runtimeType}');
-                      print('🖼️ Profile Photo isNull: ${profilePhoto == null}');
-                      print('🖼️ Profile Photo isEmpty: ${profilePhoto.toString().isEmpty}');
-                      print('🖼️ Profile Photo isNotEmpty: ${profilePhoto.toString().isNotEmpty}');
                       if (profilePhoto != null && profilePhoto.toString().isNotEmpty) {
-                        print('🖼️ Profile Photo Value: "$profilePhoto"');
-                        print('🖼️ Profile Photo Length: ${profilePhoto.toString().length}');
                       }
-                      print('🖼️ ==========================================');
                       
                       return CircleAvatar(
                         radius: 40,

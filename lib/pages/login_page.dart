@@ -45,8 +45,6 @@ class _LoginPageState extends State<LoginPage> {
       final email = _emailController.text.trim();
       final password = _passwordController.text.trim();
       
-      print('🔍 Attempting login for: $email');
-      print('🔍 Expected category: $_expectedCategory');
       
       // Validate email format
       if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
@@ -64,8 +62,6 @@ class _LoginPageState extends State<LoginPage> {
       final user = await AuthService().authenticateUser(email, password, _expectedCategory);
       
       if (user != null) {
-        print('✅ Login successful for: ${user['name']}');
-        print('✅ User category: ${user['category']}');
         
         // Route based on category
         Widget page = const DashboardPage();
@@ -81,11 +77,9 @@ class _LoginPageState extends State<LoginPage> {
           MaterialPageRoute(builder: (_) => page),
         );
       } else {
-        print('❌ Login failed: Invalid credentials or category mismatch');
         _showSnack('Invalid email, password, or category mismatch. Please check your credentials.');
       }
     } catch (e) {
-      print('❌ Login error: $e');
       
       // Handle specific Firebase Auth errors
       String errorMessage = 'Login failed. Please try again.';

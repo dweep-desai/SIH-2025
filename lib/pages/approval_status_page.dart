@@ -26,12 +26,8 @@ class _ApprovalStatusPageState extends State<ApprovalStatusPage> {
     });
     
     try {
-      print('🔄 ==========================================');
-      print('🔄 LOADING STUDENT APPROVAL HISTORY');
-      print('🔄 ==========================================');
       
       // Force refresh user data first
-      print('🔄 Force refreshing user data...');
       await _authService.forceRefreshUserData();
       
       final history = await _authService.getStudentApprovalHistory();
@@ -41,16 +37,10 @@ class _ApprovalStatusPageState extends State<ApprovalStatusPage> {
       });
       
       // Enhanced logging
-      print('✅ Loaded ${history.length} total approval requests');
       
       // Log each request with details
       for (int i = 0; i < history.length; i++) {
         var request = history[i];
-        print('🔍 Request $i: ${request['title']} - Status: ${request['status']}');
-        print('🔍   ID: ${request['id']}');
-        print('🔍   Points: ${request['points_awarded']}');
-        print('🔍   Faculty: ${request['faculty_id']}');
-        print('🔍   Approved At: ${request['approved_at']}');
       }
       
       // Count by status
@@ -58,11 +48,6 @@ class _ApprovalStatusPageState extends State<ApprovalStatusPage> {
       int rejected = history.where((req) => req['status'] == 'rejected').length;
       int pending = history.where((req) => req['status'] == 'pending').length;
       
-      print('📊 Status Summary:');
-      print('📊   Accepted: $accepted');
-      print('📊   Rejected: $rejected');
-      print('📊   Pending: $pending');
-      print('🔄 ==========================================');
       
       // Show feedback to user
       if (mounted) {
@@ -74,7 +59,6 @@ class _ApprovalStatusPageState extends State<ApprovalStatusPage> {
         );
       }
     } catch (e) {
-      print('❌ Error loading approval history: $e');
       setState(() => _isLoading = false);
       
       if (mounted) {
@@ -92,39 +76,22 @@ class _ApprovalStatusPageState extends State<ApprovalStatusPage> {
   // Debug method to check approval data directly from Firebase
   Future<void> _debugApprovalData() async {
     try {
-      print('🔍 ==========================================');
-      print('🔍 DEBUGGING STUDENT APPROVAL DATA');
-      print('🔍 ==========================================');
       
       final userData = _authService.getCurrentUser();
       if (userData == null) {
-        print('❌ No current user found');
         return;
       }
       
       String studentId = userData['id'];
-      print('🔍 Student ID: $studentId');
       
       // Check Firebase data directly
-      print('🔍 Checking Firebase data directly...');
       final firebaseData = await _authService.debugStudentApprovalData();
       
-      print('🔍 Firebase Data Summary:');
-      print('🔍   approval_accepted: ${firebaseData['accepted']}');
-      print('🔍   approval_rejected: ${firebaseData['rejected']}');
-      print('🔍   approval_history: ${firebaseData['history']}');
       
       // Also check processed data
-      print('🔍 Checking processed data...');
       final processedHistory = await _authService.getStudentApprovalHistory();
       
-      print('🔍 Processed Data Summary:');
-      print('🔍 Total requests loaded: ${processedHistory.length}');
       for (var request in processedHistory) {
-        print('🔍 Request: ${request['title']} - Status: ${request['status']}');
-        print('🔍   ID: ${request['id']}');
-        print('🔍   Points: ${request['points_awarded']}');
-        print('🔍   Faculty: ${request['faculty_id']}');
       }
       
       // Show in UI
@@ -135,7 +102,6 @@ class _ApprovalStatusPageState extends State<ApprovalStatusPage> {
         ),
       );
     } catch (e) {
-      print('❌ Error debugging approval data: $e');
     }
   }
 

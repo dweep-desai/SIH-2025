@@ -58,16 +58,6 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
   Future<void> _loadUserData() async {
     final userData = _authService.getCurrentUser();
     if (userData != null) {
-      print('🖼️ ==========================================');
-      print('🖼️ STUDENT EDIT PROFILE LOAD DEBUG');
-      print('🖼️ ==========================================');
-      print('🖼️ User ID: ${userData['id']}');
-      print('🖼️ User Category: ${userData['category']}');
-      print('🖼️ Profile Photo Raw: ${userData['profile_photo']}');
-      print('🖼️ Profile Photo Type: ${userData['profile_photo'].runtimeType}');
-      print('🖼️ Profile Photo isNull: ${userData['profile_photo'] == null}');
-      print('🖼️ Profile Photo isEmpty: ${userData['profile_photo'].toString().isEmpty}');
-      print('🖼️ ==========================================');
       
       setState(() {
         _userData = userData;
@@ -96,13 +86,6 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
       );
       
       if (image != null) {
-        print('🖼️ ==========================================');
-        print('🖼️ IMAGE PICKED SUCCESSFULLY');
-        print('🖼️ ==========================================');
-        print('🖼️ Image Path: "${image.path}"');
-        print('🖼️ Image Name: "${image.name}"');
-        print('🖼️ Image Size: ${await image.length()} bytes');
-        print('🖼️ ==========================================');
         
         setState(() {
           _avatar = FileImage(File(image.path));
@@ -110,10 +93,6 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
         // Store the image path for saving to database
         _selectedImagePath = image.path;
         
-        print('🖼️ _selectedImagePath set to: "$_selectedImagePath"');
-        print('🖼️ _selectedImagePath length: ${_selectedImagePath?.length ?? 0}');
-        print('🖼️ _selectedImagePath isNull: ${_selectedImagePath == null}');
-        print('🖼️ _selectedImagePath isEmpty: ${_selectedImagePath?.isEmpty ?? true}');
       }
     } catch (e) {
       if (mounted) {
@@ -137,13 +116,6 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
         String domain2ToSave = _selectedDomain2 ?? '';
         
         // Debug _selectedImagePath before any operations
-        print('🖼️ ==========================================');
-        print('🖼️ SAVE PROFILE DEBUG - START');
-        print('🖼️ ==========================================');
-        print('🖼️ _selectedImagePath: "$_selectedImagePath"');
-        print('🖼️ _selectedImagePath isNull: ${_selectedImagePath == null}');
-        print('🖼️ _selectedImagePath isEmpty: ${_selectedImagePath?.isEmpty ?? true}');
-        print('🖼️ ==========================================');
         
         // Update domains
         await _authService.updateDomains(
@@ -155,14 +127,6 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
         
         // Update profile photo if a new image was selected
         if (_selectedImagePath != null && _selectedImagePath!.isNotEmpty) {
-          print('🖼️ ==========================================');
-          print('🖼️ STUDENT EDIT PROFILE SAVE DEBUG');
-          print('🖼️ ==========================================');
-          print('🖼️ Selected Image Path: "$_selectedImagePath"');
-          print('🖼️ User ID: ${_userData!['id']}');
-          print('🖼️ User Category: ${_userData!['category']}');
-          print('🖼️ About to save profile photo to database...');
-          print('🖼️ ==========================================');
           
           // For now, we'll store the local file path
           // In a production app, you'd upload to Firebase Storage and get a URL
@@ -172,13 +136,7 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
             _selectedImagePath!,
           );
           
-          print('🖼️ ==========================================');
-          print('🖼️ PROFILE PHOTO SAVE COMPLETED');
-          print('🖼️ ==========================================');
         } else {
-          print('🖼️ ==========================================');
-          print('🖼️ NO IMAGE SELECTED - SKIPPING PROFILE PHOTO SAVE');
-          print('🖼️ ==========================================');
         }
         
         // Force refresh user data directly from Firebase to get latest updates

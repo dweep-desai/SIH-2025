@@ -82,10 +82,6 @@ class _FacultyEditProfilePageState extends State<FacultyEditProfilePage> {
     if (_isLoading || !mounted) return;
     setState(() { _isLoading = true; });
     try {
-      print('[FacultyEdit] Save tapped');
-      print('[FacultyEdit] Primary: ' + (_primaryDomain ?? 'null'));
-      print('[FacultyEdit] Secondary: ' + (_secondaryDomain ?? 'null'));
-      print('[FacultyEdit] Avatar path: ' + (FacultyProfileData.profileImagePath ?? 'null'));
 
       FacultyProfileData.setPrimaryDomain(_primaryDomain);
       FacultyProfileData.setSecondaryDomain(_secondaryDomain);
@@ -111,7 +107,6 @@ class _FacultyEditProfilePageState extends State<FacultyEditProfilePage> {
       );
 
       final canPop = Navigator.of(context).canPop();
-      print('[FacultyEdit] Navigator.canPop: ' + canPop.toString());
       if (canPop) {
         Navigator.of(context).pop(true);
       } else {
@@ -123,12 +118,10 @@ class _FacultyEditProfilePageState extends State<FacultyEditProfilePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error saving profile: ' + e.toString()), backgroundColor: Colors.red),
       );
-      print('[FacultyEdit] Error while saving: ' + e.toString());
     } finally {
       if (mounted) {
         setState(() { _isLoading = false; });
       }
-      print('[FacultyEdit] Save flow finished');
     }
   }
 

@@ -24,14 +24,12 @@ class _DashboardPageState extends State<DashboardPage> {
 
   // Method to refresh data from external calls
   void refreshData() {
-    print('🔄 Dashboard refreshData called');
     _loadUserData();
   }
 
 
   // Method to force refresh data
   Future<void> _forceRefresh() async {
-    print('🔄 Force refreshing dashboard data...');
     await _loadUserData();
   }
 
@@ -39,7 +37,6 @@ class _DashboardPageState extends State<DashboardPage> {
   // Method to fetch domains from student branch
   Future<void> _fetchDomainsFromStudentBranch() async {
     if (_userData != null) {
-      print('🔄 Fetching domains from student branch...');
       final domains = await _authService.fetchDomainsFromStudentBranch(_userData!['id']);
       
       if (domains['domain1']!.isNotEmpty || domains['domain2']!.isNotEmpty) {
@@ -47,11 +44,7 @@ class _DashboardPageState extends State<DashboardPage> {
           _userData!['domain1'] = domains['domain1'];
           _userData!['domain2'] = domains['domain2'];
         });
-        print('✅ Domains updated from student branch');
-        print('✅ Domain1: "${domains['domain1']}"');
-        print('✅ Domain2: "${domains['domain2']}"');
       } else {
-        print('❌ No domains found in student branch');
       }
     }
   }
@@ -66,19 +59,9 @@ class _DashboardPageState extends State<DashboardPage> {
         'link': 'https://example.com/test-project',
       };
       
-      print('🧪 ==========================================');
-      print('🧪 SUBMITTING TEST APPROVAL REQUEST');
-      print('🧪 ==========================================');
-      print('🧪 Student: ${_userData?['name']} (${_userData?['id']})');
-      print('🧪 Department: ${_userData?['branch']}');
-      print('🧪 Request: $testRequest');
-      print('🧪 ==========================================');
       
       await _authService.submitApprovalRequest(testRequest);
       
-      print('🧪 ==========================================');
-      print('🧪 TEST REQUEST COMPLETED SUCCESSFULLY');
-      print('🧪 ==========================================');
       
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -88,11 +71,6 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
       );
     } catch (e) {
-      print('❌ ==========================================');
-      print('❌ ERROR SUBMITTING TEST REQUEST');
-      print('❌ ==========================================');
-      print('❌ Error: $e');
-      print('❌ ==========================================');
       
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -107,10 +85,6 @@ class _DashboardPageState extends State<DashboardPage> {
   // Test method to check faculty selection
   Future<void> _testFacultySelection() async {
     try {
-      print('🔍 ==========================================');
-      print('🔍 TESTING FACULTY SELECTION');
-      print('🔍 ==========================================');
-      print('🔍 Student Department: ${_userData?['branch']}');
       
       // This will trigger the faculty selection logic
       Map<String, dynamic> testRequest = {
@@ -122,9 +96,6 @@ class _DashboardPageState extends State<DashboardPage> {
       
       await _authService.submitApprovalRequest(testRequest);
       
-      print('🔍 ==========================================');
-      print('🔍 FACULTY SELECTION TEST COMPLETED');
-      print('🔍 ==========================================');
       
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -134,7 +105,6 @@ class _DashboardPageState extends State<DashboardPage> {
         ),
       );
     } catch (e) {
-      print('❌ Faculty selection test error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Faculty selection test error: $e'),
@@ -156,7 +126,6 @@ class _DashboardPageState extends State<DashboardPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     // Refresh data when returning from other pages
-    print('🔄 Dashboard didChangeDependencies - refreshing data');
     _loadUserData();
   }
 
@@ -164,7 +133,6 @@ class _DashboardPageState extends State<DashboardPage> {
   Future<void> _loadUserData() async {
     try {
       // Force refresh user data directly from Firebase to get latest updates
-      print('🔄 Dashboard _loadUserData - force refreshing from Firebase...');
       final userData = await _authService.forceRefreshUserData();
       if (userData != null) {
         // Safely cast the grades data
@@ -173,7 +141,6 @@ class _DashboardPageState extends State<DashboardPage> {
           try {
             grades = Map<String, dynamic>.from(userData['grades'] as Map<dynamic, dynamic>);
           } catch (e) {
-            print('❌ Error casting grades: $e');
             grades = {};
           }
         }
@@ -184,18 +151,15 @@ class _DashboardPageState extends State<DashboardPage> {
           try {
             studentRecord = Map<String, dynamic>.from(userData['student_record'] as Map<dynamic, dynamic>);
           } catch (e) {
-            print('❌ Error casting student_record: $e');
             studentRecord = {};
           }
         }
         
         // Fetch domains from student branch if user is a student
         if (userData['category'] == 'student') {
-          print('🔄 Fetching domains from student branch...');
           final domains = await _authService.fetchDomainsFromStudentBranch(userData['id']);
           userData['domain1'] = domains['domain1'];
           userData['domain2'] = domains['domain2'];
-          print('✅ Domains fetched from student branch: ${domains}');
         }
         
         setState(() {
@@ -206,48 +170,14 @@ class _DashboardPageState extends State<DashboardPage> {
         });
         
         // Debug profile photo loading
-        print('🖼️ ==========================================');
-        print('🖼️ STUDENT DASHBOARD PROFILE PHOTO DEBUG');
-        print('🖼️ ==========================================');
-        print('🖼️ User ID: ${userData['id']}');
-        print('🖼️ User Category: ${userData['category']}');
-        print('🖼️ Profile Photo Raw: ${userData['profile_photo']}');
-        print('🖼️ Profile Photo Type: ${userData['profile_photo'].runtimeType}');
-        print('🖼️ Profile Photo isNull: ${userData['profile_photo'] == null}');
-        print('🖼️ Profile Photo isEmpty: ${userData['profile_photo'].toString().isEmpty}');
-        print('🖼️ Profile Photo isNotEmpty: ${userData['profile_photo'].toString().isNotEmpty}');
         if (userData['profile_photo'] != null && userData['profile_photo'].toString().isNotEmpty) {
-          print('🖼️ Profile Photo Value: "${userData['profile_photo']}"');
-          print('🖼️ Profile Photo Length: ${userData['profile_photo'].toString().length}');
-          print('🖼️ Profile Photo startsWith http: ${userData['profile_photo'].toString().startsWith('http')}');
-          print('🖼️ Profile Photo startsWith /: ${userData['profile_photo'].toString().startsWith('/')}');
-          print('🖼️ Profile Photo startsWith C:: ${userData['profile_photo'].toString().startsWith('C:')}');
         }
-        print('🖼️ ==========================================');
         
         // Enhanced domain logging
-        print('✅ Dashboard loaded - GPA: $_gpa');
-        print('✅ User ID: ${userData['id']}');
-        print('✅ User Category: ${userData['category']}');
-        print('✅ Domain1: "${userData['domain1']}" (type: ${userData['domain1'].runtimeType})');
-        print('✅ Domain2: "${userData['domain2']}" (type: ${userData['domain2'].runtimeType})');
-        print('✅ Domain1 isEmpty: ${userData['domain1'].toString().isEmpty}');
-        print('✅ Domain2 isEmpty: ${userData['domain2'].toString().isEmpty}');
-        print('✅ Domain1 isNotEmpty: ${userData['domain1'].toString().isNotEmpty}');
-        print('✅ Domain2 isNotEmpty: ${userData['domain2'].toString().isNotEmpty}');
-        print('✅ Domain1 == null: ${userData['domain1'] == null}');
-        print('✅ Domain2 == null: ${userData['domain2'] == null}');
-        print('✅ Domain1 == "": ${userData['domain1'] == ""}');
-        print('✅ Domain2 == "": ${userData['domain2'] == ""}');
-        print('✅ Full userData keys: ${userData.keys.toList()}');
-        print('✅ Grades data: $grades');
-        print('✅ Student record data: $studentRecord');
       } else {
-        print('❌ Failed to get user data from Firebase');
         setState(() => _isLoading = false);
       }
     } catch (e) {
-      print('Error loading user data: $e');
       setState(() => _isLoading = false);
     }
   }
@@ -296,7 +226,6 @@ class _DashboardPageState extends State<DashboardPage> {
             };
           }));
         } catch (e) {
-          print('❌ Error processing $category: $e');
         }
       }
     }
@@ -458,7 +387,6 @@ class _DashboardPageState extends State<DashboardPage> {
                     );
                     // If profile was updated, refresh the dashboard
                     if (result == true) {
-                      print('🔄 Profile was updated, refreshing dashboard');
                       refreshData();
                     }
                   },
@@ -511,29 +439,16 @@ class _DashboardPageState extends State<DashboardPage> {
 
   // Helper method to get appropriate image provider
   ImageProvider _getImageProvider(String imagePath) {
-    print('🖼️ ==========================================');
-    print('🖼️ STUDENT DASHBOARD _getImageProvider DEBUG');
-    print('🖼️ ==========================================');
-    print('🖼️ Input imagePath: "$imagePath"');
-    print('🖼️ imagePath length: ${imagePath.length}');
-    print('🖼️ startsWith http: ${imagePath.startsWith('http')}');
-    print('🖼️ startsWith /: ${imagePath.startsWith('/')}');
-    print('🖼️ startsWith C:: ${imagePath.startsWith('C:')}');
     
     ImageProvider provider;
     if (imagePath.startsWith('http')) {
       provider = NetworkImage(imagePath);
-      print('🖼️ Using NetworkImage for HTTP URL');
     } else if (imagePath.startsWith('/') || imagePath.startsWith('C:')) {
       provider = FileImage(File(imagePath));
-      print('🖼️ Using FileImage for local path');
     } else {
       provider = NetworkImage(imagePath);
-      print('🖼️ Using NetworkImage as fallback');
     }
     
-    print('🖼️ Provider type: ${provider.runtimeType}');
-    print('🖼️ ==========================================');
     return provider;
   }
 

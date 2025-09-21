@@ -40,7 +40,6 @@ class _SemesterInfoPageState extends State<SemesterInfoPage> {
         });
       }
     } catch (e) {
-      print('Error loading user data: $e');
       setState(() => _isLoading = false);
     }
   }

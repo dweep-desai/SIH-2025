@@ -31,7 +31,6 @@ class _AchievementsPageState extends State<AchievementsPage> {
         });
       }
     } catch (e) {
-      print('Error loading user data: $e');
       setState(() => _isLoading = false);
     }
   }
@@ -180,9 +179,9 @@ class _AchievementsPageState extends State<AchievementsPage> {
       case 'Workshops':
         return 3; // Top 3 (highest points)
       case 'Research papers':
-        return 5; // Top 5 (highest points)
+        return 10; // Top 10 (highest points)
       case 'Experience':
-        return 5; // Any 5 (not necessarily highest points)
+        return 10; // Top 10 (highest points)
       default:
         return 5;
     }

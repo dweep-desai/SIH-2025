@@ -48,17 +48,24 @@ class AuthService {
   // Find user in Firebase Realtime Database by email and validate category
   Future<Map<String, dynamic>?> _findUserInFirebaseDatabase(String email, String expectedCategory) async {
     try {
+      
       // Search in all collections
       for (String collectionName in ['students', 'faculty', 'admin']) {
+        
         try {
           DataSnapshot snapshot = await _databaseRef.child(collectionName).get();
-          if (snapshot.exists) {
+          
+              if (snapshot.exists) {
                 Map<dynamic, dynamic> collection = snapshot.value as Map<dynamic, dynamic>;
+                
                 for (String userId in collection.keys) {
                   Map<String, dynamic> user = Map<String, dynamic>.from(collection[userId] as Map<dynamic, dynamic>);
-                  if (user['email'] == email) {
+              
+              if (user['email'] == email) {
+                
                 // Check if category matches
                 if (user['category'] == expectedCategory) {
+                  
                   // Return user data with proper structure
                   Map<String, dynamic> userData = {
                     'id': userId,
@@ -70,7 +77,8 @@ class AuthService {
                   // Debug profile photo fetching
                   if (user['profile_photo'] != null) {
                   }
-                  // Add category-specific fields
+
+                          // Add category-specific fields
                           if (user['category'] == 'student') {
                             userData.addAll({
                               'branch': user['branch'],
@@ -118,7 +126,7 @@ class AuthService {
               }
             }
           } else {
-            }
+          }
         } catch (collectionError) {
           continue; // Try next collection
         }
@@ -140,7 +148,7 @@ class AuthService {
     try {
       await _auth.signOut();
       _currentUser = null;
-      } catch (e) {
+    } catch (e) {
       _currentUser = null; // Clear local session even if Firebase logout fails
     }
   }
@@ -265,20 +273,23 @@ class AuthService {
     int totalCourses = 0;
 
     try {
+      
       for (String semester in grades.keys) {
         try {
           if (grades[semester] is Map) {
             Map<String, dynamic> semesterGrades = Map<String, dynamic>.from(grades[semester] as Map<dynamic, dynamic>);
+            
             for (String course in semesterGrades.keys) {
               // Grades are already on 1-10 scale, no conversion needed
               int numericGrade = semesterGrades[course] as int? ?? 0;
+              
               
               totalGradePoints += numericGrade;
               totalCourses++;
             }
           }
         } catch (e) {
-          }
+        }
       }
       
       double gpa = totalCourses > 0 ? totalGradePoints / totalCourses : 0.0;
@@ -288,17 +299,22 @@ class AuthService {
     }
   }
 
+
+
   // Update user profile photo
   Future<void> updateProfilePhoto(String userId, String category, String photoUrl) async {
     try {
+      
       // Fix the database path - use plural form for the collection
       String collectionName = category == 'student' ? 'students' : category;
+      
       await _databaseRef.child(collectionName).child(userId).child('profile_photo').set(photoUrl);
+      
       
       if (_currentUser != null) {
         _currentUser!['profile_photo'] = photoUrl;
-        }
-      } catch (e) {
+      }
+    } catch (e) {
       throw e;
     }
   }
@@ -306,6 +322,7 @@ class AuthService {
   // Update user domains
   Future<void> updateDomains(String userId, String category, String domain1, String domain2) async {
     try {
+      
       // Fix the database path - use plural form for the collection
       String collectionName = category == 'student' ? 'students' : category;
       
@@ -317,26 +334,30 @@ class AuthService {
       
       // Update domain1
       await _databaseRef.child(collectionName).child(userId).child('domain1').set(domain1);
+      
       // Update domain2
       await _databaseRef.child(collectionName).child(userId).child('domain2').set(domain2);
+      
       // Verify the update by reading back immediately
       DataSnapshot snapshot = await _databaseRef.child(collectionName).child(userId).get();
       if (snapshot.exists) {
         Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
       } else {
-        }
-
+      }
+      
+      
       // Update local data
       if (_currentUser != null) {
         _currentUser!['domain1'] = domain1;
         _currentUser!['domain2'] = domain2;
-        } else {
-        }
+      } else {
+      }
       
-      } catch (e) {
+    } catch (e) {
       throw e;
     }
   }
+
 
   // Method to directly check Firebase approval data
   Future<Map<String, dynamic>> debugStudentApprovalData() async {
@@ -346,12 +367,16 @@ class AuthService {
       }
       
       String studentId = _currentUser!['id'];
+      
       // Check approval_accepted directly
       DataSnapshot acceptedSnapshot = await _databaseRef.child('students').child(studentId).child('approval_accepted').get();
+      
       // Check approval_rejected directly
       DataSnapshot rejectedSnapshot = await _databaseRef.child('students').child(studentId).child('approval_rejected').get();
+      
       // Check approval_history directly
       DataSnapshot historySnapshot = await _databaseRef.child('students').child(studentId).child('approval_list').get();
+      
       return {
         'accepted': acceptedSnapshot.value,
         'rejected': rejectedSnapshot.value,
@@ -370,10 +395,12 @@ class AuthService {
       }
       
       String studentId = _currentUser!['id'];
+      
       List<Map<String, dynamic>> history = [];
       
       // Load approved requests
       DataSnapshot approvedSnapshot = await _databaseRef.child('students').child(studentId).child('approval_accepted').get();
+      
       if (approvedSnapshot.exists && approvedSnapshot.value != null) {
         Map<dynamic, dynamic> approvedData = approvedSnapshot.value as Map<dynamic, dynamic>;
         approvedData.forEach((key, value) {
@@ -384,11 +411,12 @@ class AuthService {
             ...requestData,
           });
         });
-        } else {
-        }
+      } else {
+      }
       
       // Load rejected requests
       DataSnapshot rejectedSnapshot = await _databaseRef.child('students').child(studentId).child('approval_rejected').get();
+      
       if (rejectedSnapshot.exists && rejectedSnapshot.value != null) {
         Map<dynamic, dynamic> rejectedData = rejectedSnapshot.value as Map<dynamic, dynamic>;
         rejectedData.forEach((key, value) {
@@ -399,11 +427,12 @@ class AuthService {
             ...requestData,
           });
         });
-        } else {
-        }
+      } else {
+      }
       
       // Load pending requests (from approval_list with status 'pending')
       DataSnapshot pendingSnapshot = await _databaseRef.child('students').child(studentId).child('approval_list').get();
+      
       if (pendingSnapshot.exists && pendingSnapshot.value != null) {
         Map<dynamic, dynamic> pendingData = pendingSnapshot.value as Map<dynamic, dynamic>;
         int pendingCount = 0;
@@ -418,8 +447,8 @@ class AuthService {
             pendingCount++;
           }
         });
-        } else {
-        }
+      } else {
+      }
       
       return history;
     } catch (e) {
@@ -454,6 +483,7 @@ class AuthService {
     }
   }
 
+
   // Refresh current user data from Firebase
   Future<void> refreshCurrentUser() async {
     try {
@@ -464,27 +494,30 @@ class AuthService {
       String email = _currentUser!['email'];
       String category = _currentUser!['category'];
       
+      
       Map<String, dynamic>? updatedUser = await _findUserInFirebaseDatabase(email, category);
       if (updatedUser != null) {
         
         _currentUser = updatedUser;
-        } else {
-        }
-    } catch (e) {
+      } else {
       }
+    } catch (e) {
+    }
   }
 
   // Method to directly read domains from Firebase for debugging
   Future<void> debugReadDomains(String userId, String category) async {
     try {
+      
       DataSnapshot snapshot = await _databaseRef.child(category).child(userId).get();
       if (snapshot.exists) {
         Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
       } else {
-        }
-    } catch (e) {
       }
+    } catch (e) {
+    }
   }
+
 
   // Method to force refresh user data directly from Firebase
   Future<Map<String, dynamic>?> forceRefreshUserData() async {
@@ -496,13 +529,16 @@ class AuthService {
       String email = _currentUser!['email'];
       String category = _currentUser!['category'];
       
+      
       // Get fresh data directly from Firebase
       Map<String, dynamic>? freshUserData = await _findUserInFirebaseDatabase(email, category);
       
       if (freshUserData != null) {
+        
         // Debug profile photo in refreshed data
         if (freshUserData['profile_photo'] != null) {
         }
+        
         // Update the current user with fresh data
         _currentUser = freshUserData;
         
@@ -518,6 +554,7 @@ class AuthService {
   // Method to directly fetch user data by user ID from Firebase
   Future<Map<String, dynamic>?> fetchUserById(String userId, String category) async {
     try {
+      
       DataSnapshot snapshot = await _databaseRef.child(category).child(userId).get();
       
       if (snapshot.exists) {
@@ -541,6 +578,7 @@ class AuthService {
   // Method to fetch domains from the student branch structure
   Future<Map<String, String>> fetchDomainsFromStudentBranch(String userId) async {
     try {
+      
       DataSnapshot snapshot = await _databaseRef.child('students').child(userId).get();
       
       Map<String, String> domains = {
@@ -554,17 +592,17 @@ class AuthService {
         // Check for domain1
         if (data.containsKey('domain1')) {
           domains['domain1'] = data['domain1']?.toString() ?? '';
-          } else {
-          }
+        } else {
+        }
         
         // Check for domain2
         if (data.containsKey('domain2')) {
           domains['domain2'] = data['domain2']?.toString() ?? '';
-          } else {
-          }
-        
         } else {
         }
+        
+      } else {
+      }
       
       return domains;
     } catch (e) {
@@ -608,17 +646,21 @@ class AuthService {
       }
       
       print('🎯 🎲 RANDOMLY ASSIGNED FACULTY: $facultyName ($assignedFacultyId)');
+      
       // Add to faculty's approval section
       await _databaseRef.child('faculty').child(assignedFacultyId).child('approval_section').child(requestId).set(requestData);
+      
       // Verify the addition
       DataSnapshot verifySnapshot = await _databaseRef.child('faculty').child(assignedFacultyId).child('approval_section').get();
+      
       // Add to student's approval list
       await _databaseRef.child('students').child(studentId).child('approval_list').child(requestId).set({
         ...requestData,
         'assigned_faculty_id': assignedFacultyId,
         'status': 'pending',
       });
-      } catch (e) {
+      
+    } catch (e) {
       throw e;
     }
   }
@@ -626,6 +668,7 @@ class AuthService {
   // Method to find a random faculty member in the same department
   Future<String?> _findRandomFacultyInDepartment(String department) async {
     try {
+      
       DataSnapshot facultySnapshot = await _databaseRef.child('faculty').get();
       
       if (!facultySnapshot.exists) {
@@ -635,6 +678,7 @@ class AuthService {
       Map<dynamic, dynamic> faculty = facultySnapshot.value as Map<dynamic, dynamic>;
       List<String> matchingFaculty = [];
       List<String> allFaculty = [];
+      
       
       for (String facultyId in faculty.keys) {
         Map<String, dynamic> facultyData = Map<String, dynamic>.from(faculty[facultyId] as Map<dynamic, dynamic>);
@@ -648,6 +692,7 @@ class AuthService {
         } else {
         }
       }
+      
       
       if (matchingFaculty.isEmpty) {
         return null;
@@ -708,23 +753,21 @@ class AuthService {
       if (approved) {
         // Add to student's approval_accepted section
         await _databaseRef.child('students').child(studentId).child('approval_accepted').child(requestId).set(approvalHistory);
-        
-        // Add to student's record in the appropriate category
-        print('🎯 About to add to student record...');
-        await _addToStudentRecord(studentId, requestData, points);
-        } else {
+      } else {
         // Add to student's approval_rejected section
         await _databaseRef.child('students').child(studentId).child('approval_rejected').child(requestId).set(approvalHistory);
-        }
+      }
       
       // Remove from student's approval_list since it's now processed
       await _databaseRef.child('students').child(studentId).child('approval_list').child(requestId).remove();
+      
       // Remove from faculty's approval section
       await _databaseRef.child('faculty').child(facultyId).child('approval_section').child(requestId).remove();
+      
       // Update faculty analytics
       await _updateFacultyAnalytics(facultyId, approved, points);
       
-      } catch (e) {
+    } catch (e) {
       throw e;
     }
   }
@@ -763,128 +806,6 @@ class AuthService {
       
       await _databaseRef.child('faculty').child(facultyId).child('approval_analytics').set(analytics);
     } catch (e) {
-      }
-  }
-
-  // Method to add approved request to student's record
-  Future<void> _addToStudentRecord(String studentId, Map<String, dynamic> requestData, int points) async {
-    try {
-      print('🎯 ==========================================');
-      print('🎯 ADDING TO STUDENT RECORD');
-      print('🎯 ==========================================');
-      print('🎯 Student ID: $studentId');
-      print('🎯 Request Data: $requestData');
-      print('🎯 Points: $points');
-      
-      String requestCategory = requestData['category'] ?? 'Achievements';
-      String title = requestData['title'] ?? 'Untitled';
-      String description = requestData['description'] ?? '';
-      
-      // Map approval category to student record category
-      String category = _mapApprovalCategoryToRecordCategory(requestCategory);
-      
-      print('🎯 Request Category: $requestCategory');
-      print('🎯 Mapped Category: $category');
-      print('🎯 Title: $title');
-      print('🎯 Description: $description');
-      
-      // Create the record item
-      Map<String, dynamic> recordItem = {
-        'title': title,
-        'description': description,
-        'points': points,
-        'approved_at': DateTime.now().toIso8601String(),
-        'faculty_id': requestData['assigned_faculty_id'] ?? '',
-      };
-      
-      // Get current student record
-      print('🎯 Fetching current student record...');
-      DataSnapshot recordSnapshot = await _databaseRef.child('students').child(studentId).child('student_record').get();
-      print('🎯 Record snapshot exists: ${recordSnapshot.exists}');
-      
-      Map<String, dynamic> studentRecord = recordSnapshot.exists 
-          ? Map<String, dynamic>.from(recordSnapshot.value as Map<dynamic, dynamic>)
-          : {
-              'research_papers': [],
-              'certifications': [],
-              'achievements': [],
-              'projects': [],
-              'workshops': [],
-              'experience': [],
-            };
-      
-      print('🎯 Current student record: $studentRecord');
-      
-      // Ensure the category exists and is a list
-      if (studentRecord[category] == null) {
-        studentRecord[category] = [];
-      }
-      
-      // Add the new item to the category
-      List<dynamic> categoryList = List<dynamic>.from(studentRecord[category] ?? []);
-      categoryList.add(recordItem);
-      
-      // Sort by points (highest first) and apply limits
-      categoryList.sort((a, b) => (b['points'] ?? 0).compareTo(a['points'] ?? 0));
-      
-      // Apply display limits
-      int limit = _getDisplayLimit(category);
-      if (categoryList.length > limit) {
-        categoryList = categoryList.take(limit).toList();
-      }
-      
-      // Update the category in student record
-      studentRecord[category] = categoryList;
-      
-      print('🎯 Updated student record: $studentRecord');
-      print('🎯 Saving to database...');
-      
-      // Save back to database
-      await _databaseRef.child('students').child(studentId).child('student_record').set(studentRecord);
-      
-      print('🎯 ✅ Successfully saved to student record!');
-      print('🎯 ==========================================');
-      
-    } catch (e) {
-      print('🎯 ❌ Error adding to student record: $e');
-      print('🎯 ==========================================');
-      // Don't throw error to avoid breaking the approval process
-    }
-  }
-  
-  // Method to map approval category to student record category
-  String _mapApprovalCategoryToRecordCategory(String approvalCategory) {
-    switch (approvalCategory) {
-      case 'Certifications':
-        return 'certifications';
-      case 'Achievements':
-        return 'achievements';
-      case 'Projects':
-        return 'projects';
-      case 'Workshops':
-        return 'workshops';
-      case 'Research papers':
-        return 'research_papers';
-      case 'Experience':
-        return 'experience';
-      default:
-        return 'achievements'; // Default fallback
-    }
-  }
-
-  // Method to get display limit for each category
-  int _getDisplayLimit(String category) {
-    switch (category.toLowerCase()) {
-      case 'certifications':
-      case 'achievements':
-      case 'projects':
-      case 'workshops':
-        return 3;
-      case 'research_papers':
-      case 'experience':
-        return 10;
-      default:
-        return 5; // Default limit
     }
   }
 

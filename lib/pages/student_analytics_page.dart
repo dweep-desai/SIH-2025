@@ -44,7 +44,6 @@ class _StudentAnalyticsPageState extends State<StudentAnalyticsPage> {
         _calculateAnalytics();
       }
     } catch (e) {
-      print('Error loading user data: $e');
       setState(() => _isLoading = false);
     }
   }
@@ -148,7 +147,6 @@ class _StudentAnalyticsPageState extends State<StudentAnalyticsPage> {
             }
           }
         } catch (e) {
-          print('Error processing $dbCategory: $e');
         }
       }
       
@@ -194,7 +192,6 @@ class _StudentAnalyticsPageState extends State<StudentAnalyticsPage> {
             }
           }
         } catch (e) {
-          print('Error processing $category: $e');
         }
       }
     }

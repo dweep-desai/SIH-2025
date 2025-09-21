@@ -37,7 +37,6 @@ class _AdminFacultySearchPageState extends State<AdminFacultySearchPage> {
         _isLoading = false;
       });
     } catch (e) {
-      print('Error loading faculty data: $e');
       setState(() {
         _isLoading = false;
       });

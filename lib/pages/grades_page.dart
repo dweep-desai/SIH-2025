@@ -45,7 +45,6 @@ class _GradesPageState extends State<GradesPage> {
         });
       }
     } catch (e) {
-      print('Error loading user data: $e');
       setState(() => _isLoading = false);
     }
   }

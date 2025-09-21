@@ -25,33 +25,22 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
 
   Future<void> _loadUserData() async {
     try {
-      print('🔍 ==========================================');
-      print('🔍 FACULTY APPROVAL PAGE - LOADING USER DATA');
-      print('🔍 ==========================================');
       
       // Force refresh user data from Firebase to get latest updates
-      print('🔄 Loading faculty user data...');
       final userData = await _authService.forceRefreshUserData();
       if (userData != null) {
-        print('✅ Faculty user data loaded: ${userData['name']}');
-        print('✅ Faculty ID: ${userData['id']}');
-        print('✅ Faculty Category: ${userData['category']}');
-        print('✅ Faculty Department: ${userData['department']}');
         
         setState(() {
           _userData = userData;
           _isLoading = false;
         });
         
-        print('🔄 Now loading approval requests from Firebase...');
         // Load approval requests directly from Firebase
         await _loadApprovalRequestsFromFirebase();
       } else {
-        print('❌ No faculty user data found');
         setState(() => _isLoading = false);
       }
     } catch (e) {
-      print('❌ Error loading faculty data: $e');
       setState(() => _isLoading = false);
     }
   }
@@ -59,13 +48,8 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
   // Method to load approval requests directly from Firebase
   Future<void> _loadApprovalRequestsFromFirebase() async {
     try {
-      print('🔍 ==========================================');
-      print('🔍 LOADING APPROVAL REQUESTS FROM FIREBASE');
-      print('🔍 ==========================================');
       
       String facultyId = _userData!['id'];
-      print('🔍 Faculty ID: $facultyId');
-      print('🔍 Firebase Path: /faculty/$facultyId/approval_section');
       
       // Get Firebase Database reference
       final DatabaseReference databaseRef = FirebaseDatabase.instanceFor(
@@ -73,26 +57,14 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
         databaseURL: 'https://ssh-project-7ebc3-default-rtdb.asia-southeast1.firebasedatabase.app',
       ).ref();
       
-      print('🔍 Firebase Database Reference created');
-      print('🔍 Database URL: https://ssh-project-7ebc3-default-rtdb.asia-southeast1.firebasedatabase.app');
       
       // Get approval_section directly from Firebase
-      print('🔍 Fetching data from Firebase...');
       DataSnapshot approvalSnapshot = await databaseRef.child('faculty').child(facultyId).child('approval_section').get();
       
-      print('🔍 ==========================================');
-      print('🔍 FIREBASE RESPONSE ANALYSIS');
-      print('🔍 ==========================================');
-      print('🔍 Raw approval_section from Firebase: ${approvalSnapshot.value}');
-      print('🔍 Approval_section exists: ${approvalSnapshot.exists}');
-      print('🔍 Data type: ${approvalSnapshot.value.runtimeType}');
-      print('🔍 Data is null: ${approvalSnapshot.value == null}');
       
       if (approvalSnapshot.exists && approvalSnapshot.value != null) {
         if (approvalSnapshot.value is Map) {
           Map<dynamic, dynamic> approvalMap = approvalSnapshot.value as Map<dynamic, dynamic>;
-          print('🔍 Approval_section is a Map with ${approvalMap.length} entries');
-          print('🔍 Map keys: ${approvalMap.keys.toList()}');
           
           _approvalRequests = approvalMap.entries.map((entry) {
             Map<String, dynamic> request = Map<String, dynamic>.from(entry.value as Map<dynamic, dynamic>);
@@ -100,55 +72,23 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
             return request;
           }).toList();
           
-          print('🔍 ==========================================');
-          print('🔍 PROCESSED APPROVAL REQUESTS');
-          print('🔍 ==========================================');
-          print('🔍 Loaded ${_approvalRequests.length} approval requests from Firebase');
           
           // Log each request for debugging
           for (int i = 0; i < _approvalRequests.length; i++) {
             var request = _approvalRequests[i];
-            print('🔍 Request $i:');
-            print('🔍   - ID: ${request['request_id']}');
-            print('🔍   - Title: ${request['title']}');
-            print('🔍   - Student: ${request['student_name']}');
-            print('🔍   - Category: ${request['category']}');
-            print('🔍   - Description: ${request['description']}');
-            print('🔍   - Link: ${request['link']}');
-            print('🔍   - Full data: $request');
           }
         } else {
-          print('🔍 Approval_section is not a Map: ${approvalSnapshot.value.runtimeType}');
-          print('🔍 Actual value: ${approvalSnapshot.value}');
           _approvalRequests = [];
         }
       } else {
-        print('🔍 No approval_section found in Firebase');
-        print('🔍 This could mean:');
-        print('🔍   1. No approval requests have been assigned to this faculty');
-        print('🔍   2. The path is incorrect');
-        print('🔍   3. Firebase connection issue');
         _approvalRequests = [];
       }
       
-      print('🔍 ==========================================');
-      print('🔍 FINAL RESULT');
-      print('🔍 ==========================================');
-      print('🔍 _approvalRequests.length: ${_approvalRequests.length}');
-      print('🔍 _approvalRequests.isEmpty: ${_approvalRequests.isEmpty}');
-      print('🔍 ==========================================');
       
       // Update the UI with the loaded data
       setState(() {});
       
     } catch (e) {
-      print('❌ ==========================================');
-      print('❌ ERROR LOADING APPROVAL REQUESTS');
-      print('❌ ==========================================');
-      print('❌ Error: $e');
-      print('❌ Error type: ${e.runtimeType}');
-      print('❌ Stack trace: ${StackTrace.current}');
-      print('❌ ==========================================');
       _approvalRequests = [];
       setState(() {});
     }
@@ -336,20 +276,11 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('🔍 ==========================================');
-    print('🔍 FACULTY APPROVAL PAGE - BUILD METHOD');
-    print('🔍 ==========================================');
-    print('🔍 _isLoading: $_isLoading');
-    print('🔍 _userData: $_userData');
-    print('🔍 _approvalRequests.length: ${_approvalRequests.length}');
-    print('🔍 _approvalRequests.isEmpty: ${_approvalRequests.isEmpty}');
-    print('🔍 ==========================================');
     
     // Faculty theme: green
     final Color facultyPrimary = Colors.green.shade700;
 
     if (_isLoading) {
-      print('🔍 Showing loading screen...');
       return Scaffold(
         appBar: AppBar(
           title: const Text('Approval Section'),
@@ -361,8 +292,6 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
       );
     }
 
-    print('🔍 Showing main content screen...');
-    print('🔍 _approvalRequests.isEmpty: ${_approvalRequests.isEmpty}');
     
     return Scaffold(
       appBar: AppBar(
@@ -372,7 +301,6 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
         actions: [
           IconButton(
             onPressed: () {
-              print('🔍 Refresh button pressed - reloading approval requests...');
               _loadApprovalRequestsFromFirebase();
             },
             icon: const Icon(Icons.refresh),
@@ -413,7 +341,6 @@ class _FacultyApprovalPageState extends State<FacultyApprovalPage> {
               itemCount: _approvalRequests.length,
               itemBuilder: (context, index) {
                 final request = _approvalRequests[index];
-                print('🔍 Building ListTile for request $index: ${request['title']}');
                 return Card(
                   elevation: 2,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

@@ -36,10 +36,8 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
   Future<void> _loadUserData() async {
     try {
       // Force refresh user data from Firebase to get latest updates
-      print('🔄 Loading faculty user data...');
       final userData = await _authService.forceRefreshUserData();
       if (userData != null) {
-        print('✅ Faculty user data loaded: ${userData['name']}');
         setState(() {
           _userData = userData;
           _isLoading = false;
@@ -49,11 +47,9 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
         await _loadFacultyData();
         await _loadNotificationCount();
       } else {
-        print('❌ No faculty user data found');
         setState(() => _isLoading = false);
       }
     } catch (e) {
-      print('❌ Error loading faculty data: $e');
       setState(() => _isLoading = false);
     }
   }
@@ -89,19 +85,16 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
       
       setState(() {});
     } catch (e) {
-      print('Error loading faculty data: $e');
     }
   }
 
   // Method to refresh data from external calls
   void refreshData() {
-    print('🔄 Faculty dashboard refreshData called');
     _loadUserData();
   }
 
   // Method to refresh only approval requests
   Future<void> _refreshApprovalRequests() async {
-    print('🔄 Refreshing approval requests...');
     await _loadApprovalRequestsFromFirebase();
     await _loadNotificationCount(); // Also refresh notification count
     setState(() {});
@@ -116,7 +109,6 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
 
   // Method to refresh only approval history
   Future<void> _refreshApprovalHistory() async {
-    print('🔄 Refreshing approval history...');
     await _loadApprovalHistoryFromFirebase();
     setState(() {});
     
@@ -130,7 +122,6 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
 
   // Method to refresh only approval analytics
   Future<void> _refreshApprovalAnalytics() async {
-    print('🔄 Refreshing approval analytics...');
     await _loadApprovalAnalyticsFromFirebase();
     setState(() {});
     
@@ -146,7 +137,6 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
   Future<void> _loadApprovalHistoryFromFirebase() async {
     try {
       String facultyId = _userData!['id'];
-      print('🔍 Loading approval history directly from Firebase for faculty: $facultyId');
       
       // Get Firebase Database reference
       final DatabaseReference databaseRef = FirebaseDatabase.instanceFor(
@@ -157,8 +147,6 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
       // Get approval history directly from Firebase
       DataSnapshot historySnapshot = await databaseRef.child('faculty').child(facultyId).child('approval_history').get();
       
-      print('🔍 Raw approval history from Firebase: ${historySnapshot.value}');
-      print('🔍 Approval history exists: ${historySnapshot.exists}');
       
       if (historySnapshot.exists && historySnapshot.value != null) {
         if (historySnapshot.value is Map) {
@@ -168,17 +156,13 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
             item['request_id'] = entry.key; // Add the request ID
             return item;
           }).toList();
-          print('🔍 Loaded ${_approvalHistory.length} approval history items from Firebase');
         } else {
-          print('🔍 Approval history is not a Map: ${historySnapshot.value.runtimeType}');
           _approvalHistory = [];
         }
       } else {
-        print('🔍 No approval history found in Firebase');
         _approvalHistory = [];
       }
     } catch (e) {
-      print('❌ Error loading approval history from Firebase: $e');
       _approvalHistory = [];
     }
   }
@@ -187,7 +171,6 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
   Future<void> _loadApprovalAnalyticsFromFirebase() async {
     try {
       String facultyId = _userData!['id'];
-      print('🔍 Loading approval analytics directly from Firebase for faculty: $facultyId');
       
       // Get Firebase Database reference
       final DatabaseReference databaseRef = FirebaseDatabase.instanceFor(
@@ -198,14 +181,10 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
       // Get approval analytics directly from Firebase
       DataSnapshot analyticsSnapshot = await databaseRef.child('faculty').child(facultyId).child('approval_analytics').get();
       
-      print('🔍 Raw approval analytics from Firebase: ${analyticsSnapshot.value}');
-      print('🔍 Approval analytics exists: ${analyticsSnapshot.exists}');
       
       if (analyticsSnapshot.exists && analyticsSnapshot.value != null) {
         _approvalAnalytics = Map<String, dynamic>.from(analyticsSnapshot.value as Map<dynamic, dynamic>);
-        print('🔍 Loaded approval analytics from Firebase: $_approvalAnalytics');
       } else {
-        print('🔍 No approval analytics found in Firebase, using defaults');
         _approvalAnalytics = {
           'total_approved': 0,
           'total_rejected': 0,
@@ -214,7 +193,6 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
         };
       }
     } catch (e) {
-      print('❌ Error loading approval analytics from Firebase: $e');
       _approvalAnalytics = {
         'total_approved': 0,
         'total_rejected': 0,
@@ -230,7 +208,6 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
       if (_userData == null) return;
       
       final facultyId = _userData!['faculty_id'] ?? _userData!['id'];
-      print('🔔 Loading notification count for faculty: $facultyId');
 
       final snapshot = await FirebaseDatabase.instance.ref()
           .child('faculty')
@@ -243,15 +220,12 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
         setState(() {
           _notificationCount = approvalData.length;
         });
-        print('🔔 Notification count: $_notificationCount');
       } else {
         setState(() {
           _notificationCount = 0;
         });
-        print('🔔 No notifications found');
       }
     } catch (e) {
-      print('❌ Error loading notification count: $e');
       setState(() {
         _notificationCount = 0;
       });
@@ -273,7 +247,6 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
   Future<void> _loadApprovalRequestsFromFirebase() async {
     try {
       String facultyId = _userData!['id'];
-      print('🔍 Loading approval requests directly from Firebase for faculty: $facultyId');
       
       // Get Firebase Database reference
       final DatabaseReference databaseRef = FirebaseDatabase.instanceFor(
@@ -284,8 +257,6 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
       // Get approval section directly from Firebase
       DataSnapshot approvalSnapshot = await databaseRef.child('faculty').child(facultyId).child('approval_section').get();
       
-      print('🔍 Raw approval section from Firebase: ${approvalSnapshot.value}');
-      print('🔍 Approval section exists: ${approvalSnapshot.exists}');
       
       if (approvalSnapshot.exists && approvalSnapshot.value != null) {
         if (approvalSnapshot.value is Map) {
@@ -295,22 +266,17 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
             request['request_id'] = entry.key; // Add the request ID
             return request;
           }).toList();
-          print('🔍 Loaded ${_approvalRequests.length} approval requests from Firebase');
           
           // Log each request for debugging
           for (var request in _approvalRequests) {
-            print('🔍 Request: ${request['request_id']} - ${request['title']} from ${request['student_name']}');
           }
         } else {
-          print('🔍 Approval section is not a Map: ${approvalSnapshot.value.runtimeType}');
           _approvalRequests = [];
         }
       } else {
-        print('🔍 No approval section found in Firebase');
         _approvalRequests = [];
       }
     } catch (e) {
-      print('❌ Error loading approval requests from Firebase: $e');
       _approvalRequests = [];
     }
   }
@@ -318,7 +284,6 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
   // Debug method to check approval section
   Future<void> _debugApprovalSection() async {
     if (_userData == null) {
-      print('❌ No user data available for debugging');
       return;
     }
 
@@ -327,12 +292,6 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
       String facultyName = _userData!['name'];
       String department = _userData!['department'];
       
-      print('🔍 ==========================================');
-      print('🔍 DEBUGGING APPROVAL SECTION');
-      print('🔍 ==========================================');
-      print('🔍 Faculty: $facultyName ($facultyId)');
-      print('🔍 Department: $department');
-      print('🔍 ==========================================');
       
       // Check approval section directly from Firebase
       final DatabaseReference databaseRef = FirebaseDatabase.instanceFor(
@@ -341,32 +300,18 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
       ).ref();
       
       DataSnapshot approvalSnapshot = await databaseRef.child('faculty').child(facultyId).child('approval_section').get();
-      print('🔍 Raw approval section from Firebase: ${approvalSnapshot.value}');
-      print('🔍 Approval section exists: ${approvalSnapshot.exists}');
       
       if (approvalSnapshot.exists && approvalSnapshot.value != null) {
         if (approvalSnapshot.value is Map) {
           Map<dynamic, dynamic> approvalMap = approvalSnapshot.value as Map<dynamic, dynamic>;
-          print('🔍 Approval section is a Map with ${approvalMap.length} entries');
           if (approvalMap.isNotEmpty) {
-            print('🔍 ==========================================');
-            print('🔍 PENDING APPROVAL REQUESTS:');
-            print('🔍 ==========================================');
             approvalMap.forEach((key, value) {
-              print('🔍 Request ID: $key');
-              print('🔍 Student: ${value['student_name']} (${value['student_id']})');
-              print('🔍 Project: ${value['title']}');
-              print('🔍 Category: ${value['category']}');
-              print('🔍 ==========================================');
             });
           } else {
-            print('🔍 No pending approval requests found');
           }
         } else {
-          print('🔍 Approval section is not a Map: ${approvalSnapshot.value.runtimeType}');
         }
       } else {
-        print('🔍 No approval section found in Firebase');
       }
       
       // Also refresh the UI data
@@ -381,7 +326,6 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
         ),
       );
     } catch (e) {
-      print('❌ Error debugging approval section: $e');
     }
   }
 
@@ -543,7 +487,6 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
                     
                     // If profile was updated, refresh the dashboard data
                     if (result == true) {
-                      print('🔄 Profile was updated, refreshing faculty dashboard');
                       refreshData();
                     }
                   },

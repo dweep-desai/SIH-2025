@@ -47,11 +47,8 @@ class SubjectMappingService {
         }
       }
       
-      print('✅ Subject mapping initialized with ${_subjectMapping.length} subjects');
-      print('✅ Sample mappings: ${_subjectMapping.entries.take(5).toList()}');
       
     } catch (e) {
-      print('❌ Error initializing subject mapping: $e');
       // Fallback to empty mapping
       _subjectMapping = {};
     }

@@ -33,9 +33,7 @@ class _AdminStudentSearchPageState extends State<AdminStudentSearchPage> {
         _filteredStudents = students;
         _isLoading = false;
       });
-      print('Loaded ${students.length} students');
     } catch (e) {
-      print('Error loading students: $e');
       setState(() {
         _isLoading = false;
       });
@@ -242,7 +240,6 @@ class _AdminStudentSearchPageState extends State<AdminStudentSearchPage> {
             ),
             trailing: PopupMenuButton<String>(
               onSelected: (String value) {
-                print('🔍 Admin Search - Menu item selected: $value for student: ${student['name']}');
                 _openStudentDetail(student, value);
               },
               itemBuilder: (context) => [
@@ -393,7 +390,6 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
         isLoading = false;
       });
     } catch (e) {
-      print('Error loading student data: $e');
       setState(() {
         isLoading = false;
       });
@@ -598,7 +594,6 @@ class _StudentRecordViewState extends State<_StudentRecordView> {
         isLoading = false;
       });
     } catch (e) {
-      print('Error loading student data: $e');
       setState(() {
         isLoading = false;
       });
@@ -904,9 +899,7 @@ class _StudentRecordViewState extends State<_StudentRecordView> {
   }
 
   Widget _buildRecordSection(String title, dynamic items) {
-    print('🔍 Building record section: $title with items: $items');
     if (items == null) {
-      print('❌ No items for $title');
       return const SizedBox.shrink();
     }
     
@@ -979,7 +972,7 @@ class _StudentRecordViewState extends State<_StudentRecordView> {
         return 3;
       case 'Research Papers':
       case 'Experience':
-        return 5;
+        return 10;
       default:
         return 10;
     }
@@ -1102,7 +1095,6 @@ class _StudentGradesViewState extends State<_StudentGradesView> {
         isLoading = false;
       });
     } catch (e) {
-      print('Error loading student data: $e');
       setState(() {
         isLoading = false;
       });
@@ -1319,7 +1311,6 @@ class _StudentSemesterInfoViewState extends State<_StudentSemesterInfoView> with
         isLoading = false;
       });
     } catch (e) {
-      print('Error loading student data: $e');
       setState(() {
         isLoading = false;
       });

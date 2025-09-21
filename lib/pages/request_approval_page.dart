@@ -93,7 +93,6 @@ class _RequestApprovalPageState extends State<RequestApprovalPage> {
       });
 
     } catch (e) {
-      print('Error submitting approval request: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Error submitting request. Please try again.')),
       );
