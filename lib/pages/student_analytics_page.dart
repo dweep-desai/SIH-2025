@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import '../widgets/student_drawer.dart';
+import '../widgets/enhanced_app_bar.dart';
+import '../widgets/modern_chart_components.dart';
+import '../widgets/loading_components.dart';
+import '../widgets/error_components.dart';
+import '../utils/responsive_utils.dart';
 import '../services/auth_service.dart';
 import '../services/subject_mapping_service.dart';
 
@@ -15,6 +19,8 @@ class _StudentAnalyticsPageState extends State<StudentAnalyticsPage> {
   final AuthService _authService = AuthService();
   final SubjectMappingService _subjectMapping = SubjectMappingService();
   bool _isLoading = true;
+  bool _hasError = false;
+  String _errorMessage = '';
   Map<String, dynamic>? _userData;
   
   final List<Map<String, dynamic>> _semesterGpaData = [];
@@ -40,11 +46,23 @@ class _StudentAnalyticsPageState extends State<StudentAnalyticsPage> {
         setState(() {
           _userData = userData;
           _isLoading = false;
+          _hasError = false;
+          _errorMessage = '';
         });
         _calculateAnalytics();
+      } else {
+        setState(() {
+          _isLoading = false;
+          _hasError = true;
+          _errorMessage = 'No user data found. Please log in again.';
+        });
       }
     } catch (e) {
-      setState(() => _isLoading = false);
+      setState(() {
+        _isLoading = false;
+        _hasError = true;
+        _errorMessage = e.toString();
+      });
     }
   }
 
@@ -223,34 +241,86 @@ class _StudentAnalyticsPageState extends State<StudentAnalyticsPage> {
 
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text("Analytics"),
+        appBar: EnhancedAppBar(
+          title: "Analytics",
           backgroundColor: studentPrimary,
           foregroundColor: Colors.white,
+          enableGradient: true,
+          gradientColors: [
+            studentPrimary,
+            studentPrimary.withOpacity(0.8),
+          ],
         ),
         drawer: MainDrawer(context: context),
-        body: const Center(child: CircularProgressIndicator()),
+        body: LoadingComponents.buildPulseLoading(
+          message: "Analyzing your data...",
+          context: context,
+        ),
+      );
+    }
+
+    if (_hasError) {
+      return Scaffold(
+        appBar: EnhancedAppBar(
+          title: "Analytics",
+          backgroundColor: studentPrimary,
+          foregroundColor: Colors.white,
+          enableGradient: true,
+          gradientColors: [
+            studentPrimary,
+            studentPrimary.withOpacity(0.8),
+          ],
+        ),
+        drawer: MainDrawer(context: context),
+        body: Center(
+          child: Padding(
+            padding: ResponsiveUtils.getResponsivePadding(context),
+            child: ErrorComponents.buildErrorState(
+              title: 'Failed to Load Analytics',
+              message: _errorMessage.isNotEmpty 
+                  ? _errorMessage 
+                  : 'Unable to load your analytics data. Please check your connection and try again.',
+              icon: Icons.analytics_outlined,
+              onRetry: () {
+                setState(() {
+                  _isLoading = true;
+                  _hasError = false;
+                  _errorMessage = '';
+                });
+                _loadUserData();
+              },
+              context: context,
+              retryText: 'Retry',
+            ),
+          ),
+        ),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Analytics"),
+      appBar: EnhancedAppBar(
+        title: "Analytics",
+        subtitle: "Your academic performance insights",
         backgroundColor: studentPrimary,
         foregroundColor: Colors.white,
+        enableGradient: true,
+        gradientColors: [
+          studentPrimary,
+          studentPrimary.withOpacity(0.8),
+        ],
       ),
       drawer: MainDrawer(context: context),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: ResponsiveUtils.getResponsivePadding(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             _buildSemesterGpaChart(),
-            const SizedBox(height: 24),
+            SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 24)),
             _buildAttendanceBarChart(),
-            const SizedBox(height: 24),
+            SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 24)),
             _buildPointsDoughnutChart(),
-            const SizedBox(height: 24),
+            SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 24)),
             _buildPercentileCard(),
           ],
         ),
@@ -259,307 +329,67 @@ class _StudentAnalyticsPageState extends State<StudentAnalyticsPage> {
   }
 
   Widget _buildSemesterGpaChart() {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
-    final TextTheme textTheme = theme.textTheme;
+    // Convert data to the format expected by modern chart components
+    final chartData = _semesterGpaData.map((item) => {
+      'value': item['gpa'],
+      'label': item['label'],
+    }).toList();
 
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.trending_up, color: colorScheme.primary, size: 24),
-                const SizedBox(width: 8),
-                Text(
-                  "Semester-wise GPA Trend",
-                  style: textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 250,
-              child: _semesterGpaData.isEmpty
-                  ? Center(
-                      child: Text(
-                        "No GPA data available",
-                        style: textTheme.bodyLarge?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    )
-                  :                       LineChart(
-                      LineChartData(
-                        lineTouchData: LineTouchData(
-                          enabled: true,
-                          touchTooltipData: LineTouchTooltipData(
-                            tooltipRoundedRadius: 8,
-                            getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
-                              return touchedBarSpots.map((barSpot) {
-                                return LineTooltipItem(
-                                  'Sem ${barSpot.x.toInt()}\nGPA: ${barSpot.y.toStringAsFixed(2)}',
-                                  textTheme.bodySmall?.copyWith(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ) ?? const TextStyle(color: Colors.white),
-                                );
-                              }).toList();
-                            },
-                          ),
-                        ),
-                        gridData: FlGridData(
-                          show: true,
-                          drawVerticalLine: true,
-                          horizontalInterval: 1,
-                          verticalInterval: 1,
-                          getDrawingHorizontalLine: (value) {
-                            return FlLine(
-                              color: colorScheme.outline.withOpacity(0.3),
-                              strokeWidth: 1,
-                            );
-                          },
-                          getDrawingVerticalLine: (value) {
-                            return FlLine(
-                              color: colorScheme.outline.withOpacity(0.3),
-                              strokeWidth: 1,
-                            );
-                          },
-                        ),
-                        titlesData: FlTitlesData(
-                          show: true,
-                          rightTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false),
-                          ),
-                          topTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false),
-                          ),
-                          bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 30,
-                              interval: 1,
-                              getTitlesWidget: (double value, TitleMeta meta) {
-                                if (value.toInt() >= 1 && value.toInt() <= _semesterGpaData.length && value == value.toInt().toDouble()) {
-                                  return Text(
-                                    '${value.toInt()}',
-                                    style: textTheme.bodySmall?.copyWith(
-                                      color: colorScheme.onSurfaceVariant,
-                                    ),
-                                  );
-                                }
-                                return const Text('');
-                              },
-                            ),
-                          ),
-                          leftTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              interval: 1,
-                              reservedSize: 40,
-                              getTitlesWidget: (double value, TitleMeta meta) {
-                                return Text(
-                                  value.toStringAsFixed(1),
-                                  style: textTheme.bodySmall?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                        borderData: FlBorderData(
-                          show: true,
-                          border: Border.all(
-                            color: colorScheme.outline.withOpacity(0.3),
-                          ),
-                        ),
-                        minX: 0.5,
-                        maxX: _semesterGpaData.length.toDouble() + 0.5,
-                        minY: 0,
-                        maxY: 10,
-                        lineBarsData: [
-                          LineChartBarData(
-                            spots: _semesterGpaData.asMap().entries.map((entry) {
-                              return FlSpot(entry.key + 1, (entry.value['gpa'] as num).toDouble());
-                            }).toList(),
-                            isCurved: true,
-                            color: colorScheme.primary,
-                            barWidth: 3,
-                            isStrokeCapRound: true,
-                            dotData: FlDotData(
-                              show: true,
-                              getDotPainter: (spot, percent, barData, index) {
-                                return FlDotCirclePainter(
-                                  radius: 4,
-                                  color: colorScheme.primary,
-                                  strokeWidth: 2,
-                                  strokeColor: Colors.white,
-                                );
-                              },
-                            ),
-                            belowBarData: BarAreaData(
-                              show: true,
-                              color: colorScheme.primary.withOpacity(0.1),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-            ),
-          ],
-        ),
-      ),
+    return ModernChartComponents.buildModernLineChart(
+      data: chartData,
+      title: "Semester-wise GPA Trend",
+      subtitle: "Track your academic progress over time",
+      xAxisLabel: "Semester",
+      yAxisLabel: "GPA",
+      icon: Icons.trending_up,
+      context: context,
+      minY: 0,
+      maxY: 10,
+      showArea: true,
+      showDots: true,
+      showGrid: true,
     );
   }
 
   Widget _buildAttendanceBarChart() {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
-    final TextTheme textTheme = theme.textTheme;
+    // Convert data to the format expected by modern chart components
+    final chartData = _attendanceData.map((item) => {
+      'value': item['attendance'],
+      'label': item['course'],
+    }).toList();
 
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.check_circle_outline, color: colorScheme.primary, size: 24),
-                const SizedBox(width: 8),
-                Text(
-                  "Course-wise Attendance",
-                  style: textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 300,
-              child: _attendanceData.isEmpty
-                  ? Center(
-                      child: Text(
-                        "No attendance data available",
-                        style: textTheme.bodyLarge?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    )
-                  : BarChart(
-                      BarChartData(
-                        alignment: BarChartAlignment.spaceAround,
-                        maxY: 100,
-                        barTouchData: BarTouchData(
-                          enabled: true,
-                          touchTooltipData: BarTouchTooltipData(
-                            getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                              return BarTooltipItem(
-                                '${_attendanceData[group.x]['course']}\n${rod.toY.toStringAsFixed(0)}%',
-                                textTheme.bodySmall?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ) ?? const TextStyle(color: Colors.white),
-                              );
-                            },
-                          ),
-                        ),
-                        titlesData: FlTitlesData(
-                          show: true,
-                          rightTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false),
-                          ),
-                          topTitles: const AxisTitles(
-                            sideTitles: SideTitles(showTitles: false),
-                          ),
-                          bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              getTitlesWidget: (double value, TitleMeta meta) {
-                                if (value.toInt() < _attendanceData.length) {
-                                  final course = _attendanceData[value.toInt()]['course'];
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
-                                    child: Transform.rotate(
-                                      angle: -0.5,
-                                      child: Text(
-                                        course,
-                                        style: textTheme.bodySmall?.copyWith(
-                                          color: colorScheme.onSurfaceVariant,
-                                          fontSize: 10,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }
-                                return const Text('');
-                              },
-                            ),
-                          ),
-                          leftTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 40,
-                              interval: 20,
-                              getTitlesWidget: (double value, TitleMeta meta) {
-                                return Text(
-                                  '${value.toInt()}%',
-                                  style: textTheme.bodySmall?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                        borderData: FlBorderData(show: false),
-                        barGroups: _attendanceData.asMap().entries.map((entry) {
-                          final attendance = (entry.value['attendance'] as num).toDouble();
-                          return BarChartGroupData(
-                            x: entry.key,
-                            barRods: [
-                              BarChartRodData(
-                                toY: attendance,
-                                color: attendance >= 75 
-                                    ? Colors.green.shade600 
-                                    : attendance >= 60 
-                                        ? Colors.orange.shade600 
-                                        : Colors.red.shade600,
-                                width: 20,
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(4),
-                                  topRight: Radius.circular(4),
-                                ),
-                              ),
-                            ],
-                          );
-                        }).toList(),
-                      ),
-                    ),
-            ),
-          ],
-        ),
-      ),
+    // Create dynamic colors based on attendance percentage
+    final colors = _attendanceData.map((item) {
+      final attendance = (item['attendance'] as num).toDouble();
+      if (attendance >= 75) return Colors.green.shade600;
+      if (attendance >= 60) return Colors.orange.shade600;
+      return Colors.red.shade600;
+    }).toList();
+
+    return ModernChartComponents.buildModernBarChart(
+      data: chartData,
+      title: "Course-wise Attendance",
+      subtitle: "Monitor your attendance across different courses",
+      xAxisLabel: "Course",
+      yAxisLabel: "Attendance %",
+      icon: Icons.check_circle_outline,
+      context: context,
+      colors: colors,
+      maxY: 100,
+      showTooltips: true,
+      showGrid: true,
     );
   }
 
   Widget _buildPointsDoughnutChart() {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
-    final TextTheme textTheme = theme.textTheme;
+    // Convert data to the format expected by modern chart components
+    final chartData = _pointsCategoryData.map((item) => {
+      'value': item['points'],
+      'label': item['category'],
+      'percentage': item['percentage'],
+    }).toList();
 
+    final colorScheme = Theme.of(context).colorScheme;
     final colors = [
       colorScheme.primary,
       colorScheme.secondary,
@@ -567,239 +397,44 @@ class _StudentAnalyticsPageState extends State<StudentAnalyticsPage> {
       Colors.purple.shade600,
     ];
 
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.pie_chart, color: colorScheme.primary, size: 20),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    "Points Distribution by Category",
-                    style: textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.onSurface,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Row(
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: SizedBox(
-                    height: 250,
-                    child: _pointsCategoryData.isEmpty
-                        ? Center(
-                            child: Text(
-                              "No points data available",
-                              style: textTheme.bodyLarge?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          )
-                        : PieChart(
-                            PieChartData(
-                              pieTouchData: PieTouchData(
-                                touchCallback: (FlTouchEvent event, pieTouchResponse) {
-                                  setState(() {
-                                    // Handle touch interaction if needed
-                                  });
-                                },
-                              ),
-                              borderData: FlBorderData(show: false),
-                              sectionsSpace: 2,
-                              centerSpaceRadius: 60,
-                              sections: _buildPieChartSections(colors, textTheme),
-                            ),
-                          ),
-                    ),
-                  ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: _buildLegendItems(colors, textTheme, colorScheme),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+    return ModernChartComponents.buildModernPieChart(
+      data: chartData,
+      title: "Points Distribution by Category",
+      subtitle: "Breakdown of your achievement points",
+      icon: Icons.pie_chart,
+      context: context,
+      colors: colors,
+      centerSpaceRadius: 60,
+      showLegend: true,
+      showPercentage: true,
     );
   }
 
-  List<PieChartSectionData> _buildPieChartSections(List<Color> colors, TextTheme textTheme) {
-    List<PieChartSectionData> sections = [];
-    for (int i = 0; i < _pointsCategoryData.length; i++) {
-      final data = _pointsCategoryData[i];
-      sections.add(
-        PieChartSectionData(
-          color: colors[i % colors.length],
-          value: (data['percentage'] as num).toDouble(),
-          title: '${(data['percentage'] as num).toStringAsFixed(1)}%',
-          radius: 54,
-          titleStyle: textTheme.bodySmall?.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ) ?? const TextStyle(),
-        ),
-      );
-    }
-    return sections;
-  }
-
-  List<Widget> _buildLegendItems(List<Color> colors, TextTheme textTheme, ColorScheme colorScheme) {
-    List<Widget> items = [];
-    for (int i = 0; i < _pointsCategoryData.length; i++) {
-      final data = _pointsCategoryData[i];
-      items.add(
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4.0),
-          child: Row(
-            children: [
-              Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                  color: colors[i % colors.length],
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  data['category'].toString().toUpperCase(),
-                  style: textTheme.bodySmall?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-    return items;
-  }
 
   Widget _buildPercentileCard() {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme colorScheme = theme.colorScheme;
-    final TextTheme textTheme = theme.textTheme;
+    // Determine colors based on percentile
+    Color primaryColor, secondaryColor;
+    if (_departmentPercentile >= 80) {
+      primaryColor = Colors.green.shade600;
+      secondaryColor = Colors.green.shade400;
+    } else if (_departmentPercentile >= 60) {
+      primaryColor = Colors.orange.shade600;
+      secondaryColor = Colors.orange.shade400;
+    } else {
+      primaryColor = Colors.red.shade600;
+      secondaryColor = Colors.red.shade400;
+    }
 
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(Icons.leaderboard, color: colorScheme.primary, size: 24),
-                const SizedBox(width: 8),
-                Text(
-                  "Department Ranking",
-                  style: textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 20),
-            Center(
-              child: Column(
-                children: [
-                  Container(
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                        colors: [
-                          colorScheme.primary,
-                          colorScheme.secondary,
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            '${_departmentPercentile.toStringAsFixed(0)}',
-                            style: textTheme.headlineMedium?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            'Percentile',
-                            style: textTheme.bodySmall?.copyWith(
-                              color: Colors.white70,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    "Based on your academic performance and extracurricular activities",
-                    style: textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: _departmentPercentile >= 80 
-                          ? Colors.green.shade100 
-                          : _departmentPercentile >= 60 
-                              ? Colors.orange.shade100 
-                              : Colors.red.shade100,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      _departmentPercentile >= 80 
-                          ? "Excellent Performance" 
-                          : _departmentPercentile >= 60 
-                              ? "Good Performance" 
-                              : "Needs Improvement",
-                      style: textTheme.bodySmall?.copyWith(
-                        color: _departmentPercentile >= 80 
-                            ? Colors.green.shade700 
-                            : _departmentPercentile >= 60 
-                                ? Colors.orange.shade700 
-                                : Colors.red.shade700,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+    return ModernChartComponents.buildModernGaugeChart(
+      value: _departmentPercentile,
+      maxValue: 100,
+      title: "Department Ranking",
+      subtitle: "Your percentile among department students",
+      icon: Icons.leaderboard,
+      context: context,
+      primaryColor: primaryColor,
+      secondaryColor: secondaryColor,
+      unit: "th",
     );
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import '../widgets/student_drawer.dart';
+import '../widgets/form_components.dart';
+import '../utils/responsive_utils.dart';
 import '../services/auth_service.dart';
 
 class RequestApprovalPage extends StatefulWidget {
@@ -101,95 +103,181 @@ class _RequestApprovalPageState extends State<RequestApprovalPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Request Approval'),
+        elevation: 0,
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
       ),
       drawer: MainDrawer(context: context),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
+        padding: ResponsiveUtils.getResponsivePadding(context),
         child: Form(
           key: _formKey,
-          child: ListView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
+              // Category Selection Section
+              ModernFormComponents.buildFormSection(
+                title: 'Request Category',
+                subtitle: 'Select the type of approval request',
+                icon: Icons.category_outlined,
+                context: context,
+                child: ModernFormComponents.buildModernDropdownField<String>(
+                  value: selectedCategory,
+                  items: categories
+                      .map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
+                      .toList(),
                   labelText: 'Category',
-                  border: OutlineInputBorder(),
-                ),
-                items: categories
-                    .map((cat) => DropdownMenuItem(value: cat, child: Text(cat)))
-                    .toList(),
-                initialValue: selectedCategory,
-                onChanged: (val) {
-                  setState(() {
-                    selectedCategory = val;
-                    pickedFile = null;
-                    link = null;
-                    experienceType = null;
-                  });
-                },
-                validator: (val) => val == null ? 'Please select a category' : null,
-              ),
-              if (selectedCategory == 'Experience') ...[
-                const SizedBox(height: 16),
-                DropdownButtonFormField<String>(
-                  decoration: const InputDecoration(
-                    labelText: 'Experience Type',
-                    border: OutlineInputBorder(),
-                  ),
-                  items: const [
-                    DropdownMenuItem(value: 'Internship', child: Text('Internship')),
-                    DropdownMenuItem(value: 'Club roles', child: Text('Club roles')),
-                    DropdownMenuItem(value: 'Jobs', child: Text('Jobs')),
-                  ],
-                  initialValue: experienceType,
+                  hintText: 'Select a category',
+                  prefixIcon: Icons.category_outlined,
                   onChanged: (val) {
                     setState(() {
-                      experienceType = val;
+                      selectedCategory = val;
+                      pickedFile = null;
+                      link = null;
+                      experienceType = null;
                     });
                   },
-                  validator: (val) => selectedCategory == 'Experience' && val == null ? 'Select experience type' : null,
+                  validator: (val) => val == null ? 'Please select a category' : null,
+                  context: context,
+                ),
+              ),
+
+              // Experience Type Section (conditional)
+              if (selectedCategory == 'Experience') ...[
+                SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+                ModernFormComponents.buildFormSection(
+                  title: 'Experience Type',
+                  subtitle: 'Specify the type of experience',
+                  icon: Icons.work_outline,
+                  context: context,
+                  child: ModernFormComponents.buildModernDropdownField<String>(
+                    value: experienceType,
+                    items: const [
+                      DropdownMenuItem(value: 'Internship', child: Text('Internship')),
+                      DropdownMenuItem(value: 'Club roles', child: Text('Club roles')),
+                      DropdownMenuItem(value: 'Jobs', child: Text('Jobs')),
+                    ],
+                    labelText: 'Experience Type',
+                    hintText: 'Select experience type',
+                    prefixIcon: Icons.work_outline,
+                    onChanged: (val) {
+                      setState(() {
+                        experienceType = val;
+                      });
+                    },
+                    validator: (val) => selectedCategory == 'Experience' && val == null ? 'Select experience type' : null,
+                    context: context,
+                  ),
                 ),
               ],
-              const SizedBox(height: 16),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Title',
-                  border: OutlineInputBorder(),
+
+              SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+
+              // Request Details Section
+              ModernFormComponents.buildFormSection(
+                title: 'Request Details',
+                subtitle: 'Provide information about your request',
+                icon: Icons.description_outlined,
+                context: context,
+                child: Column(
+                  children: [
+                    // Title Field
+                    ModernFormComponents.buildModernTextField(
+                      controller: TextEditingController(text: title),
+                      labelText: 'Title',
+                      hintText: 'Enter a descriptive title',
+                      prefixIcon: Icons.title,
+                      onChanged: (val) => title = val,
+                      validator: (val) => val == null || val.isEmpty ? 'Title is required' : null,
+                      context: context,
+                    ),
+
+                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+
+                    // Description Field
+                    ModernFormComponents.buildModernTextField(
+                      controller: TextEditingController(text: description),
+                      labelText: 'Description',
+                      hintText: 'Provide detailed description',
+                      prefixIcon: Icons.description_outlined,
+                      maxLines: 3,
+                      onChanged: (val) => description = val,
+                      validator: (val) => val == null || val.isEmpty ? 'Description is required' : null,
+                      context: context,
+                    ),
+
+                    // Link Field (conditional)
+                    if (isPdfOptional) ...[
+                      SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+                      ModernFormComponents.buildModernTextField(
+                        controller: TextEditingController(text: link ?? ''),
+                        labelText: 'Link (optional if PDF uploaded)',
+                        hintText: 'Enter a relevant link',
+                        prefixIcon: Icons.link,
+                        onChanged: (val) => link = val,
+                        context: context,
+                      ),
+                    ],
+                  ],
                 ),
-                onSaved: (val) => title = val ?? '',
-                validator: (val) => val == null || val.isEmpty ? 'Title is required' : null,
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: 'Description',
-                  border: OutlineInputBorder(),
+
+              SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+
+              // File Upload Section
+              ModernFormComponents.buildFormSection(
+                title: 'Document Upload',
+                subtitle: isPdfOptional 
+                    ? 'Upload a PDF document (optional for this category)'
+                    : 'Upload a PDF document (required for this category)',
+                icon: Icons.upload_file_outlined,
+                context: context,
+                child: Column(
+                  children: [
+                    ModernFormComponents.buildFileUploadButton(
+                      text: 'Upload PDF',
+                      fileName: pickedFile?.name,
+                      icon: Icons.upload_file_outlined,
+                      onPressed: pickPdfFile,
+                      context: context,
+                    ),
+                    if (pickedFile != null) ...[
+                      SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+                      ModernFormComponents.buildValidationMessage(
+                        message: 'File selected: ${pickedFile!.name}',
+                        isError: false,
+                        context: context,
+                      ),
+                    ],
+                    if (!isPdfOptional && pickedFile == null) ...[
+                      SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+                      ModernFormComponents.buildValidationMessage(
+                        message: 'PDF file is required for this category',
+                        isError: true,
+                        context: context,
+                      ),
+                    ],
+                  ],
                 ),
-                maxLines: 3,
-                onSaved: (val) => description = val ?? '',
-                validator: (val) => val == null || val.isEmpty ? 'Description is required' : null,
               ),
-              const SizedBox(height: 16),
-              if (isPdfOptional)
-                TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'Link (optional if PDF uploaded)',
-                    border: OutlineInputBorder(),
-                  ),
-                  onSaved: (val) => link = val,
+
+              SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 32)),
+
+              // Submit Button
+              SizedBox(
+                width: double.infinity,
+                child: ModernFormComponents.buildModernButton(
+                  text: 'Submit Request',
+                  icon: Icons.send_outlined,
+                  onPressed: submit,
+                  context: context,
                 ),
-              const SizedBox(height: 16),
-              ElevatedButton.icon(
-                onPressed: pickPdfFile,
-                icon: const Icon(Icons.upload_file),
-                label: Text(pickedFile == null ? 'Upload PDF' : 'Change PDF (${pickedFile!.name})'),
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: submit,
-                child: const Text('Submit'),
               ),
             ],
           ),

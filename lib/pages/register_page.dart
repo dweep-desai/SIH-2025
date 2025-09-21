@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'login_page.dart'; // For navigating back to login
+import '../widgets/form_components.dart';
+import '../utils/responsive_utils.dart';
 
 // ---------------- REGISTRATION PAGE ----------------
 class RegisterPage extends StatefulWidget {
@@ -52,176 +54,214 @@ class _RegisterPageState extends State<RegisterPage> {
         child: SafeArea(
           child: Center(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Center(
-                    child: Container(
-                      padding: const EdgeInsets.all(8.0),
-                      decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerLowest.withOpacity(0.9),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: ToggleButtons(
-                        isSelected: [
-                          selectedIndex == 0,
-                          selectedIndex == 1,
-                          selectedIndex == 2,
-                        ],
-                        onPressed: (index) {
-                          setState(() {
-                            selectedIndex = index;
-                          });
-                        },
-                        borderRadius: BorderRadius.circular(8),
-                        selectedColor: colorScheme.onPrimary,
-                        color: colorScheme.primary,
-                        fillColor: colorScheme.primary,
-                        borderColor: colorScheme.outline.withOpacity(0.3),
-                        selectedBorderColor: colorScheme.primary,
-                        constraints: const BoxConstraints(minHeight: 38),
-                        children: const [
-                          Padding(padding: EdgeInsets.symmetric(horizontal: 16.0), child: Text("STUDENT")),
-                          Padding(padding: EdgeInsets.symmetric(horizontal: 16.0), child: Text("FACULTY")),
-                          Padding(padding: EdgeInsets.symmetric(horizontal: 16.0), child: Text("ADMIN")),
-                        ],
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  Icon(Icons.person_add_alt_1_outlined, size: 60, color: colorScheme.primary),
-                  const SizedBox(height: 12),
-                  Text(
-                    "CREATE ACCOUNT",
-                    textAlign: TextAlign.center,
-                    style: textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.primary,
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  Card(
-                    elevation: 4,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    color: colorScheme.surfaceContainerLow,
-                    child: Padding(
-                      padding: const EdgeInsets.all(24.0),
+              padding: ResponsiveUtils.getResponsivePadding(context),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: ResponsiveUtils.getResponsiveMaxWidth(context),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Category Selection
+                    _buildCategorySelection(context, colorScheme, textTheme),
+                    
+                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 30)),
+                    
+                    // Header
+                    _buildHeader(context, colorScheme, textTheme),
+                    
+                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 30)),
+                    
+                    // Registration Form
+                    ModernFormComponents.buildModernCard(
+                      context: context,
                       child: Form(
                         key: _formKey,
                         child: Column(
                           children: [
-                            TextFormField(
+                            // Email Field
+                            ModernFormComponents.buildModernTextField(
                               controller: _emailController,
-                              decoration: InputDecoration(
-                                labelText: "Email Address",
-                                prefixIcon: Icon(Icons.email_outlined, color: colorScheme.primary),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.5)),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(color: colorScheme.primary, width: 2),
-                                ),
-                                filled: true,
-                                fillColor: colorScheme.surfaceContainerHighest,
-                                contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-                              ),
+                              labelText: "Email Address",
+                              prefixIcon: Icons.email_outlined,
+                              keyboardType: TextInputType.emailAddress,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return "Please enter your email";
-                                if (!value.contains("@")) return "Enter a valid email";
+                                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                                  return "Please enter a valid email address";
+                                }
                                 return null;
                               },
+                              context: context,
                             ),
-                            const SizedBox(height: 16),
-                            TextFormField(
+                            
+                            SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+                            
+                            // Password Field
+                            ModernFormComponents.buildModernTextField(
                               controller: _passwordController,
-                              decoration: InputDecoration(
-                                labelText: "Password",
-                                prefixIcon: Icon(Icons.lock_outline, color: colorScheme.primary),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.5)),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(color: colorScheme.primary, width: 2),
-                                ),
-                                filled: true,
-                                fillColor: colorScheme.surfaceContainerHighest,
-                                contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-                              ),
+                              labelText: "Password",
+                              prefixIcon: Icons.lock_outline,
                               obscureText: true,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return "Please enter your password";
                                 if (value.length < 6) return "Password must be at least 6 characters";
+                                if (value.length > 50) return "Password must be less than 50 characters";
                                 return null;
                               },
+                              context: context,
                             ),
-                            const SizedBox(height: 16),
-                            TextFormField(
+                            
+                            SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+                            
+                            // Confirm Password Field
+                            ModernFormComponents.buildModernTextField(
                               controller: _confirmPasswordController,
-                              decoration: InputDecoration(
-                                labelText: "Confirm Password",
-                                prefixIcon: Icon(Icons.lock_reset_outlined, color: colorScheme.primary),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.5)),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(color: colorScheme.primary, width: 2),
-                                ),
-                                filled: true,
-                                fillColor: colorScheme.surfaceContainerHighest,
-                                contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
-                              ),
+                              labelText: "Confirm Password",
+                              prefixIcon: Icons.lock_reset_outlined,
                               obscureText: true,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return "Please confirm your password";
                                 if (value != _passwordController.text) return "Passwords do not match";
                                 return null;
                               },
+                              context: context,
                             ),
-                            const SizedBox(height: 24),
-                            ElevatedButton.icon(
-                              icon: const Icon(Icons.app_registration_rounded),
-                              label: const Text("REGISTER", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                              style: ElevatedButton.styleFrom(
-                                minimumSize: const Size(double.infinity, 50),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            
+                            SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 24)),
+                            
+                            // Register Button
+                            SizedBox(
+                              width: double.infinity,
+                              child: ModernFormComponents.buildModernButton(
+                                text: "CREATE ACCOUNT",
+                                icon: Icons.app_registration_rounded,
+                                onPressed: _performRegistration,
+                                context: context,
                               ),
-                              onPressed: _performRegistration,
                             ),
                           ],
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("Already have an account?", style: textTheme.bodyMedium),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(builder: (_) => const LoginPage()),
-                          );
-                        },
-                        child: Text("Login", style: TextStyle(color: colorScheme.primary, fontWeight: FontWeight.w600)),
-                      ),
-                    ],
-                  ),
-                ],
+                    
+                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 24)),
+                    
+                    // Login Link
+                    _buildLoginLink(context, colorScheme, textTheme),
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildCategorySelection(BuildContext context, ColorScheme colorScheme, TextTheme textTheme) {
+    return Center(
+      child: Container(
+        padding: EdgeInsets.all(ResponsiveUtils.getResponsiveSpacing(context, 8)),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerLowest.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 12)),
+          boxShadow: [
+            BoxShadow(
+              color: colorScheme.shadow.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: ToggleButtons(
+          isSelected: [
+            selectedIndex == 0,
+            selectedIndex == 1,
+            selectedIndex == 2,
+          ],
+          onPressed: (index) {
+            setState(() {
+              selectedIndex = index;
+            });
+          },
+          borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 8)),
+          selectedColor: colorScheme.onPrimary,
+          color: colorScheme.primary,
+          fillColor: colorScheme.primary,
+          borderColor: colorScheme.outline.withOpacity(0.3),
+          selectedBorderColor: colorScheme.primary,
+          constraints: BoxConstraints(
+            minHeight: ResponsiveUtils.getResponsiveSpacing(context, 38),
+            minWidth: ResponsiveUtils.getResponsiveSpacing(context, 80),
+          ),
+          children: [
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+              child: Text("STUDENT", style: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600)),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+              child: Text("FACULTY", style: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600)),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+              child: Text("ADMIN", style: textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context, ColorScheme colorScheme, TextTheme textTheme) {
+    return Column(
+      children: [
+        Icon(
+          Icons.person_add_alt_1_outlined,
+          size: ResponsiveUtils.getResponsiveIconSize(context, 60),
+          color: colorScheme.primary,
+        ),
+        SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 12)),
+        Text(
+          "CREATE ACCOUNT",
+          textAlign: TextAlign.center,
+          style: textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: colorScheme.primary,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLoginLink(BuildContext context, ColorScheme colorScheme, TextTheme textTheme) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          "Already have an account?",
+          style: textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => const LoginPage()),
+            );
+          },
+          child: Text(
+            "Login",
+            style: textTheme.bodyMedium?.copyWith(
+              color: colorScheme.primary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

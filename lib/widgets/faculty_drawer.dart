@@ -12,6 +12,7 @@ import '../pages/faculty_approval_history_page.dart';
 import '../pages/faculty_approval_analytics_page.dart';
 import '../data/approval_data.dart';
 import '../services/auth_service.dart';
+import '../utils/color_utils.dart';
 
 // ---------------- GLOBAL DRAWER ----------------
 class MainDrawer extends StatelessWidget {
@@ -93,17 +94,24 @@ class MainDrawer extends StatelessWidget {
       child: Column(
         children: [
           Container(
-            height: 200,
+            constraints: const BoxConstraints(
+              minHeight: 180,
+              maxHeight: 220,
+            ),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.green.shade700, Colors.green.shade500],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+        gradient: LinearGradient(
+          colors: [
+            Colors.green.shade600,
+            Colors.green.shade500,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
             ),
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Builder(
                     builder: (context) {
@@ -133,21 +141,27 @@ class MainDrawer extends StatelessWidget {
                       final userName = userData?['name'] ?? 'Faculty';
                       
                       return Column(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           const Text(
                             "Smart Student Hub",
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 18,
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
+                          const SizedBox(height: 4),
                           Text(
                             "Welcome, $userName!",
                             style: const TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               color: Colors.white70,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       );
@@ -243,11 +257,11 @@ class MainDrawer extends StatelessWidget {
     Color? color,
   }) {
     return ListTile(
-      leading: Icon(icon, color: color ?? Colors.indigo),
+      leading: Icon(icon, color: color ?? Colors.green.shade600),
       title: Text(
         title,
         style: TextStyle(
-          color: color ?? Colors.black87,
+          color: color ?? Colors.grey.shade700,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -268,14 +282,14 @@ class MainDrawer extends StatelessWidget {
       builder: (context, _) {
         final int pending = approvalStats.pendingCount;
         return ListTile(
-          leading: const Icon(Icons.check_circle, color: Colors.indigo),
+          leading: Icon(Icons.check_circle, color: Colors.green.shade600),
           title: Row(
             children: [
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
-                    color: Colors.black87,
+                  style: TextStyle(
+                    color: Colors.grey.shade700,
                     fontWeight: FontWeight.w500,
                   ),
                 ),

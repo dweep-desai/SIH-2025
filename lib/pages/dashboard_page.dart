@@ -1,7 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import '../widgets/student_drawer.dart';
+import '../widgets/enhanced_app_bar.dart';
+import '../widgets/loading_components.dart';
+import '../widgets/error_components.dart';
 import '../services/auth_service.dart';
+import '../utils/responsive_utils.dart';
+import '../utils/animation_utils.dart';
+import '../utils/color_utils.dart';
 import 'semester_info_page.dart';
 import 'student_edit_profile_page.dart';
 import 'achievements_page.dart';
@@ -18,6 +24,8 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   final AuthService _authService = AuthService();
   bool _isLoading = true;
+  bool _hasError = false;
+  String _errorMessage = '';
   Map<String, dynamic>? _userData;
   double _gpa = 0.0;
   List<Map<String, dynamic>> _topAchievements = [];
@@ -49,71 +57,6 @@ class _DashboardPageState extends State<DashboardPage> {
     }
   }
 
-  // Test method to submit an approval request
-  Future<void> _testApprovalRequest() async {
-    try {
-      Map<String, dynamic> testRequest = {
-        'title': 'Test Project - ${DateTime.now().millisecondsSinceEpoch}',
-        'description': 'This is a test approval request to verify the system is working correctly.',
-        'category': 'project',
-        'link': 'https://example.com/test-project',
-      };
-      
-      
-      await _authService.submitApprovalRequest(testRequest);
-      
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Test approval request submitted! Check console and faculty dashboard.'),
-          backgroundColor: Colors.green,
-          duration: Duration(seconds: 5),
-        ),
-      );
-    } catch (e) {
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error submitting test request: $e'),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 5),
-        ),
-      );
-    }
-  }
-
-  // Test method to check faculty selection
-  Future<void> _testFacultySelection() async {
-    try {
-      
-      // This will trigger the faculty selection logic
-      Map<String, dynamic> testRequest = {
-        'title': 'Faculty Selection Test',
-        'description': 'Testing faculty selection logic',
-        'category': 'test',
-        'link': 'https://example.com/test',
-      };
-      
-      await _authService.submitApprovalRequest(testRequest);
-      
-      
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Faculty selection test completed! Check console for details.'),
-          backgroundColor: Colors.blue,
-          duration: Duration(seconds: 5),
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Faculty selection test error: $e'),
-          backgroundColor: Colors.red,
-          duration: Duration(seconds: 5),
-        ),
-      );
-    }
-  }
 
 
   @override
@@ -178,7 +121,11 @@ class _DashboardPageState extends State<DashboardPage> {
         setState(() => _isLoading = false);
       }
     } catch (e) {
-      setState(() => _isLoading = false);
+      setState(() {
+        _isLoading = false;
+        _hasError = true;
+        _errorMessage = e.toString();
+      });
     }
   }
 
@@ -238,25 +185,77 @@ class _DashboardPageState extends State<DashboardPage> {
   @override
   Widget build(BuildContext context) {
     // Student theme: blue
-    final Color studentPrimary = Colors.blue.shade800;
+    final Color studentPrimary = ColorUtils.primaryBlue;
 
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text("Dashboard"),
+        appBar: EnhancedAppBar(
+          title: "Dashboard",
           backgroundColor: studentPrimary,
           foregroundColor: Colors.white,
+          enableGradient: true,
+          gradientColors: [
+            studentPrimary,
+            studentPrimary.withOpacity(0.8),
+          ],
         ),
         drawer: MainDrawer(context: context),
-        body: const Center(child: CircularProgressIndicator()),
+        body: LoadingComponents.buildModernLoadingIndicator(
+          message: "Loading your dashboard...",
+          context: context,
+        ),
+      );
+    }
+
+    if (_hasError) {
+      return Scaffold(
+        appBar: EnhancedAppBar(
+          title: "Dashboard",
+          backgroundColor: studentPrimary,
+          foregroundColor: Colors.white,
+          enableGradient: true,
+          gradientColors: [
+            studentPrimary,
+            studentPrimary.withOpacity(0.8),
+          ],
+        ),
+        drawer: MainDrawer(context: context),
+        body: Center(
+          child: Padding(
+            padding: ResponsiveUtils.getResponsivePadding(context),
+            child: ErrorComponents.buildErrorState(
+              title: 'Failed to Load Dashboard',
+              message: _errorMessage.isNotEmpty 
+                  ? _errorMessage 
+                  : 'Unable to load your dashboard data. Please check your connection and try again.',
+              icon: Icons.dashboard_outlined,
+              onRetry: () {
+                setState(() {
+                  _isLoading = true;
+                  _hasError = false;
+                  _errorMessage = '';
+                });
+                _loadUserData();
+              },
+              context: context,
+              retryText: 'Retry',
+            ),
+          ),
+        ),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Dashboard"),
+      appBar: EnhancedAppBar(
+        title: "Dashboard",
+        subtitle: "Welcome back!",
         backgroundColor: studentPrimary,
         foregroundColor: Colors.white,
+        enableGradient: true,
+        gradientColors: [
+          studentPrimary,
+          studentPrimary.withOpacity(0.8),
+        ],
         actions: [
           IconButton(
             onPressed: _fetchDomainsFromStudentBranch,
@@ -297,20 +296,6 @@ class _DashboardPageState extends State<DashboardPage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   FloatingActionButton(
-                    onPressed: _testFacultySelection,
-                    tooltip: 'Test Faculty Selection',
-                    child: const Icon(Icons.people),
-                    heroTag: "test_faculty",
-                  ),
-                  const SizedBox(height: 8),
-                  FloatingActionButton(
-                    onPressed: _testApprovalRequest,
-                    tooltip: 'Test Approval Request',
-                    child: const Icon(Icons.send),
-                    heroTag: "test_approval",
-                  ),
-                  const SizedBox(height: 8),
-                  FloatingActionButton(
                     onPressed: _forceRefresh,
                     tooltip: 'Refresh Dashboard',
                     child: const Icon(Icons.refresh),
@@ -327,82 +312,190 @@ class _DashboardPageState extends State<DashboardPage> {
     final ColorScheme colorScheme = theme.colorScheme;
     final TextTheme textTheme = theme.textTheme;
 
-    return Card(
-      elevation: 2, // Softer elevation
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return AnimationUtils.buildAnimatedCard(
+      duration: AnimationUtils.normalDuration,
+      curve: AnimationUtils.normalCurve,
+      elevation: ResponsiveUtils.getResponsiveElevation(context, 4),
+      child: Container(
+        margin: ResponsiveUtils.getResponsiveMargin(context),
+        child: Card(
+        elevation: ResponsiveUtils.getResponsiveElevation(context, 4),
+        shadowColor: colorScheme.shadow.withOpacity(0.1),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 20)),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 20)),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                colorScheme.surface,
+                colorScheme.surfaceContainerHighest,
+              ],
+            ),
+          ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+            padding: ResponsiveUtils.getResponsivePadding(context),
         child: Stack(
           children: [
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CircleAvatar(
-                  radius: 40,
+                    // Profile Avatar with enhanced styling
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: colorScheme.primary.withOpacity(0.2),
+                            blurRadius: 20,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: CircleAvatar(
+                        radius: ResponsiveUtils.getResponsiveIconSize(context, 50),
                   backgroundColor: colorScheme.primaryContainer,
                   backgroundImage: _userData?['profile_photo'] != null && _userData!['profile_photo'].isNotEmpty
                       ? _getImageProvider(_userData!['profile_photo'])
                       : null,
                   child: _userData?['profile_photo'] == null || _userData!['profile_photo'].isEmpty
-                      ? Icon(Icons.person, size: 40, color: colorScheme.onPrimaryContainer)
+                            ? Icon(
+                                Icons.person_rounded, 
+                                size: ResponsiveUtils.getResponsiveIconSize(context, 50), 
+                                color: colorScheme.onPrimaryContainer
+                              )
                       : null,
                 ),
-                const SizedBox(height: 12),
-                Text(
+                    ),
+                    
+                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+                    
+                    // Name with gradient text
+                    ShaderMask(
+                      shaderCallback: (bounds) => LinearGradient(
+                        colors: [colorScheme.primary, colorScheme.secondary],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ).createShader(bounds),
+                      child: Text(
                   _userData?['name'] ?? "Loading...",
-                  style: textTheme.titleLarge?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  "Student ID: ${_userData?['student_id'] ?? 'Loading...'}",
-                  style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
-                ),
-                const SizedBox(height: 8),
-                Divider(color: colorScheme.outline.withOpacity(0.5)),
-                const SizedBox(height: 8),
+                        style: textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    
+                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 4)),
+                    
+                    // Student ID with chip-like styling
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: ResponsiveUtils.getResponsiveSpacing(context, 12),
+                        vertical: ResponsiveUtils.getResponsiveSpacing(context, 4),
+                      ),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+                      ),
+                      child: Text(
+                        "ID: ${_userData?['student_id'] ?? 'Loading...'}",
+                        style: textTheme.labelMedium?.copyWith(
+                          color: colorScheme.onPrimaryContainer,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    
+                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+                    
+                    // Divider with gradient
+                    Container(
+                      height: 1,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.transparent,
+                            colorScheme.outline.withOpacity(0.3),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ),
+                    
+                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+                    
+                    // Details with enhanced styling
                 Column(
-                  crossAxisAlignment: CrossAxisAlignment.start, // Align details to the start
+                      crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildDetailRow(context, Icons.school, "Branch: ${_userData?['branch'] ?? 'Loading...'}"),
-                    _buildDetailRow(context, Icons.account_balance, "Institute: ${_userData?['institute'] ?? 'Loading...'}"),
-                    _buildDetailRow(context, Icons.person_outline, "Faculty Advisor: ${_userData?['faculty_advisor'] ?? 'Loading...'}"),
-                    // Display domains with proper handling of empty strings
-                    _buildDetailRow(context, Icons.work_outline, "Domain 1: ${_getDomainDisplay(_userData?['domain1'])}"),
-                    _buildDetailRow(context, Icons.work_outline, "Domain 2: ${_getDomainDisplay(_userData?['domain2'])}"),
+                        _buildModernDetailRow(context, Icons.school_rounded, "Branch", _userData?['branch'] ?? 'Loading...', colorScheme, textTheme),
+                        _buildModernDetailRow(context, Icons.account_balance_rounded, "Institute", _userData?['institute'] ?? 'Loading...', colorScheme, textTheme),
+                        _buildModernDetailRow(context, Icons.person_outline_rounded, "Faculty Advisor", _userData?['faculty_advisor'] ?? 'Loading...', colorScheme, textTheme),
+                        _buildModernDetailRow(context, Icons.work_outline_rounded, "Domain 1", _getDomainDisplay(_userData?['domain1']), colorScheme, textTheme),
+                        _buildModernDetailRow(context, Icons.work_outline_rounded, "Domain 2", _getDomainDisplay(_userData?['domain2']), colorScheme, textTheme),
                   ],
                 ),
               ],
             ),
+                
+                // Enhanced Edit Button
             Positioned(
               top: 0,
               right: 0,
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 20)),
                   onTap: () async {
                     final result = await Navigator.push(
                       context,
                       MaterialPageRoute(builder: (_) => const StudentEditProfilePage()),
                     );
-                    // If profile was updated, refresh the dashboard
                     if (result == true) {
                       refreshData();
                     }
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: ResponsiveUtils.getResponsiveSpacing(context, 16),
+                          vertical: ResponsiveUtils.getResponsiveSpacing(context, 8),
+                        ),
                     decoration: BoxDecoration(
-                      color: colorScheme.primary.withOpacity(0.12),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: colorScheme.primary, width: 1),
+                          gradient: LinearGradient(
+                            colors: [colorScheme.primary, colorScheme.secondary],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 20)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: colorScheme.primary.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.edit, size: 18, color: colorScheme.primary),
-                        const SizedBox(width: 4),
-                        Text("Edit", style: textTheme.labelMedium?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.w600)),
+                            Icon(
+                              Icons.edit_rounded, 
+                              size: ResponsiveUtils.getResponsiveIconSize(context, 16), 
+                              color: colorScheme.onPrimary
+                            ),
+                            SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 4)),
+                            Text(
+                              "Edit", 
+                              style: textTheme.labelMedium?.copyWith(
+                                color: colorScheme.onPrimary, 
+                                fontWeight: FontWeight.w600
+                              )
+                            ),
                       ],
                     ),
                   ),
@@ -410,21 +503,69 @@ class _DashboardPageState extends State<DashboardPage> {
               ),
             ),
           ],
+            ),
+          ),
         ),
+      ),
       ),
     );
   }
 
-  Widget _buildDetailRow(BuildContext context, IconData icon, String text) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+
+  Widget _buildModernDetailRow(BuildContext context, IconData icon, String label, String value, ColorScheme colorScheme, TextTheme textTheme) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: ResponsiveUtils.getResponsiveSpacing(context, 4)),
+      padding: EdgeInsets.symmetric(
+        horizontal: ResponsiveUtils.getResponsiveSpacing(context, 12),
+        vertical: ResponsiveUtils.getResponsiveSpacing(context, 8),
+      ),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 12)),
+        border: Border.all(
+          color: colorScheme.outline.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
       child: Row(
         children: [
-          Icon(icon, size: 18, color: colorScheme.secondary),
-          const SizedBox(width: 8),
-          Expanded(child: Text(text, style: textTheme.bodyMedium)),
+          Container(
+            padding: EdgeInsets.all(ResponsiveUtils.getResponsiveSpacing(context, 8)),
+            decoration: BoxDecoration(
+              color: colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 8)),
+            ),
+            child: Icon(
+              icon, 
+              size: ResponsiveUtils.getResponsiveIconSize(context, 16), 
+              color: colorScheme.primary
+            ),
+          ),
+          SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 12)),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: textTheme.labelSmall?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 2)),
+                Text(
+                  value,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurface,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -457,45 +598,208 @@ class _DashboardPageState extends State<DashboardPage> {
     final ColorScheme colorScheme = theme.colorScheme;
     final TextTheme textTheme = theme.textTheme;
 
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: InkWell( // Make card tappable with ripple effect
+    return AnimationUtils.buildAnimatedCard(
+      duration: AnimationUtils.normalDuration,
+      curve: AnimationUtils.normalCurve,
+      elevation: ResponsiveUtils.getResponsiveElevation(context, 4),
+      child: Container(
+        margin: ResponsiveUtils.getResponsiveMargin(context),
+        child: Card(
+        elevation: ResponsiveUtils.getResponsiveElevation(context, 4),
+        shadowColor: colorScheme.shadow.withOpacity(0.1),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 20)),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 20)),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                colorScheme.surface,
+                colorScheme.primaryContainer.withOpacity(0.1),
+              ],
+            ),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const SemesterInfoPage()),
           );
         },
-        borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 20)),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+                padding: ResponsiveUtils.getResponsivePadding(context),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header with icon and semester info
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(ResponsiveUtils.getResponsiveSpacing(context, 8)),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [colorScheme.primary, colorScheme.secondary],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 12)),
+                          ),
+                          child: Icon(
+                            Icons.school_rounded,
+                            color: colorScheme.onPrimary,
+                            size: ResponsiveUtils.getResponsiveIconSize(context, 20),
+                          ),
+                        ),
+                        SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 12)),
+                        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Current Semester: ${_userData?['current_semester'] ?? 'Loading...'}",
-                style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onSurface),
-              ),
-              const SizedBox(height: 8),
+                                "Academic Performance",
+                                style: textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: colorScheme.onSurface,
+                                ),
+                              ),
+                              Text(
+                                "Semester ${_userData?['current_semester'] ?? 'Loading...'}",
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          color: colorScheme.primary,
+                          size: ResponsiveUtils.getResponsiveIconSize(context, 16),
+                        ),
+                      ],
+                    ),
+                    
+                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 20)),
+                    
+                    // GPA Display with enhanced styling
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("GPA: ${_gpa.toStringAsFixed(2)} / 10", style: textTheme.bodyLarge),
-                  Icon(Icons.show_chart, color: colorScheme.primary)
-                ],
-              ),
-              const SizedBox(height: 8),
-              LinearProgressIndicator(
-                value: _gpa / 10, // Convert to 0-1 range
-                backgroundColor: colorScheme.surfaceContainerHighest, // Softer background
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Current GPA",
+                              style: textTheme.labelMedium?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 4)),
+                            Text(
+                              "${_gpa.toStringAsFixed(2)}",
+                              style: textTheme.headlineMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: colorScheme.primary,
+                              ),
+                            ),
+                            Text(
+                              "out of 10.0",
+                              style: textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(ResponsiveUtils.getResponsiveSpacing(context, 16)),
+                          decoration: BoxDecoration(
+                            color: colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+                          ),
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.trending_up_rounded,
                 color: colorScheme.primary,
-                minHeight: 6,
-                borderRadius: BorderRadius.circular(3),
+                                size: ResponsiveUtils.getResponsiveIconSize(context, 24),
+                              ),
+                              SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 4)),
+                              Text(
+                                "View Details",
+                                style: textTheme.labelSmall?.copyWith(
+                                  color: colorScheme.primary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    
+                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 20)),
+                    
+                    // Enhanced Progress Bar
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Progress",
+                              style: textTheme.labelMedium?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              "${(_gpa / 10 * 100).toStringAsFixed(0)}%",
+                              style: textTheme.labelMedium?.copyWith(
+                                color: colorScheme.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+                        Container(
+                          height: ResponsiveUtils.getResponsiveSpacing(context, 8),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 4)),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 4)),
+                            child: LinearProgressIndicator(
+                              value: _gpa / 10,
+                              backgroundColor: Colors.transparent,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                _gpa >= 8.0 
+                                    ? Colors.green
+                                    : _gpa >= 6.0 
+                                        ? Colors.orange
+                                        : colorScheme.error
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ],
+            ),
           ),
         ),
+      ),
       ),
     );
   }
@@ -505,10 +809,36 @@ class _DashboardPageState extends State<DashboardPage> {
     final ColorScheme colorScheme = theme.colorScheme;
     final TextTheme textTheme = theme.textTheme;
     final double attendancePercentage = (_userData?['attendance'] ?? 0) / 100.0;
+    final bool isGoodAttendance = attendancePercentage >= 0.75;
 
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return AnimationUtils.buildAnimatedCard(
+      duration: AnimationUtils.normalDuration,
+      curve: AnimationUtils.normalCurve,
+      elevation: ResponsiveUtils.getResponsiveElevation(context, 4),
+      child: Container(
+        margin: ResponsiveUtils.getResponsiveMargin(context),
+        child: Card(
+        elevation: ResponsiveUtils.getResponsiveElevation(context, 4),
+        shadowColor: colorScheme.shadow.withOpacity(0.1),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 20)),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 20)),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                colorScheme.surface,
+                isGoodAttendance 
+                    ? Colors.green.withOpacity(0.1)
+                    : colorScheme.errorContainer.withOpacity(0.1),
+              ],
+            ),
+          ),
+          child: Material(
+            color: Colors.transparent,
       child: InkWell(
         onTap: () {
           Navigator.push(
@@ -518,35 +848,201 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
           );
         },
-        borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 20)),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+                padding: ResponsiveUtils.getResponsivePadding(context),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header with status indicator
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(ResponsiveUtils.getResponsiveSpacing(context, 8)),
+                          decoration: BoxDecoration(
+                            color: isGoodAttendance 
+                                ? Colors.green.withOpacity(0.2)
+                                : colorScheme.errorContainer,
+                            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 12)),
+                          ),
+                          child: Icon(
+                            isGoodAttendance 
+                                ? Icons.check_circle_rounded
+                                : Icons.warning_rounded,
+                            color: isGoodAttendance 
+                                ? Colors.green
+                                : colorScheme.error,
+                            size: ResponsiveUtils.getResponsiveIconSize(context, 20),
+                          ),
+                        ),
+                        SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 12)),
+                        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 "Attendance Overview",
-                style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onSurface),
-              ),
-              const SizedBox(height: 8),
+                                style: textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: colorScheme.onSurface,
+                                ),
+                              ),
+                              Text(
+                                isGoodAttendance ? "Excellent attendance!" : "Needs improvement",
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: isGoodAttendance 
+                                      ? Colors.green
+                                      : colorScheme.error,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          color: colorScheme.primary,
+                          size: ResponsiveUtils.getResponsiveIconSize(context, 16),
+                        ),
+                      ],
+                    ),
+                    
+                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 20)),
+                    
+                    // Attendance percentage with visual emphasis
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Overall: ${(attendancePercentage * 100).toStringAsFixed(0)}%", style: textTheme.bodyLarge),
-                  Icon(Icons.check_circle_outline, color: attendancePercentage >= 0.75 ? Colors.green.shade600 : colorScheme.error),
-                ],
-              ),
-              const SizedBox(height: 8),
-              LinearProgressIndicator(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Current Attendance",
+                              style: textTheme.labelMedium?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 4)),
+                            Text(
+                              "${(attendancePercentage * 100).toStringAsFixed(0)}%",
+                              style: textTheme.headlineLarge?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: isGoodAttendance 
+                                    ? Colors.green
+                                    : colorScheme.error,
+                              ),
+                            ),
+                            Text(
+                              "out of 100%",
+                              style: textTheme.bodySmall?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: EdgeInsets.all(ResponsiveUtils.getResponsiveSpacing(context, 16)),
+                          decoration: BoxDecoration(
+                            color: isGoodAttendance 
+                                ? Colors.green.withOpacity(0.2)
+                                : colorScheme.errorContainer,
+                            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+                          ),
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.calendar_today_rounded,
+                                color: isGoodAttendance 
+                                    ? Colors.green
+                                    : colorScheme.error,
+                                size: ResponsiveUtils.getResponsiveIconSize(context, 24),
+                              ),
+                              SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 4)),
+                              Text(
+                                "View Details",
+                                style: textTheme.labelSmall?.copyWith(
+                                  color: isGoodAttendance 
+                                      ? Colors.green
+                                      : colorScheme.error,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    
+                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 20)),
+                    
+                    // Enhanced Progress Bar with status colors
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Progress",
+                              style: textTheme.labelMedium?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              "${(attendancePercentage * 100).toStringAsFixed(0)}%",
+                              style: textTheme.labelMedium?.copyWith(
+                                color: isGoodAttendance 
+                                    ? Colors.green
+                                    : colorScheme.error,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+                        Container(
+                          height: ResponsiveUtils.getResponsiveSpacing(context, 8),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 4)),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 4)),
+                            child: LinearProgressIndicator(
                 value: attendancePercentage,
-                backgroundColor: colorScheme.surfaceContainerHighest,
-                color: attendancePercentage >= 0.75 ? Colors.green.shade600 : colorScheme.error,
-                minHeight: 6,
-                borderRadius: BorderRadius.circular(3),
+                              backgroundColor: Colors.transparent,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                isGoodAttendance 
+                                    ? Colors.green
+                                    : colorScheme.error
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+                        // Status message
+                        Text(
+                          isGoodAttendance 
+                              ? "Keep up the great work! 🎉"
+                              : "Consider improving your attendance 📚",
+                          style: textTheme.bodySmall?.copyWith(
+                              color: isGoodAttendance 
+                                  ? Colors.green
+                                  : colorScheme.error,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ],
+            ),
           ),
         ),
+      ),
       ),
     );
   }
@@ -558,9 +1054,32 @@ class _DashboardPageState extends State<DashboardPage> {
     final ColorScheme colorScheme = theme.colorScheme;
     final TextTheme textTheme = theme.textTheme;
 
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return AnimationUtils.buildAnimatedCard(
+      duration: AnimationUtils.normalDuration,
+      curve: AnimationUtils.normalCurve,
+      elevation: ResponsiveUtils.getResponsiveElevation(context, 4),
+      child: Container(
+      margin: ResponsiveUtils.getResponsiveMargin(context),
+      child: Card(
+        elevation: ResponsiveUtils.getResponsiveElevation(context, 4),
+        shadowColor: colorScheme.shadow.withOpacity(0.1),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 20)),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 20)),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                colorScheme.surface,
+                colorScheme.tertiaryContainer.withOpacity(0.1),
+              ],
+            ),
+          ),
+          child: Material(
+            color: Colors.transparent,
       child: InkWell(
         onTap: () {
           Navigator.push(
@@ -568,75 +1087,315 @@ class _DashboardPageState extends State<DashboardPage> {
             MaterialPageRoute(builder: (context) => const AchievementsPage()),
           );
         },
-        borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 20)),
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                padding: ResponsiveUtils.getResponsivePadding(context),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                    // Header with icon and title
+                    Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(ResponsiveUtils.getResponsiveSpacing(context, 8)),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [colorScheme.tertiary, colorScheme.primary],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 12)),
+                          ),
+                          child: Icon(
+                            Icons.workspace_premium_rounded,
+                            color: colorScheme.onPrimary,
+                            size: ResponsiveUtils.getResponsiveIconSize(context, 20),
+                          ),
+                        ),
+                        SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 12)),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "Student Record",
+                                style: textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: colorScheme.onSurface,
+                                ),
+                              ),
+                              Text(
+                                "Your achievements & accomplishments",
+                                style: textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          color: colorScheme.primary,
+                          size: ResponsiveUtils.getResponsiveIconSize(context, 16),
+                        ),
+                      ],
+                    ),
+                    
+                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 20)),
+                    
+                    // Achievements list with enhanced styling
+                    if (_topAchievements.isNotEmpty) ...[
+                      ..._topAchievements.asMap().entries.map((entry) {
+                        final index = entry.key;
+                        final achievement = entry.value;
+                        return Container(
+                          margin: EdgeInsets.only(bottom: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: ResponsiveUtils.getResponsiveSpacing(context, 12),
+                            vertical: ResponsiveUtils.getResponsiveSpacing(context, 8),
+                          ),
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainerHighest.withOpacity(0.5),
+                            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 12)),
+                            border: Border.all(
+                              color: colorScheme.outline.withOpacity(0.2),
+                              width: 1,
+                            ),
+                          ),
                 child: Row(
                   children: [
-                     Icon(Icons.workspace_premium, color: colorScheme.primary),
-                     const SizedBox(width: 8),
-                     Text("Student Record", style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold, color: colorScheme.onSurface)),
-                  ],
-                ),
-              ),
-              const Divider(height: 16, indent: 16, endIndent: 16),
-              ..._topAchievements.map((achievement) => ListTile(
-                dense: true,
-                title: Text(achievement['title'], style: textTheme.bodyMedium, maxLines: 1, overflow: TextOverflow.ellipsis),
-                subtitle: Text("${achievement['category']} • ${achievement['points']} points", style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant)),
-                trailing: Icon(Icons.arrow_forward_ios, size: 14, color: colorScheme.onSurfaceVariant),
-              )),
-              if (_topAchievements.isEmpty)
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Center(child: Text("No achievements to display", style: textTheme.bodyMedium)),
+                              // Achievement number badge
+                              Container(
+                                width: ResponsiveUtils.getResponsiveSpacing(context, 24),
+                                height: ResponsiveUtils.getResponsiveSpacing(context, 24),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [colorScheme.primary, colorScheme.secondary],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    '${index + 1}',
+                                    style: textTheme.labelSmall?.copyWith(
+                                      color: colorScheme.onPrimary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 12)),
+                              // Achievement details
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      achievement['title'] ?? 'Achievement',
+                                      style: textTheme.bodyMedium?.copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        color: colorScheme.onSurface,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 2)),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: ResponsiveUtils.getResponsiveSpacing(context, 6),
+                                            vertical: ResponsiveUtils.getResponsiveSpacing(context, 2),
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: colorScheme.primaryContainer,
+                                            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 8)),
+                                          ),
+                                          child: Text(
+                                            achievement['category'] ?? 'General',
+                                            style: textTheme.labelSmall?.copyWith(
+                                              color: colorScheme.primary,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+                                        Icon(
+                                          Icons.star_rounded,
+                                          color: Colors.orange,
+                                          size: ResponsiveUtils.getResponsiveIconSize(context, 14),
+                                        ),
+                                        SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 2)),
+                                        Text(
+                                          '${achievement['points'] ?? 0} pts',
+                                          style: textTheme.labelSmall?.copyWith(
+                                            color: Colors.orange,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios_rounded,
+                                size: ResponsiveUtils.getResponsiveIconSize(context, 14),
+                                color: colorScheme.onSurfaceVariant,
                 ),
             ],
           ),
+                        );
+                      }),
+                    ] else ...[
+                      // Empty state with enhanced styling
+                      Container(
+                        padding: ResponsiveUtils.getResponsivePadding(context),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                          borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.emoji_events_outlined,
+                              size: ResponsiveUtils.getResponsiveIconSize(context, 48),
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                            SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 12)),
+                            Text(
+                              "No achievements yet",
+                              style: textTheme.titleMedium?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 4)),
+                            Text(
+                              "Start building your student record!",
+                              style: textTheme.bodyMedium?.copyWith(
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
+      ),
       ),
     );
   }
 
   Widget quickButtons(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
+    final ThemeData theme = Theme.of(context);
+    final ColorScheme colorScheme = theme.colorScheme;
+    final TextTheme textTheme = theme.textTheme;
 
-    return Row(
+    return AnimationUtils.buildAnimatedCard(
+      duration: AnimationUtils.normalDuration,
+      curve: AnimationUtils.normalCurve,
+      elevation: ResponsiveUtils.getResponsiveElevation(context, 4),
+      child: Container(
+      margin: ResponsiveUtils.getResponsiveMargin(context),
+      child: Row(
       children: [
         Expanded(
-          child: ElevatedButton.icon(
+            child: _buildModernQuickButton(
+              context: context,
+              icon: Icons.download_rounded,
+              label: "Download Profile",
             onPressed: () { /* TODO: Implement Download Profile */ },
-            icon: const Icon(Icons.download, size: 20), // Slightly smaller icon
-            label: Text("Download Profile", style: textTheme.labelLarge),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              colorScheme: colorScheme,
+              textTheme: textTheme,
             ),
           ),
-        ),
-        const SizedBox(width: 12),
+          SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 12)),
         Expanded(
-          child: ElevatedButton.icon(
+            child: _buildModernQuickButton(
+              context: context,
+              icon: Icons.analytics_rounded,
+              label: "View Analytics",
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const StudentAnalyticsPage()),
               );
             },
-            icon: const Icon(Icons.analytics, size: 20),
-            label: Text("View Analytics", style: textTheme.labelLarge),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              colorScheme: colorScheme,
+              textTheme: textTheme,
+            ),
+          ),
+        ],
+      ),
+      ),
+    );
+  }
+
+  Widget _buildModernQuickButton({
+    required BuildContext context,
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+    required ColorScheme colorScheme,
+    required TextTheme textTheme,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+        gradient: LinearGradient(
+          colors: [colorScheme.primary, colorScheme.secondary],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: colorScheme.primary.withOpacity(0.3),
+            blurRadius: ResponsiveUtils.getResponsiveElevation(context, 8),
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveUtils.getResponsiveSpacing(context, 16),
+              vertical: ResponsiveUtils.getResponsiveSpacing(context, 16),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  color: colorScheme.onPrimary,
+                  size: ResponsiveUtils.getResponsiveIconSize(context, 24),
+                ),
+                SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+                Text(
+                  label,
+                  style: textTheme.labelLarge?.copyWith(
+                    color: colorScheme.onPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 }

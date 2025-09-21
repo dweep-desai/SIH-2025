@@ -4,9 +4,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../widgets/faculty_drawer.dart';
 import '../widgets/approval_donut_chart.dart';
+import '../widgets/enhanced_app_bar.dart';
+import '../widgets/loading_components.dart';
+import '../widgets/error_components.dart';
 import 'faculty_edit_profile_page.dart';
 import 'faculty_notifications_page.dart';
 import '../services/auth_service.dart';
+import '../utils/safe_snackbar_utils.dart';
+import '../utils/responsive_utils.dart';
+import '../utils/animation_utils.dart';
+import '../utils/color_utils.dart';
 
 // ---------------- FACULTY DASHBOARD PAGE ----------------
 class FacultyDashboardPage extends StatefulWidget {
@@ -99,12 +106,7 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
     await _loadNotificationCount(); // Also refresh notification count
     setState(() {});
     
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Approval requests refreshed. Found ${_approvalRequests.length} requests.'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+    // Approval requests refreshed silently
   }
 
   // Method to refresh only approval history
@@ -112,12 +114,7 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
     await _loadApprovalHistoryFromFirebase();
     setState(() {});
     
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Approval history refreshed. Found ${_approvalHistory.length} items.'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+    // Approval history refreshed silently
   }
 
   // Method to refresh only approval analytics
@@ -125,12 +122,7 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
     await _loadApprovalAnalyticsFromFirebase();
     setState(() {});
     
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Approval analytics refreshed.'),
-        duration: Duration(seconds: 2),
-      ),
-    );
+    // Approval analytics refreshed silently
   }
 
   // Method to load approval history directly from Firebase
@@ -318,39 +310,47 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
       await _loadApprovalRequestsFromFirebase();
       setState(() {});
       
-      // Show in UI
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Approval section debug info printed to console'),
-          duration: Duration(seconds: 3),
-        ),
-      );
+      // Debug info printed to console silently
     } catch (e) {
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Faculty theme: green
-    final Color facultyPrimary = Colors.green.shade700;
+    // Faculty theme: green gradient
+    final Color facultyPrimary = Colors.green.shade600;
 
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text("Faculty Dashboard"),
+        appBar: EnhancedAppBar(
+          title: "Faculty Dashboard",
           backgroundColor: facultyPrimary,
           foregroundColor: Colors.white,
+          enableGradient: true,
+          gradientColors: [
+            facultyPrimary,
+            facultyPrimary.withOpacity(0.8),
+          ],
         ),
         drawer: MainDrawer(context: context, isFaculty: true),
-        body: const Center(child: CircularProgressIndicator()),
+        body: LoadingComponents.buildModernLoadingIndicator(
+          message: "Loading faculty dashboard...",
+          context: context,
+        ),
       );
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Faculty Dashboard"),
+      appBar: EnhancedAppBar(
+        title: "Faculty Dashboard",
+        subtitle: "Welcome back!",
         backgroundColor: facultyPrimary,
         foregroundColor: Colors.white,
+        enableGradient: true,
+        gradientColors: [
+          facultyPrimary,
+          facultyPrimary.withOpacity(0.8),
+        ],
         actions: [
           // Notification bell with badge
           Stack(
@@ -398,22 +398,34 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
+            padding: ResponsiveUtils.getResponsivePadding(context),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                personalCard(context),
-                const SizedBox(height: 16),
-                researchPapersCard(context),
-                const SizedBox(height: 16),
-                projectsCard(context),
-                const SizedBox(height: 16),
-                approvalRequestsCard(context),
-                const SizedBox(height: 16),
-                approvalHistoryCard(context),
-                const SizedBox(height: 16),
-                approvalAnalyticsCard(context),
-                const SizedBox(height: 16),
+                AnimationUtils.buildAnimatedCard(
+                  child: personalCard(context),
+                ),
+                SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+                AnimationUtils.buildAnimatedCard(
+                  child: researchPapersCard(context),
+                ),
+                SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+                AnimationUtils.buildAnimatedCard(
+                  child: projectsCard(context),
+                ),
+                SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+                AnimationUtils.buildAnimatedCard(
+                  child: approvalRequestsCard(context),
+                ),
+                SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+                AnimationUtils.buildAnimatedCard(
+                  child: approvalHistoryCard(context),
+                ),
+                SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+                AnimationUtils.buildAnimatedCard(
+                  child: approvalAnalyticsCard(context),
+                ),
+                SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16)),
               ],
             ),
           );
@@ -427,47 +439,100 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
     final TextTheme textTheme = theme.textTheme;
+    final facultyPrimary = Colors.green.shade600;
 
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Colors.green.shade50,
+            Colors.green.shade100,
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+        border: Border.all(
+          color: facultyPrimary.withOpacity(0.3),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: facultyPrimary.withOpacity(0.2),
+            blurRadius: ResponsiveUtils.getResponsiveElevation(context, 8),
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: ResponsiveUtils.getResponsivePadding(context),
         child: Stack(
           children: [
             Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundColor: colorScheme.primaryContainer,
-                  backgroundImage: _userData?['profile_photo'] != null && _userData!['profile_photo'].toString().isNotEmpty
-                      ? _getImageProvider(_userData!['profile_photo'])
-                      : null,
-                  child: _userData?['profile_photo'] == null || _userData!['profile_photo'].toString().isEmpty
-                      ? Icon(Icons.person, size: 40, color: colorScheme.onPrimaryContainer)
-                      : null,
+                Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: facultyPrimary.withOpacity(0.3),
+                        blurRadius: 20,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
+                  child: CircleAvatar(
+                    radius: ResponsiveUtils.getResponsiveIconSize(context, 40),
+                    backgroundColor: Colors.white,
+                    backgroundImage: _userData?['profile_photo'] != null && _userData!['profile_photo'].toString().isNotEmpty
+                        ? _getImageProvider(_userData!['profile_photo'])
+                        : null,
+                    child: _userData?['profile_photo'] == null || _userData!['profile_photo'].toString().isEmpty
+                        ? Icon(
+                            Icons.person_rounded, 
+                            size: ResponsiveUtils.getResponsiveIconSize(context, 40), 
+                            color: facultyPrimary,
+                          )
+                        : null,
+                  ),
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  _userData?['name'] ?? "Loading...",
-                  style: textTheme.titleLarge?.copyWith(color: colorScheme.primary, fontWeight: FontWeight.bold),
+                SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 12)),
+               Text(
+                 _userData?['name'] ?? "Loading...",
+                 style: textTheme.titleLarge?.copyWith(
+                   color: Colors.grey.shade800,
+                   fontWeight: FontWeight.bold,
+                 ),
+               ),
+                SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 4)),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ResponsiveUtils.getResponsiveSpacing(context, 12),
+                    vertical: ResponsiveUtils.getResponsiveSpacing(context, 4),
+                  ),
+                  decoration: BoxDecoration(
+                    color: facultyPrimary.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 12)),
+                  ),
+                 child: Text(
+                   "Faculty ID: ${_userData?['faculty_id'] ?? 'Loading...'}",
+                   style: textTheme.bodyMedium?.copyWith(
+                     color: Colors.grey.shade700,
+                     fontWeight: FontWeight.w600,
+                   ),
+                 ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  "Faculty ID: ${_userData?['faculty_id'] ?? 'Loading...'}",
-                  style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurfaceVariant),
-                ),
-                const SizedBox(height: 8),
-                Divider(color: colorScheme.outline.withOpacity(0.5)),
-                const SizedBox(height: 8),
+                SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+                Divider(color: facultyPrimary.withOpacity(0.3)),
+                SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 12)),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildDetailRow(context, Icons.work, "Designation: ${_userData?['designation'] ?? 'Loading...'}"),
-                    _buildDetailRow(context, Icons.business, "Department: ${_userData?['department'] ?? 'Loading...'}"),
-                    _buildDetailRow(context, Icons.school, "Educational Qualifications: ${_userData?['educational_qualifications'] ?? 'Loading...'}"),
-                    _buildDetailRow(context, Icons.email, "Email: ${_userData?['email'] ?? 'Loading...'}"),
+                    _buildDetailRow(context, Icons.work, "Designation: ${_userData?['designation'] ?? 'Loading...'}", facultyPrimary),
+                    _buildDetailRow(context, Icons.business, "Department: ${_userData?['department'] ?? 'Loading...'}", facultyPrimary),
+                    _buildDetailRow(context, Icons.school, "Educational Qualifications: ${_userData?['educational_qualifications'] ?? 'Loading...'}", facultyPrimary),
+                    _buildDetailRow(context, Icons.email, "Email: ${_userData?['email'] ?? 'Loading...'}", facultyPrimary),
                   ],
                 ),
               ],
@@ -515,16 +580,30 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
     );
   }
 
-  Widget _buildDetailRow(BuildContext context, IconData icon, String text) {
+  Widget _buildDetailRow(BuildContext context, IconData icon, String text, Color? color) {
     final TextTheme textTheme = Theme.of(context).textTheme;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final effectiveColor = color ?? Colors.green.shade600;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      padding: EdgeInsets.symmetric(vertical: ResponsiveUtils.getResponsiveSpacing(context, 4)),
       child: Row(
         children: [
-          Icon(icon, size: 18, color: colorScheme.secondary),
-          const SizedBox(width: 8),
-          Expanded(child: Text(text, style: textTheme.bodyMedium)),
+          Icon(
+            icon,
+            size: ResponsiveUtils.getResponsiveIconSize(context, 18),
+            color: effectiveColor,
+          ),
+          SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+          Expanded(
+            child: Text(
+              text,
+              style: textTheme.bodyMedium?.copyWith(
+                color: Colors.grey.shade700,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -814,11 +893,9 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
         await _showRejectionDialog(request);
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error handling approval: $e'),
-          backgroundColor: Colors.red,
-        ),
+      SafeSnackBarUtils.showError(
+        context,
+        message: 'Error handling approval: $e',
       );
     }
   }
@@ -855,11 +932,9 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
             onPressed: () async {
               int points = int.tryParse(pointsController.text) ?? 0;
               if (points < 1 || points > 50) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Please enter points between 1 and 50'),
-                    backgroundColor: Colors.red,
-                  ),
+                SafeSnackBarUtils.showWarning(
+                  context,
+                  message: 'Please enter points between 1 and 50',
                 );
                 return;
               }
@@ -905,11 +980,9 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
           ElevatedButton(
             onPressed: () async {
               if (reasonController.text.trim().isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Please enter a reason for rejection'),
-                    backgroundColor: Colors.red,
-                  ),
+                SafeSnackBarUtils.showWarning(
+                  context,
+                  message: 'Please enter a reason for rejection',
                 );
                 return;
               }
@@ -933,18 +1006,21 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
       // Refresh data
       await _loadUserData();
       
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Request ${approved ? 'approved' : 'rejected'} successfully'),
-          backgroundColor: approved ? Colors.green : Colors.orange,
-        ),
-      );
+      if (approved) {
+        SafeSnackBarUtils.showSuccess(
+          context,
+          message: 'Request approved successfully',
+        );
+      } else {
+        SafeSnackBarUtils.showWarning(
+          context,
+          message: 'Request rejected',
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error processing approval: $e'),
-          backgroundColor: Colors.red,
-        ),
+      SafeSnackBarUtils.showError(
+        context,
+        message: 'Error processing approval: $e',
       );
     }
   }

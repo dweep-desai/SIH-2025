@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import '../widgets/student_drawer.dart';
+import '../widgets/form_components.dart';
+import '../utils/responsive_utils.dart';
 import '../services/auth_service.dart';
 import 'dashboard_page.dart';
 
@@ -184,75 +186,53 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = theme.colorScheme;
-    // final texts = theme.textTheme;
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit Profile')),
+      appBar: AppBar(
+        title: Text('Edit Profile'),
+        elevation: 0,
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
+      ),
       drawer: MainDrawer(context: context),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: ResponsiveUtils.getResponsivePadding(context),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-            Center(
-              child: Stack(
-                children: [
-                  CircleAvatar(
-                    radius: 48,
-                    backgroundImage: _avatar,
-                    backgroundColor: colors.primaryContainer,
-                    child: _avatar == null
-                        ? Icon(Icons.person, color: colors.onPrimaryContainer, size: 40)
-                        : null,
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: colors.primary,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: colors.surface, width: 2),
-                      ),
-                      child: IconButton(
-                        icon: const Icon(Icons.camera_alt, color: Colors.white),
-                        onPressed: _isLoading ? null : _pickImage,
-                        iconSize: 20,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Domain 1', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: colors.onSurface)),
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: colors.outline),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
+              // Profile Photo Section
+              _buildProfilePhotoSection(context, colorScheme, textTheme),
+              
+              SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 24)),
+              
+              // Domain Selection Section
+              ModernFormComponents.buildFormSection(
+                title: 'Domain Selection',
+                subtitle: 'Choose your areas of expertise',
+                icon: Icons.category_outlined,
+                context: context,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    // Use responsive layout based on screen width
+                    if (constraints.maxWidth < 600) {
+                      // Stack vertically on smaller screens
+                      return Column(
+                        children: [
+                          ModernFormComponents.buildModernDropdownField<String>(
                             value: _selectedDomain1,
-                            isExpanded: true,
-                            hint: const Text('Select Domain 1'),
                             items: const [
                               DropdownMenuItem(value: 'AI/ML', child: Text('AI/ML')),
                               DropdownMenuItem(value: 'Data Science', child: Text('Data Science')),
                               DropdownMenuItem(value: 'Cybersecurity', child: Text('Cybersecurity')),
                               DropdownMenuItem(value: 'Web Development', child: Text('Web Development')),
                             ],
+                            labelText: 'Domain 1',
+                            hintText: 'Select Domain 1',
+                            prefixIcon: Icons.star_outline,
                             onChanged: (v) {
                               if (v != null && v == _selectedDomain2) {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -265,36 +245,22 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
                               }
                               setState(() => _selectedDomain1 = v);
                             },
+                            context: context,
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Domain 2 (optional)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: colors.onSurface)),
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: colors.outline),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
+                          
+                          SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+                          
+                          ModernFormComponents.buildModernDropdownField<String>(
                             value: _selectedDomain2,
-                            isExpanded: true,
-                            hint: const Text('Select Domain 2'),
                             items: const [
                               DropdownMenuItem(value: 'AI/ML', child: Text('AI/ML')),
                               DropdownMenuItem(value: 'Data Science', child: Text('Data Science')),
                               DropdownMenuItem(value: 'Cybersecurity', child: Text('Cybersecurity')),
                               DropdownMenuItem(value: 'Web Development', child: Text('Web Development')),
                             ],
+                            labelText: 'Domain 2 (optional)',
+                            hintText: 'Select Domain 2',
+                            prefixIcon: Icons.star_border_outlined,
                             onChanged: (v) {
                               if (v != null && v == _selectedDomain1) {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -307,34 +273,161 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
                               }
                               setState(() => _selectedDomain2 = v);
                             },
+                            context: context,
                           ),
-                        ),
-                      ),
-                    ],
-                  ),
+                        ],
+                      );
+                    } else {
+                      // Use horizontal layout on larger screens
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: ModernFormComponents.buildModernDropdownField<String>(
+                              value: _selectedDomain1,
+                              items: const [
+                                DropdownMenuItem(value: 'AI/ML', child: Text('AI/ML')),
+                                DropdownMenuItem(value: 'Data Science', child: Text('Data Science')),
+                                DropdownMenuItem(value: 'Cybersecurity', child: Text('Cybersecurity')),
+                                DropdownMenuItem(value: 'Web Development', child: Text('Web Development')),
+                              ],
+                              labelText: 'Domain 1',
+                              hintText: 'Select Domain 1',
+                              prefixIcon: Icons.star_outline,
+                              onChanged: (v) {
+                                if (v != null && v == _selectedDomain2) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('This domain is already selected in Domain 2'),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                  return;
+                                }
+                                setState(() => _selectedDomain1 = v);
+                              },
+                              context: context,
+                            ),
+                          ),
+                          
+                          SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 12)),
+                          
+                          Expanded(
+                            child: ModernFormComponents.buildModernDropdownField<String>(
+                              value: _selectedDomain2,
+                              items: const [
+                                DropdownMenuItem(value: 'AI/ML', child: Text('AI/ML')),
+                                DropdownMenuItem(value: 'Data Science', child: Text('Data Science')),
+                                DropdownMenuItem(value: 'Cybersecurity', child: Text('Cybersecurity')),
+                                DropdownMenuItem(value: 'Web Development', child: Text('Web Development')),
+                              ],
+                              labelText: 'Domain 2 (optional)',
+                              hintText: 'Select Domain 2',
+                              prefixIcon: Icons.star_border_outlined,
+                              onChanged: (v) {
+                                if (v != null && v == _selectedDomain1) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('This domain is already selected in Domain 1'),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                  return;
+                                }
+                                setState(() => _selectedDomain2 = v);
+                              },
+                              context: context,
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                  },
                 ),
-              ],
+              ),
+              
+              SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 32)),
+              
+              // Save Button
+              SizedBox(
+                width: double.infinity,
+                child: ModernFormComponents.buildModernButton(
+                  text: _isLoading ? 'Saving...' : 'Save Changes',
+                  icon: Icons.save_outlined,
+                  onPressed: _isLoading ? null : _saveProfile,
+                  isLoading: _isLoading,
+                  context: context,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfilePhotoSection(BuildContext context, ColorScheme colorScheme, TextTheme textTheme) {
+    return ModernFormComponents.buildFormSection(
+      title: 'Profile Photo',
+      subtitle: 'Upload a photo to personalize your profile',
+      icon: Icons.photo_camera_outlined,
+      context: context,
+      child: Center(
+        child: Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: colorScheme.shadow.withOpacity(0.2),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: CircleAvatar(
+                radius: ResponsiveUtils.getResponsiveIconSize(context, 48),
+                backgroundImage: _avatar,
+                backgroundColor: colorScheme.primaryContainer,
+                child: _avatar == null
+                    ? Icon(
+                        Icons.person,
+                        color: colorScheme.onPrimaryContainer,
+                        size: ResponsiveUtils.getResponsiveIconSize(context, 40),
+                      )
+                    : null,
+              ),
             ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: _isLoading ? null : _saveProfile,
-              icon: _isLoading 
-                ? const SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.save),
-              label: Text(_isLoading ? 'Saving...' : 'Save Changes'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            Positioned(
+              bottom: 0,
+              right: 0,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: colorScheme.primary,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: colorScheme.surface,
+                    width: 3,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colorScheme.shadow.withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: IconButton(
+                  icon: Icon(
+                    Icons.camera_alt,
+                    color: colorScheme.onPrimary,
+                    size: ResponsiveUtils.getResponsiveIconSize(context, 20),
+                  ),
+                  onPressed: _isLoading ? null : _pickImage,
                 ),
               ),
             )
-            ],
-          ),
+          ],
         ),
       ),
     );

@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../widgets/faculty_drawer.dart';
+import '../widgets/enhanced_app_bar.dart';
+import '../widgets/modern_chart_components.dart';
+import '../widgets/form_components.dart';
+import '../widgets/loading_components.dart';
+import '../widgets/error_components.dart';
+import '../utils/responsive_utils.dart';
 import '../services/auth_service.dart';
-import '../widgets/approval_donut_chart.dart';
 
 class FacultyApprovalAnalyticsPage extends StatefulWidget {
   const FacultyApprovalAnalyticsPage({super.key});
@@ -15,6 +20,8 @@ class FacultyApprovalAnalyticsPage extends StatefulWidget {
 class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsPage> {
   final AuthService _authService = AuthService();
   bool _isLoading = true;
+  bool _hasError = false;
+  String _errorMessage = '';
   Map<String, dynamic>? _userData;
   Map<String, dynamic> _approvalAnalytics = {};
 
@@ -42,7 +49,11 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
         setState(() => _isLoading = false);
       }
     } catch (e) {
-      setState(() => _isLoading = false);
+      setState(() {
+        _isLoading = false;
+        _hasError = true;
+        _errorMessage = e.toString();
+      });
     }
   }
 
@@ -106,13 +117,59 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
 
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(
-          title: const Text('Approval Analytics'),
+        appBar: EnhancedAppBar(
+          title: 'Approval Analytics',
           backgroundColor: facultyPrimary,
           foregroundColor: Colors.white,
+          enableGradient: true,
+          gradientColors: [
+            facultyPrimary,
+            facultyPrimary.withOpacity(0.8),
+          ],
         ),
         drawer: MainDrawer(context: context, isFaculty: true),
-        body: const Center(child: CircularProgressIndicator()),
+        body: LoadingComponents.buildPulseLoading(
+          message: 'Loading Analytics Data',
+          context: context,
+        ),
+      );
+    }
+
+    if (_hasError) {
+      return Scaffold(
+        appBar: EnhancedAppBar(
+          title: 'Approval Analytics',
+          backgroundColor: facultyPrimary,
+          foregroundColor: Colors.white,
+          enableGradient: true,
+          gradientColors: [
+            facultyPrimary,
+            facultyPrimary.withOpacity(0.8),
+          ],
+        ),
+        drawer: MainDrawer(context: context, isFaculty: true),
+        body: Center(
+          child: Padding(
+            padding: ResponsiveUtils.getResponsivePadding(context),
+            child: ErrorComponents.buildErrorState(
+              title: 'Failed to Load Analytics',
+              message: _errorMessage.isNotEmpty 
+                  ? _errorMessage 
+                  : 'Unable to load your approval analytics. Please check your connection and try again.',
+              icon: Icons.analytics_outlined,
+              onRetry: () {
+                setState(() {
+                  _isLoading = true;
+                  _hasError = false;
+                  _errorMessage = '';
+                });
+                _loadUserData();
+              },
+              context: context,
+              retryText: 'Retry',
+            ),
+          ),
+        ),
       );
     }
 
@@ -121,12 +178,17 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
     final approvalRate = _approvalAnalytics['approval_rate'] ?? 0.0;
     final avgPoints = _approvalAnalytics['avg_points_awarded'] ?? 0.0;
 
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Approval Analytics'),
+      appBar: EnhancedAppBar(
+        title: 'Approval Analytics',
+        subtitle: 'Track your approval performance',
         backgroundColor: facultyPrimary,
         foregroundColor: Colors.white,
+        enableGradient: true,
+        gradientColors: [
+          facultyPrimary,
+          facultyPrimary.withOpacity(0.8),
+        ],
         actions: [
           IconButton(
             onPressed: () {
@@ -139,74 +201,121 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
       ),
       drawer: MainDrawer(context: context, isFaculty: true),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: ResponsiveUtils.getResponsivePadding(context),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Overview Metrics
-            Row(
-              children: [
-                Expanded(child: _metricTile(context, 'Total Approved', '$totalApproved', Icons.check_circle, Colors.green)),
-                const SizedBox(width: 12),
-                Expanded(child: _metricTile(context, 'Total Rejected', '$totalRejected', Icons.cancel, Colors.red)),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(child: _metricTile(context, 'Approval Rate', '${(approvalRate * 100).toStringAsFixed(1)}%', Icons.percent, colors.primary)),
-                const SizedBox(width: 12),
-                Expanded(child: _metricTile(context, 'Avg. Points Awarded', avgPoints.toStringAsFixed(1), Icons.star_rate, colors.tertiary)),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 280),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: ApprovalDonutChart(
-                    approved: totalApproved,
-                    rejected: totalRejected,
-                    pending: 0,
-                    includePending: false,
-                    showLegend: true,
-                    thicknessMultiplier: 1.5,
-                  ),
-                ),
-              ),
-            ),
+            _buildMetricsGrid(context, totalApproved, totalRejected, approvalRate, avgPoints, colors),
+            SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 24)),
+            // Modern Donut Chart
+            _buildModernDonutChart(context, totalApproved, totalRejected, colors),
           ],
         ),
       ),
     );
   }
 
-  Widget _metricTile(BuildContext context, String title, String value, IconData icon, Color color) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-    final ColorScheme colors = Theme.of(context).colorScheme;
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: colors.outline.withOpacity(0.2))),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: 100),
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(icon, color: color, size: 20),
-                  const SizedBox(width: 8),
-                  Expanded(child: Text(title, style: textTheme.bodyMedium?.copyWith(color: colors.onSurfaceVariant), maxLines: 2, softWrap: true)),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(value, style: textTheme.titleLarge?.copyWith(color: color, fontWeight: FontWeight.bold)),
-            ],
+  Widget _buildMetricsGrid(BuildContext context, int totalApproved, int totalRejected, double approvalRate, double avgPoints, ColorScheme colors) {
+    return Row(
+      children: [
+        Expanded(
+          child: _buildModernMetricTile(
+            context: context,
+            title: 'Total Approved',
+            value: '$totalApproved',
+            icon: Icons.check_circle,
+            color: Colors.green,
+            colors: colors,
           ),
         ),
+        SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 12)),
+        Expanded(
+          child: _buildModernMetricTile(
+            context: context,
+            title: 'Total Rejected',
+            value: '$totalRejected',
+            icon: Icons.cancel,
+            color: Colors.red,
+            colors: colors,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildModernDonutChart(BuildContext context, int totalApproved, int totalRejected, ColorScheme colors) {
+    final chartData = [
+      {
+        'value': totalApproved.toDouble(),
+        'label': 'Approved',
+        'percentage': totalApproved + totalRejected > 0 ? (totalApproved / (totalApproved + totalRejected)) * 100 : 0.0,
+      },
+      {
+        'value': totalRejected.toDouble(),
+        'label': 'Rejected',
+        'percentage': totalApproved + totalRejected > 0 ? (totalRejected / (totalApproved + totalRejected)) * 100 : 0.0,
+      },
+    ];
+
+    return ModernChartComponents.buildModernPieChart(
+      data: chartData,
+      title: "Approval Distribution",
+      subtitle: "Breakdown of your approval decisions",
+      icon: Icons.pie_chart_outline,
+      context: context,
+      colors: [Colors.green.shade600, Colors.red.shade600],
+      centerSpaceRadius: 80,
+      showLegend: true,
+      showPercentage: true,
+    );
+  }
+
+  Widget _buildModernMetricTile({
+    required BuildContext context,
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color color,
+    required ColorScheme colors,
+  }) {
+    final textTheme = Theme.of(context).textTheme;
+    
+    return ModernFormComponents.buildModernCard(
+      context: context,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                icon,
+                color: color,
+                size: ResponsiveUtils.getResponsiveIconSize(context, 20),
+              ),
+              SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+              Expanded(
+                child: Text(
+                  title,
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: colors.onSurfaceVariant,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  maxLines: 2,
+                  softWrap: true,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+          Text(
+            value,
+            style: textTheme.titleLarge?.copyWith(
+              color: color,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
       ),
     );
   }

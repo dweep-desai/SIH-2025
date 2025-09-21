@@ -9,6 +9,8 @@ import '../pages/faculty_search_page.dart';
 import '../pages/request_approval_page.dart';
 import '../pages/approval_status_page.dart';
 import '../services/auth_service.dart';
+import '../utils/responsive_utils.dart';
+import '../utils/navigation_utils.dart';
 
 // ---------------- GLOBAL DRAWER ----------------
 class MainDrawer extends StatelessWidget {
@@ -17,58 +19,58 @@ class MainDrawer extends StatelessWidget {
   const MainDrawer({super.key, required this.context});
 
   void _signOut() {
-    Navigator.pushReplacement(
+    NavigationUtils.pushReplacementWithFade(
       context,
-      MaterialPageRoute(builder: (_) => const LoginPage()),
+      const LoginPage(),
     );
   }
 
   void _semInfo() {
-    Navigator.pushReplacement(
+    NavigationUtils.pushReplacementWithSlide(
       context,
-      MaterialPageRoute(builder: (_) => const SemesterInfoPage()),
+      const SemesterInfoPage(),
     );
   }
 
   void _dashboard() {
-    Navigator.pushReplacement(
+    NavigationUtils.pushReplacementWithSlide(
       context,
-      MaterialPageRoute(builder: (_) => const DashboardPage()),
+      const DashboardPage(),
     );
   }
 
   void _grades() {
-    Navigator.pushReplacement(
+    NavigationUtils.pushReplacementWithSlide(
       context,
-      MaterialPageRoute(builder: (_) => const GradesPage()),
+      const GradesPage(),
     );
   }
 
   void _achievements() {
-    Navigator.pushReplacement(
+    NavigationUtils.pushReplacementWithSlide(
       context,
-      MaterialPageRoute(builder: (_) => const AchievementsPage()),
+      const AchievementsPage(),
     );
   }
 
   void _searchFaculty() {
-    Navigator.push(
+    NavigationUtils.pushWithSlide(
       context,
-      MaterialPageRoute(builder: (_) => const FacultySearchPage()),
+      const FacultySearchPage(),
     );
   }
 
   void _requestApproval() {
-    Navigator.pushReplacement(
+    NavigationUtils.pushReplacementWithSlide(
       context,
-      MaterialPageRoute(builder: (_) => const RequestApprovalPage()),
+      const RequestApprovalPage(),
     );
   }
 
   void _approvalStatus() {
-    Navigator.pushReplacement(
+    NavigationUtils.pushReplacementWithSlide(
       context,
-      MaterialPageRoute(builder: (_) => const ApprovalStatusPage()),
+      const ApprovalStatusPage(),
     );
   }
 
@@ -89,71 +91,124 @@ class MainDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final textTheme = theme.textTheme;
+    
     return Drawer(
-      child: Column(
-        children: [
-          Container(
-            height: 200,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.blue.shade800, Colors.blue.shade600],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              colorScheme.primary,
+              colorScheme.secondary,
+              colorScheme.tertiary,
+            ],
+            stops: const [0.0, 0.5, 1.0],
+          ),
+        ),
+        child: Column(
+          children: [
+            // Enhanced Header Section
+            Container(
+              constraints: BoxConstraints(
+                minHeight: ResponsiveUtils.getResponsiveSpacing(context, 180),
+                maxHeight: ResponsiveUtils.getResponsiveSpacing(context, 220),
               ),
-            ),
-            child: Center(
+              padding: ResponsiveUtils.getResponsivePadding(context),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Builder(
-                    builder: (context) {
-                      final userData = AuthService().getCurrentUser();
-                      final profilePhoto = userData?['profile_photo'];
-                      
-                      // Debug profile photo in drawer
-                      if (profilePhoto != null && profilePhoto.toString().isNotEmpty) {
-                      }
-                      
-                      return CircleAvatar(
-                        radius: 40,
-                        backgroundColor: Colors.white,
-                        backgroundImage: profilePhoto != null && profilePhoto.isNotEmpty
-                            ? _getImageProvider(profilePhoto)
-                            : null,
-                        child: profilePhoto == null || profilePhoto.isEmpty
-                            ? const Icon(
-                                Icons.person,
-                                size: 40,
-                                color: Colors.indigo,
-                              )
-                            : null,
-                      );
-                    },
+                  // Profile Avatar with enhanced styling
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 20,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    child: Builder(
+                      builder: (context) {
+                        final userData = AuthService().getCurrentUser();
+                        final profilePhoto = userData?['profile_photo'];
+                        
+                        return CircleAvatar(
+                          radius: ResponsiveUtils.getResponsiveIconSize(context, 50),
+                          backgroundColor: Colors.white,
+                          backgroundImage: profilePhoto != null && profilePhoto.isNotEmpty
+                              ? _getImageProvider(profilePhoto)
+                              : null,
+                          child: profilePhoto == null || profilePhoto.isEmpty
+                              ? Icon(
+                                  Icons.person_rounded,
+                                  size: ResponsiveUtils.getResponsiveIconSize(context, 50),
+                                  color: colorScheme.primary,
+                                )
+                              : null,
+                        );
+                      },
+                    ),
                   ),
-                  const SizedBox(height: 10),
+                  
+                  SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 12)),
+                  
+                  // Name with gradient text
                   Builder(
                     builder: (context) {
                       final userData = AuthService().getCurrentUser();
                       final name = userData?['name'] ?? 'Student Name';
-                      return Text(
-                        name,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                      return ShaderMask(
+                        shaderCallback: (bounds) => LinearGradient(
+                          colors: [Colors.white, Colors.white.withOpacity(0.8)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ).createShader(bounds),
+                        child: Text(
+                          name,
+                          style: textTheme.headlineSmall?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       );
                     },
                   ),
+                  
+                  SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+                  
+                  // Email with chip-like styling
                   Builder(
                     builder: (context) {
                       final userData = AuthService().getCurrentUser();
                       final email = userData?['email'] ?? 'student@university.edu';
-                      return Text(
-                        email,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.white70,
+                      return Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: ResponsiveUtils.getResponsiveSpacing(context, 8),
+                          vertical: ResponsiveUtils.getResponsiveSpacing(context, 2),
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 12)),
+                        ),
+                        child: Text(
+                          email,
+                          style: textTheme.bodySmall?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       );
                     },
@@ -161,83 +216,227 @@ class MainDrawer extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                const SizedBox(height: 10),
-                _buildDrawerItem(
-                  icon: Icons.dashboard,
-                  title: "Dashboard",
-                  onTap: _dashboard,
+            
+            // Enhanced Menu Items
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: colorScheme.surface,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 24)),
+                    topRight: Radius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 24)),
+                  ),
                 ),
-                _buildDrawerItem(
-                  icon: Icons.info,
-                  title: "Semester Info",
-                  onTap: _semInfo,
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: [
+                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 20)),
+                    
+                    _buildModernDrawerItem(
+                      context: context,
+                      icon: Icons.dashboard_rounded,
+                      title: "Dashboard",
+                      subtitle: "Overview & quick access",
+                      onTap: _dashboard,
+                      colorScheme: colorScheme,
+                      textTheme: textTheme,
+                    ),
+                    
+                    _buildModernDrawerItem(
+                      context: context,
+                      icon: Icons.info_rounded,
+                      title: "Semester Info",
+                      subtitle: "Academic details",
+                      onTap: _semInfo,
+                      colorScheme: colorScheme,
+                      textTheme: textTheme,
+                    ),
+                    
+                    _buildModernDrawerItem(
+                      context: context,
+                      icon: Icons.grade_rounded,
+                      title: "Grades",
+                      subtitle: "Academic performance",
+                      onTap: _grades,
+                      colorScheme: colorScheme,
+                      textTheme: textTheme,
+                    ),
+                    
+                    _buildModernDrawerItem(
+                      context: context,
+                      icon: Icons.workspace_premium_rounded,
+                      title: "Student Record",
+                      subtitle: "Achievements & projects",
+                      onTap: _achievements,
+                      colorScheme: colorScheme,
+                      textTheme: textTheme,
+                    ),
+                    
+                    _buildModernDrawerItem(
+                      context: context,
+                      icon: Icons.search_rounded,
+                      title: "Search Faculty",
+                      subtitle: "Find faculty members",
+                      onTap: _searchFaculty,
+                      colorScheme: colorScheme,
+                      textTheme: textTheme,
+                    ),
+                    
+                    _buildModernDrawerItem(
+                      context: context,
+                      icon: Icons.assignment_turned_in_rounded,
+                      title: "Request Approval",
+                      subtitle: "Submit for review",
+                      onTap: _requestApproval,
+                      colorScheme: colorScheme,
+                      textTheme: textTheme,
+                    ),
+                    
+                    _buildModernDrawerItem(
+                      context: context,
+                      icon: Icons.history_rounded,
+                      title: "Approval Status",
+                      subtitle: "Track your requests",
+                      onTap: _approvalStatus,
+                      colorScheme: colorScheme,
+                      textTheme: textTheme,
+                    ),
+                    
+                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 20)),
+                    
+                    // Divider with gradient
+                    Container(
+                      height: 1,
+                      margin: EdgeInsets.symmetric(horizontal: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.transparent,
+                            colorScheme.outline.withOpacity(0.3),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ),
+                    
+                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 20)),
+                    
+                    _buildModernDrawerItem(
+                      context: context,
+                      icon: Icons.logout_rounded,
+                      title: "Sign Out",
+                      subtitle: "Logout from account",
+                      onTap: _signOut,
+                      colorScheme: colorScheme,
+                      textTheme: textTheme,
+                      isDestructive: true,
+                    ),
+                    
+                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 20)),
+                  ],
                 ),
-                _buildDrawerItem(
-                  icon: Icons.grade,
-                  title: "Grades",
-                  onTap: _grades,
-                ),
-                _buildDrawerItem(
-                  icon: Icons.workspace_premium,
-                  title: "Student Record",
-                  onTap: _achievements,
-                ),
-                // Removed Edit Profile from drawer as per new design
-                _buildDrawerItem(
-                  icon: Icons.search,
-                  title: "Search Faculty",
-                  onTap: _searchFaculty,
-                ),
-                _buildDrawerItem(
-                  icon: Icons.assignment_turned_in,
-                  title: "Request Approval",
-                  onTap: _requestApproval,
-                ),
-                _buildDrawerItem(
-                  icon: Icons.history,
-                  title: "Approval Status",
-                  onTap: _approvalStatus,
-                ),
-                const Divider(),
-                _buildDrawerItem(
-                  icon: Icons.lock_open,
-                  title: "Sign Out",
-                  onTap: _signOut,
-                  color: Colors.red,
-                ),
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildDrawerItem({
+
+  Widget _buildModernDrawerItem({
+    required BuildContext context,
     required IconData icon,
     required String title,
+    required String subtitle,
     required VoidCallback onTap,
-    Color? color,
+    required ColorScheme colorScheme,
+    required TextTheme textTheme,
+    bool isDestructive = false,
   }) {
-    return ListTile(
-      leading: Icon(icon, color: color ?? Colors.indigo),
-      title: Text(
-        title,
-        style: TextStyle(
-          color: color ?? Colors.black87,
-          fontWeight: FontWeight.w500,
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: ResponsiveUtils.getResponsiveSpacing(context, 12),
+        vertical: ResponsiveUtils.getResponsiveSpacing(context, 4),
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+        color: isDestructive 
+            ? colorScheme.errorContainer.withOpacity(0.1)
+            : colorScheme.surfaceContainerHighest.withOpacity(0.3),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: ResponsiveUtils.getResponsiveSpacing(context, 16),
+              vertical: ResponsiveUtils.getResponsiveSpacing(context, 12),
+            ),
+            child: Row(
+              children: [
+                // Icon container
+                Container(
+                  padding: EdgeInsets.all(ResponsiveUtils.getResponsiveSpacing(context, 8)),
+                  decoration: BoxDecoration(
+                    color: isDestructive 
+                        ? colorScheme.errorContainer
+                        : colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 12)),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: isDestructive 
+                        ? colorScheme.error
+                        : colorScheme.primary,
+                    size: ResponsiveUtils.getResponsiveIconSize(context, 20),
+                  ),
+                ),
+                
+                SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+                
+                // Title and subtitle
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: textTheme.titleSmall?.copyWith(
+                          color: isDestructive 
+                              ? colorScheme.error
+                              : colorScheme.onSurface,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 2)),
+                      Text(
+                        subtitle,
+                        style: textTheme.bodySmall?.copyWith(
+                          color: isDestructive 
+                              ? colorScheme.error.withOpacity(0.7)
+                              : colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                // Arrow icon
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  color: isDestructive 
+                      ? colorScheme.error
+                      : colorScheme.onSurfaceVariant,
+                  size: ResponsiveUtils.getResponsiveIconSize(context, 16),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
-      onTap: onTap,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
     );
   }
 }

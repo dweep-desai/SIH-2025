@@ -1209,9 +1209,15 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
                     border: OutlineInputBorder(),
                   ),
                   items: sortedSemesters.map((semester) {
+                    // Convert sem1, sem2, etc. to Semester 1, Semester 2, etc.
+                    String displayText = semester;
+                    if (semester.startsWith('sem')) {
+                      final semesterNumber = semester.replaceAll('sem', '');
+                      displayText = 'Semester $semesterNumber';
+                    }
                     return DropdownMenuItem<String>(
                       value: semester,
-                      child: Text(semester),
+                      child: Text(displayText),
                     );
                   }).toList(),
                   onChanged: (value) {
