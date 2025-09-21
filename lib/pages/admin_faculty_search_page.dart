@@ -66,7 +66,7 @@ class _AdminFacultySearchPageState extends State<AdminFacultySearchPage> {
           final dept = (f['department'] as String).toLowerCase();
           final dom = ((f['domain'] as String?) ?? '').toLowerCase();
           return name.contains(query) || dept.contains(query) || dom.contains(query);
-        }).toList();
+    }).toList();
       }
 
       // Sort
@@ -99,7 +99,7 @@ class _AdminFacultySearchPageState extends State<AdminFacultySearchPage> {
         body: const Center(child: CircularProgressIndicator()),
       );
     }
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Faculty Search'),
@@ -108,7 +108,7 @@ class _AdminFacultySearchPageState extends State<AdminFacultySearchPage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          children: [
+        children: [
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
@@ -163,19 +163,19 @@ class _AdminFacultySearchPageState extends State<AdminFacultySearchPage> {
               },
             ),
             const SizedBox(height: 12.0),
-            Expanded(
+          Expanded(
               child: _filteredFaculty.isNotEmpty
                   ? ListView.builder(
                       itemCount: _filteredFaculty.length,
-                      itemBuilder: (context, index) {
+                        itemBuilder: (context, index) {
                         final faculty = _filteredFaculty[index];
-                        return Card(
+                          return Card(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                           elevation: 2,
                           margin: const EdgeInsets.symmetric(vertical: 6.0),
-                          child: ListTile(
+                            child: ListTile(
                             leading: CircleAvatar(
                               backgroundColor: colors.primary,
                               child: const Icon(Icons.person, color: Colors.white),
@@ -196,9 +196,9 @@ class _AdminFacultySearchPageState extends State<AdminFacultySearchPage> {
                     ),
             ),
           ],
-        ),
-      ),
-    );
+                              ),
+                            ),
+                          );
   }
 
   Widget _buildDeptFilter(ColorScheme colors) {
@@ -435,9 +435,9 @@ class _AdminFacultySearchPageState extends State<AdminFacultySearchPage> {
                         )),
                       ],
                     ),
-                  ),
-                ),
-            ],
+                      ),
+          ),
+        ],
           ),
         ),
       ),

@@ -391,11 +391,15 @@ class AuthService {
       print('🔄 Updating domains - userId: $userId, category: $category');
       print('🔄 Domain1: "$domain1", Domain2: "$domain2"');
       print('🔄 Database URL: https://ssh-project-7ebc3-default-rtdb.asia-southeast1.firebasedatabase.app');
-      print('🔄 Full path: ${_databaseRef.child(category).child(userId).path}');
+      
+      // Fix the database path - use plural form for the collection
+      String collectionName = category == 'student' ? 'students' : category;
+      print('🔄 Collection Name: $collectionName');
+      print('🔄 Full path: ${_databaseRef.child(collectionName).child(userId).path}');
       
       // Check what's currently in Firebase before update
       print('🔄 Checking current Firebase data before update...');
-      DataSnapshot beforeSnapshot = await _databaseRef.child(category).child(userId).get();
+      DataSnapshot beforeSnapshot = await _databaseRef.child(collectionName).child(userId).get();
       if (beforeSnapshot.exists) {
         Map<dynamic, dynamic> beforeData = beforeSnapshot.value as Map<dynamic, dynamic>;
         print('🔍 Before update - domain1: "${beforeData['domain1']}", domain2: "${beforeData['domain2']}"');
@@ -404,17 +408,17 @@ class AuthService {
       
       // Update domain1
       print('🔄 Setting domain1...');
-      await _databaseRef.child(category).child(userId).child('domain1').set(domain1);
+      await _databaseRef.child(collectionName).child(userId).child('domain1').set(domain1);
       print('✅ Domain1 set successfully');
       
       // Update domain2
       print('🔄 Setting domain2...');
-      await _databaseRef.child(category).child(userId).child('domain2').set(domain2);
+      await _databaseRef.child(collectionName).child(userId).child('domain2').set(domain2);
       print('✅ Domain2 set successfully');
       
       // Verify the update by reading back immediately
       print('🔄 Verifying update by reading back immediately...');
-      DataSnapshot snapshot = await _databaseRef.child(category).child(userId).get();
+      DataSnapshot snapshot = await _databaseRef.child(collectionName).child(userId).get();
       if (snapshot.exists) {
         Map<dynamic, dynamic> data = snapshot.value as Map<dynamic, dynamic>;
         print('✅ Immediate verification - domain1: "${data['domain1']}", domain2: "${data['domain2']}"');
@@ -739,9 +743,9 @@ class AuthService {
   Future<Map<String, String>> fetchDomainsFromStudentBranch(String userId) async {
     try {
       print('🔄 Fetching domains from student branch for user: $userId');
-      print('🔄 Path: student/$userId');
+      print('🔄 Path: students/$userId');
       
-      DataSnapshot snapshot = await _databaseRef.child('student').child(userId).get();
+      DataSnapshot snapshot = await _databaseRef.child('students').child(userId).get();
       
       Map<String, String> domains = {
         'domain1': '',

@@ -54,7 +54,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
       }).toList();
 
       // Sort the filtered results
-      if (_sortBy == 'Name') {
+    if (_sortBy == 'Name') {
         _filteredStudents.sort((a, b) => (a['name'] ?? '').compareTo(b['name'] ?? ''));
       } else if (_sortBy == 'Branch') {
         _filteredStudents.sort((a, b) => (a['branch'] ?? '').compareTo(b['branch'] ?? ''));
@@ -74,7 +74,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Column(
-              children: [
+        children: [
                 _buildSearchAndFilters(),
                 Expanded(
                   child: _buildStudentList(),
@@ -91,28 +91,28 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
 
   Widget _buildSearchAndFilters() {
     return Container(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        children: [
-          TextField(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                TextField(
             decoration: const InputDecoration(
               hintText: 'Search students...',
               prefixIcon: Icon(Icons.search),
               border: OutlineInputBorder(),
             ),
-            onChanged: (value) {
+              onChanged: (value) {
               _filterStudents();
-            },
-          ),
-          const SizedBox(height: 12),
+              },
+                ),
+                const SizedBox(height: 12),
           Column(
-            children: [
-              _buildBranchFilter(),
-              const SizedBox(height: 8),
-              _buildDomainFilter(),
-              const SizedBox(height: 8),
-              _buildSortFilter(),
-            ],
+                        children: [
+                          _buildBranchFilter(),
+                          const SizedBox(height: 8),
+                          _buildDomainFilter(),
+                          const SizedBox(height: 8),
+                          _buildSortFilter(),
+                        ],
           ),
         ],
       ),
@@ -181,7 +181,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
       items: uniqueDomains.map((String domain) {
         return DropdownMenuItem<String>(
           value: domain,
-          child: Text(
+                    child: Text(
             domain,
             overflow: TextOverflow.ellipsis,
           ),
@@ -207,7 +207,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
       items: ['Name', 'Branch'].map((String sort) {
         return DropdownMenuItem<String>(
           value: sort,
-          child: Text(
+                        child: Text(
             sort,
             overflow: TextOverflow.ellipsis,
           ),
@@ -231,11 +231,11 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
 
     return ListView.builder(
       itemCount: _filteredStudents.length,
-      itemBuilder: (context, index) {
+                        itemBuilder: (context, index) {
         final student = _filteredStudents[index];
-        return Card(
+                          return Card(
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          child: ListTile(
+                            child: ListTile(
             leading: CircleAvatar(
               backgroundColor: Colors.blue.shade100,
               child: Text(
@@ -244,9 +244,9 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
               ),
             ),
             title: Text(student['name'] ?? 'Unknown'),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
                 Text('ID: ${student['student_id'] ?? 'N/A'}'),
                 Text('Branch: ${student['branch'] ?? 'N/A'}'),
                 Text('Semester: ${student['current_semester'] ?? 'N/A'}'),
@@ -280,14 +280,14 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                     const PopupMenuItem<String>(
                       value: 'semester',
                       child: Text('Semester Info'),
-                    ),
-                  ],
-                ),
+                                  ),
+                                ],
+                              ),
               ],
             ),
-          ),
-        );
-      },
+                            ),
+                          );
+                        },
     );
   }
 
@@ -336,13 +336,13 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
-              child: Column(
-                children: [
+          child: Column(
+            children: [
                   Container(
                     padding: const EdgeInsets.all(16),
                     child: Row(
-                      children: [
-                        Expanded(
+                children: [
+                  Expanded(
                           child: Text(
                             _getDetailTitle(type, student['name'] ?? 'Unknown'),
                             style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
@@ -353,10 +353,10 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                             print('🔍 Faculty Search - Close button pressed');
                             Navigator.pop(context);
                           },
-                          icon: const Icon(Icons.close),
-                        ),
-                      ],
+                      icon: const Icon(Icons.close),
                     ),
+                      ],
+                  ),
                   ),
                   Expanded(
                     child: SingleChildScrollView(
@@ -364,11 +364,11 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                       child: _buildDetailContent(type, student['student_id']),
                     ),
                   ),
-                ],
-              ),
-            );
-          },
+            ],
+          ),
         );
+      },
+    );
       },
     ).then((value) {
       print('🔍 Faculty Search - Modal closed');
@@ -502,12 +502,12 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+          borderRadius: BorderRadius.circular(12),
+        ),
                         child: TabBar(
                           indicator: BoxDecoration(
                             color: Colors.purple.shade600,
-                            borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12),
                           ),
                           labelColor: Colors.white,
                           unselectedLabelColor: Colors.grey.shade600,
@@ -713,12 +713,12 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
         print('🔍 Student Record - Processed student_record keys: ${studentRecord.keys.toList()}');
         
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+          children: [
               // Student Record Header
-              Card(
+            Card(
                 elevation: 4,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                 child: Container(
@@ -733,8 +733,8 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                   ),
                   padding: const EdgeInsets.all(20),
                   child: Column(
-                    children: [
-                      CircleAvatar(
+                  children: [
+                    CircleAvatar(
                         radius: 40,
                         backgroundImage: _getImageProvider(studentData['profile_photo']),
                         backgroundColor: Colors.white.withOpacity(0.2),
@@ -763,7 +763,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                       if (studentData['domain1'] != null || studentData['domain2'] != null)
                         Wrap(
                           spacing: 8,
-                          children: [
+                        children: [
                             if (studentData['domain1'] != null)
                               Chip(
                                 label: Text(studentData['domain1']),
@@ -775,9 +775,9 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                                 label: Text(studentData['domain2']),
                                 backgroundColor: Colors.white.withOpacity(0.2),
                                 labelStyle: const TextStyle(color: Colors.white),
-                              ),
-                          ],
-                        ),
+                    ),
+                  ],
+                ),
                       const SizedBox(height: 20),
                       
                       // Student Info Stats Row
@@ -789,7 +789,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
+              children: [
                             Column(
                               children: [
                                 Icon(Icons.school, color: Colors.white, size: 20),
@@ -807,17 +807,17 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                                   style: TextStyle(
                                     color: Colors.white70,
                                     fontSize: 10,
-                                  ),
-                                ),
-                              ],
-                            ),
+                  ),
+                ),
+              ],
+            ),
                             Container(
                               width: 1,
                               height: 40,
                               color: Colors.white.withOpacity(0.3),
                             ),
                             Column(
-                              children: [
+              children: [
                                 Icon(Icons.calendar_today, color: Colors.white, size: 20),
                                 const SizedBox(height: 4),
                                 Text(
@@ -833,17 +833,17 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                                   style: TextStyle(
                                     color: Colors.white70,
                                     fontSize: 10,
-                                  ),
-                                ),
-                              ],
-                            ),
+                  ),
+                ),
+              ],
+            ),
                             Container(
                               width: 1,
                               height: 40,
                               color: Colors.white.withOpacity(0.3),
                             ),
                             Column(
-                              children: [
+              children: [
                                 Icon(Icons.present_to_all, color: Colors.white, size: 20),
                                 const SizedBox(height: 4),
                                 Text(
@@ -859,13 +859,13 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                                   style: TextStyle(
                                     color: Colors.white70,
                                     fontSize: 10,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
                       
                       const SizedBox(height: 16),
                       
@@ -878,13 +878,13 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
+              children: [
                             Icon(
                               Icons.email,
                               color: Colors.white.withOpacity(0.8),
                               size: 16,
                             ),
-                            const SizedBox(width: 8),
+                    const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 studentData['email'] ?? 'No email provided',
@@ -992,9 +992,9 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
     }
     
     return Card(
-      elevation: 2,
+                  elevation: 2,
       margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ExpansionTile(
         title: Text(
           title,
@@ -1108,10 +1108,10 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
     });
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
           // Academic Performance Header
           Card(
             elevation: 4,
@@ -1128,7 +1128,7 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
               ),
               padding: const EdgeInsets.all(20),
               child: Column(
-                children: [
+                          children: [
                   const Icon(Icons.school, size: 48, color: Colors.white),
                   const SizedBox(height: 16),
                   const Text(
@@ -1138,8 +1138,8 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
-                  ),
-                  const SizedBox(height: 8),
+                        ),
+                        const SizedBox(height: 8),
                   Text(
                     _studentData!['name'] ?? 'N/A',
                     style: const TextStyle(
@@ -1147,15 +1147,15 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
                       color: Colors.white70,
                     ),
                   ),
-                ],
-              ),
-            ),
-          ),
+                      ],
+                    ),
+                  ),
+                ),
           const SizedBox(height: 20),
           
           // Semester Selector
           if (grades.isNotEmpty) ...[
-            Card(
+                Card(
               elevation: 2,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               child: Padding(
@@ -1232,13 +1232,13 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
         print('🔍 Dynamic Grades - Grades: $grades');
 
         return Card(
-          elevation: 2,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                 Text(
                   'Grades for $selectedSemester',
                   style: const TextStyle(
@@ -1266,7 +1266,7 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
                         border: Border.all(color: gradeColor.withOpacity(0.3)),
                       ),
                       child: Row(
-                        children: [
+                          children: [
                           Expanded(
                             flex: 3,
                             child: Column(
@@ -1327,8 +1327,8 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
                     child: Padding(
                       padding: EdgeInsets.all(16.0),
                       child: Text('No courses or grades available for this semester'),
-                    ),
                   ),
+                ),
               ],
             ),
           ),
@@ -1493,7 +1493,7 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
                     ),
                     padding: const EdgeInsets.all(20),
                     child: Column(
-                      children: [
+                  children: [
                         const Icon(Icons.calendar_today, size: 48, color: Colors.white),
                         const SizedBox(height: 16),
                         const Text(
@@ -1781,8 +1781,8 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
         children: [
           // Student Profile Card
           Card(
-            elevation: 2,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -1818,15 +1818,15 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
           Card(
             elevation: 2,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
                       Icon(Icons.school, color: colors.primary),
-                      const SizedBox(width: 8),
+                const SizedBox(width: 8),
                       Text('Current Semester: ${studentData['current_semester'] ?? 'N/A'}', style: texts.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
                     ],
                   ),
@@ -1836,9 +1836,9 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
                     children: [
                       Text('GPA: ${gpa.toStringAsFixed(2)} / 10', style: texts.bodyLarge),
                       Icon(Icons.trending_up, color: Colors.green.shade600),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
+              ],
+            ),
+            const SizedBox(height: 8),
                   LinearProgressIndicator(
                     value: gpa / 10.0,
                     minHeight: 6,
@@ -1857,8 +1857,8 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
                   Row(
                     children: [
                       Icon(Icons.check_circle_outline, color: colors.primary),
@@ -2005,10 +2005,10 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
         print('🔍 Student Record - Processed student_record keys: ${studentRecord.keys.toList()}');
         
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+          children: [
               // Student Record Header
               Card(
                 elevation: 4,
@@ -2025,7 +2025,7 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
                   ),
                   padding: const EdgeInsets.all(20),
                   child: Column(
-                    children: [
+              children: [
                       CircleAvatar(
                         radius: 40,
                         backgroundImage: _getImageProvider(studentData['profile_photo']),
@@ -2073,9 +2073,9 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
                       const SizedBox(height: 20),
                       
                       // Student Info Stats Row
-                      Container(
+            Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        decoration: BoxDecoration(
+              decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.15),
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -2159,7 +2159,7 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
                         ),
                       ),
                       
-                      const SizedBox(height: 16),
+            const SizedBox(height: 16),
                       
                       // Contact Info Row
                       Container(
@@ -2206,12 +2206,12 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
               
               // Fallback message if no records found
               if (studentRecord.isEmpty)
-                Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            Card(
+              elevation: 2,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
-                    child: Column(
+              child: Column(
                       children: [
                         Icon(
                           Icons.info_outline,
@@ -2297,8 +2297,8 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
           return ListTile(
             title: Text(item['title'] ?? 'No Title'),
             subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                 if (item['description'] != null)
                   Text(item['description']),
                 if (item['points'] != null)
@@ -2407,7 +2407,7 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
             padding: const EdgeInsets.all(16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+                      children: [
                 // Semester Info Header
                 Card(
                   elevation: 4,
@@ -2456,7 +2456,7 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
                   child: Column(
                     children: [
                       Container(
-                        decoration: BoxDecoration(
+                          decoration: BoxDecoration(
                           color: Colors.grey.shade100,
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -2499,14 +2499,14 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
                                         child: ListTile(
                                           leading: CircleAvatar(
                                             backgroundColor: Colors.purple.shade100,
-                                            child: Text(
+                          child: Text(
                                               (index + 1).toString(),
                                               style: TextStyle(
                                                 color: Colors.purple.shade800,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          ),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
                                           title: Text(
                                             courseName,
                                             style: const TextStyle(fontWeight: FontWeight.bold),
@@ -2592,12 +2592,12 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
                           ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+          ],
+        ),
+      ),
         );
       },
     );
