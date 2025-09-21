@@ -49,11 +49,22 @@ class _StudentAnalyticsViewState extends State<StudentAnalyticsView> {
     final colors = Theme.of(context).colorScheme;
     final texts = Theme.of(context).textTheme;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF4A90E2).withOpacity(0.1), // Light blue
+            const Color(0xFF7ED321).withOpacity(0.05), // Light green
+          ],
+        ),
+      ),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           // Header
           Row(
             children: [
@@ -131,6 +142,7 @@ class _StudentAnalyticsViewState extends State<StudentAnalyticsView> {
           // Student Record Summary
           _buildRecordSummaryCard(),
         ],
+      ),
       ),
     );
   }
