@@ -53,13 +53,13 @@ class ApprovalDonutChart extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        AspectRatio(aspectRatio: 1, child: chart),
-        const SizedBox(height: 8),
+        AspectRatio(aspectRatio: 1.0, child: chart),
+        const SizedBox(height: 8.0),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _legendItem(color: Colors.green, label: 'Approval', value: '$approvePct% ', style: legendStyle),
-            const SizedBox(width: 16),
+            const SizedBox(width: 16.0),
             _legendItem(color: Colors.red, label: 'Rejection', value: '$rejectPct% ', style: legendStyle),
           ],
         ),
@@ -70,8 +70,8 @@ class ApprovalDonutChart extends StatelessWidget {
   Widget _legendItem({required Color color, required String label, required String value, TextStyle? style}) {
     return Row(
       children: [
-        Container(width: 10, height: 10, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
-        const SizedBox(width: 6),
+        Container(width: 10.0, height: 10.0, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        const SizedBox(width: 6.0),
         Text('$label: ', style: style),
         Text(value, style: style?.copyWith(fontWeight: FontWeight.bold)),
       ],

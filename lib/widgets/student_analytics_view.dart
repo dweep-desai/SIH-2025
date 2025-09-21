@@ -1,6 +1,6 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
+import '../utils/image_utils.dart';
 
 class StudentAnalyticsView extends StatefulWidget {
   final String studentId;
@@ -394,11 +394,7 @@ class _StudentAnalyticsViewState extends State<StudentAnalyticsView> {
     return totalSubjects > 0 ? totalPoints / totalSubjects : 0.0;
   }
 
-  ImageProvider _getImageProvider(String imagePath) {
-    if (imagePath.startsWith('http')) {
-      return NetworkImage(imagePath);
-    } else {
-      return FileImage(File(imagePath));
-    }
+  ImageProvider? _getImageProvider(String? imagePath) {
+    return ImageUtils.getImageProvider(imagePath);
   }
 }

@@ -64,30 +64,79 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final texts = Theme.of(context).textTheme;
+    // final texts = Theme.of(context).textTheme;
     
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Student Search'),
-          backgroundColor: Colors.blue.shade700,
+          backgroundColor: Colors.transparent,
           foregroundColor: Colors.white,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF4A90E2).withOpacity(0.8), // Blue
+                  const Color(0xFF7ED321).withOpacity(0.6), // Green
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
+          elevation: 0,
         ),
         drawer: _getAppropriateDrawer(context),
-        body: const Center(child: CircularProgressIndicator()),
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                const Color(0xFF4A90E2).withOpacity(0.1), // Light blue
+                const Color(0xFF7ED321).withOpacity(0.1), // Light green
+              ],
+            ),
+          ),
+          child: const Center(child: CircularProgressIndicator()),
+        ),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Student Search'),
-        backgroundColor: Colors.blue.shade700,
+        backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                const Color(0xFF4A90E2).withOpacity(0.8), // Blue
+                const Color(0xFF7ED321).withOpacity(0.6), // Green
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        elevation: 0,
       ),
       drawer: _getAppropriateDrawer(context),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFF4A90E2).withOpacity(0.1), // Light blue
+              const Color(0xFF7ED321).withOpacity(0.1), // Light green
+            ],
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
           children: [
             TextField(
               decoration: InputDecoration(
@@ -149,6 +198,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
               child: _buildStudentList(),
             ),
           ],
+        ),
         ),
       ),
     );
@@ -506,11 +556,11 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                 // Semester Info Header
                 Card(
                   elevation: 4,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(16.0),
                       gradient: LinearGradient(
                         colors: [Colors.purple.shade600, Colors.purple.shade800],
                         begin: Alignment.topLeft,
@@ -525,7 +575,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                         const Text(
                           'Semester Information',
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 24.0,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -547,18 +597,18 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                 // Tab Bar
                 Card(
                   elevation: 2,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
                   child: Column(
                     children: [
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.0),
         ),
                         child: TabBar(
                           indicator: BoxDecoration(
                             color: Colors.purple.shade600,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.0),
                           ),
                           labelColor: Colors.white,
                           unselectedLabelColor: Colors.grey.shade600,
@@ -670,7 +720,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                                                 valueColor: AlwaysStoppedAnimation<Color>(
                                                   attendance >= 75 ? Colors.green : Colors.red,
                                                 ),
-                                                minHeight: 4,
+                                                minHeight: 4.0,
                                               ),
                                             ],
                                           ),
@@ -765,11 +815,11 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
               // Student Record Header
             Card(
                 elevation: 4,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(16.0),
                     gradient: LinearGradient(
                       colors: [Colors.blue.shade600, Colors.blue.shade800],
                       begin: Alignment.topLeft,
@@ -830,7 +880,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -919,7 +969,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -961,7 +1011,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
               if (studentRecord.isEmpty)
                 Card(
                   elevation: 2,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Column(
@@ -1037,7 +1087,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
     return Card(
                   elevation: 2,
       margin: const EdgeInsets.only(bottom: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       child: ExpansionTile(
         title: Text(
           title,
@@ -1157,11 +1207,11 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
           // Academic Performance Header
           Card(
             elevation: 4,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(16.0),
                 gradient: LinearGradient(
                   colors: [Colors.green.shade600, Colors.green.shade800],
                   begin: Alignment.topLeft,
@@ -1199,7 +1249,7 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
           if (grades.isNotEmpty) ...[
                 Card(
               elevation: 2,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: DropdownButtonFormField<String>(
@@ -1276,7 +1326,7 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
 
         return Card(
                   elevation: 2,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
@@ -1347,7 +1397,7 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                               decoration: BoxDecoration(
                                 color: gradeColor,
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(12.0),
                               ),
                               child: Text(
                                 letterGrade,
@@ -1510,11 +1560,11 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
                 // Semester Info Header
                 Card(
                   elevation: 4,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(16.0),
                       gradient: LinearGradient(
                         colors: [Colors.purple.shade600, Colors.purple.shade800],
                         begin: Alignment.topLeft,
@@ -1529,7 +1579,7 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
                         const Text(
                           'Semester Information',
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 24.0,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -1551,18 +1601,18 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
                 // Tab Bar
                 Card(
                   elevation: 2,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
                   child: Column(
                     children: [
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: TabBar(
                           indicator: BoxDecoration(
                             color: Colors.purple.shade600,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(12.0),
                           ),
                           labelColor: Colors.white,
                           unselectedLabelColor: Colors.grey.shade600,
@@ -1674,7 +1724,7 @@ class _StudentGradesViewStatefulState extends State<_StudentGradesViewStateful> 
                                                 valueColor: AlwaysStoppedAnimation<Color>(
                                                   attendance >= 75 ? Colors.green : Colors.red,
                                                 ),
-                                                minHeight: 4,
+                                                minHeight: 4.0,
                                               ),
                                             ],
                                           ),
@@ -1800,7 +1850,7 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
           // Student Profile Card
           Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
@@ -1835,7 +1885,7 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
           // Current Semester Card
           Card(
             elevation: 2,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -1859,8 +1909,8 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
             const SizedBox(height: 8),
                   LinearProgressIndicator(
                     value: gpa / 10.0,
-                    minHeight: 6,
-                    borderRadius: BorderRadius.circular(3),
+                    minHeight: 6.0,
+                    borderRadius: BorderRadius.circular(3.0),
                   ),
                 ],
               ),
@@ -1871,7 +1921,7 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
           // Attendance Card
           Card(
             elevation: 2,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -1895,8 +1945,8 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
                   const SizedBox(height: 8),
                   LinearProgressIndicator(
                     value: ((studentData['attendance'] as num?)?.toDouble() ?? 0.0) / 100.0,
-                    minHeight: 6,
-                    borderRadius: BorderRadius.circular(3),
+                    minHeight: 6.0,
+                    borderRadius: BorderRadius.circular(3.0),
                   ),
                 ],
               ),
@@ -2019,11 +2069,11 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
               // Student Record Header
               Card(
                 elevation: 4,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(16.0),
                     gradient: LinearGradient(
                       colors: [Colors.blue.shade600, Colors.blue.shade800],
                       begin: Alignment.topLeft,
@@ -2084,7 +2134,7 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -2173,7 +2223,7 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(8.0),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -2215,7 +2265,7 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
               if (studentRecord.isEmpty)
             Card(
               elevation: 2,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
               child: Column(
@@ -2291,7 +2341,7 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.only(bottom: 16),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       child: ExpansionTile(
         title: Text(
           title,
@@ -2410,11 +2460,11 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
                 // Semester Info Header
                 Card(
                   elevation: 4,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
                   child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(16.0),
                       gradient: LinearGradient(
                         colors: [Colors.purple.shade600, Colors.purple.shade800],
                         begin: Alignment.topLeft,
@@ -2429,7 +2479,7 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
                         const Text(
                           'Semester Information',
                           style: TextStyle(
-                            fontSize: 24,
+                            fontSize: 24.0,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),
@@ -2451,18 +2501,18 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
                 // Tab Bar
                 Card(
                   elevation: 2,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
                   child: Column(
                     children: [
                       Container(
                           decoration: BoxDecoration(
                           color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(12.0),
                         ),
                         child: TabBar(
                           indicator: BoxDecoration(
                             color: Colors.purple.shade600,
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(12.0),
                           ),
                           labelColor: Colors.white,
                           unselectedLabelColor: Colors.grey.shade600,
@@ -2574,7 +2624,7 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
                                                 valueColor: AlwaysStoppedAnimation<Color>(
                                                   attendance >= 75 ? Colors.green : Colors.red,
                                                 ),
-                                                minHeight: 4,
+                                                minHeight: 4.0,
                                               ),
                                             ],
                                           ),

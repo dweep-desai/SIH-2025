@@ -4,6 +4,7 @@ import 'dart:io';
 import '../widgets/student_drawer.dart';
 import '../widgets/form_components.dart';
 import '../utils/responsive_utils.dart';
+import '../utils/image_utils.dart';
 import '../services/auth_service.dart';
 import 'dashboard_page.dart';
 
@@ -47,14 +48,8 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
   }
 
   // Helper method to get appropriate image provider
-  ImageProvider _getImageProvider(String imagePath) {
-    if (imagePath.startsWith('http')) {
-      return NetworkImage(imagePath);
-    } else if (imagePath.startsWith('/') || imagePath.startsWith('C:')) {
-      return FileImage(File(imagePath));
-    } else {
-      return NetworkImage(imagePath);
-    }
+  ImageProvider? _getImageProvider(String? imagePath) {
+    return ImageUtils.getImageProvider(imagePath);
   }
 
   Future<void> _loadUserData() async {
@@ -82,8 +77,8 @@ class _StudentEditProfilePageState extends State<StudentEditProfilePage> {
     try {
       final XFile? image = await _picker.pickImage(
         source: ImageSource.gallery,
-        maxWidth: 512,
-        maxHeight: 512,
+        maxWidth: 512.0,
+        maxHeight: 512.0,
         imageQuality: 85,
       );
       

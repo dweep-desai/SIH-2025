@@ -40,9 +40,9 @@ class ModernChartComponents {
             colorScheme: colorScheme,
             textTheme: textTheme,
           ),
-          SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 20)),
+          SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 20.0)),
           SizedBox(
-            height: ResponsiveUtils.getResponsiveSpacing(context, 250),
+            height: ResponsiveUtils.getResponsiveSpacing(context, 250.0),
             child: data.isEmpty
                 ? _buildEmptyState(
                     message: "No data available",
@@ -55,7 +55,7 @@ class ModernChartComponents {
                       lineTouchData: LineTouchData(
                         enabled: true,
                         touchTooltipData: LineTouchTooltipData(
-                          tooltipRoundedRadius: ResponsiveUtils.getResponsiveBorderRadius(context, 8),
+                          tooltipRoundedRadius: ResponsiveUtils.getResponsiveBorderRadius(context, 8.0),
                           getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
                             return touchedBarSpots.map((barSpot) {
                               return LineTooltipItem(
@@ -72,18 +72,18 @@ class ModernChartComponents {
                       gridData: showGrid ? FlGridData(
                         show: true,
                         drawVerticalLine: true,
-                        horizontalInterval: 1,
-                        verticalInterval: 1,
+                        horizontalInterval: 1.0,
+                        verticalInterval: 1.0,
                         getDrawingHorizontalLine: (value) {
                           return FlLine(
                             color: colorScheme.outline.withOpacity(0.2),
-                            strokeWidth: 1,
+                            strokeWidth: 1.0,
                           );
                         },
                         getDrawingVerticalLine: (value) {
                           return FlLine(
                             color: colorScheme.outline.withOpacity(0.2),
-                            strokeWidth: 1,
+                            strokeWidth: 1.0,
                           );
                         },
                       ) : const FlGridData(show: false),
@@ -98,15 +98,15 @@ class ModernChartComponents {
                         bottomTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
-                            reservedSize: ResponsiveUtils.getResponsiveSpacing(context, 30),
-                            interval: 1,
+                            reservedSize: ResponsiveUtils.getResponsiveSpacing(context, 30.0),
+                            interval: 1.0,
                             getTitlesWidget: (double value, TitleMeta meta) {
                               if (value.toInt() >= 1 && value.toInt() <= data.length && value == value.toInt().toDouble()) {
                                 return Text(
                                   '${value.toInt()}',
                                   style: textTheme.bodySmall?.copyWith(
                                     color: colorScheme.onSurfaceVariant,
-                                    fontSize: ResponsiveUtils.getResponsiveSpacing(context, 12),
+                                    fontSize: ResponsiveUtils.getResponsiveSpacing(context, 12.0),
                                   ),
                                 );
                               }
@@ -117,14 +117,14 @@ class ModernChartComponents {
                         leftTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
-                            interval: 1,
-                            reservedSize: ResponsiveUtils.getResponsiveSpacing(context, 40),
+                            interval: 1.0,
+                            reservedSize: ResponsiveUtils.getResponsiveSpacing(context, 40.0),
                             getTitlesWidget: (double value, TitleMeta meta) {
                               return Text(
                                 value.toStringAsFixed(1),
                                 style: textTheme.bodySmall?.copyWith(
                                   color: colorScheme.onSurfaceVariant,
-                                  fontSize: ResponsiveUtils.getResponsiveSpacing(context, 12),
+                                  fontSize: ResponsiveUtils.getResponsiveSpacing(context, 12.0),
                                 ),
                               );
                             },
@@ -214,7 +214,7 @@ class ModernChartComponents {
             colorScheme: colorScheme,
             textTheme: textTheme,
           ),
-          SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 20)),
+          SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 20.0)),
           SizedBox(
             height: ResponsiveUtils.getResponsiveSpacing(context, 300),
             child: data.isEmpty
@@ -231,7 +231,7 @@ class ModernChartComponents {
                       barTouchData: BarTouchData(
                         enabled: showTooltips,
                         touchTooltipData: BarTouchTooltipData(
-                          tooltipRoundedRadius: ResponsiveUtils.getResponsiveBorderRadius(context, 8),
+                          tooltipRoundedRadius: ResponsiveUtils.getResponsiveBorderRadius(context, 8.0),
                           getTooltipItem: (group, groupIndex, rod, rodIndex) {
                             return BarTooltipItem(
                               '${data[group.x]['label']}\n${yAxisLabel}: ${rod.toY.toStringAsFixed(0)}',
@@ -285,7 +285,7 @@ class ModernChartComponents {
                                 '${value.toInt()}',
                                 style: textTheme.bodySmall?.copyWith(
                                   color: colorScheme.onSurfaceVariant,
-                                  fontSize: ResponsiveUtils.getResponsiveSpacing(context, 12),
+                                  fontSize: ResponsiveUtils.getResponsiveSpacing(context, 12.0),
                                 ),
                               );
                             },
@@ -354,13 +354,13 @@ class ModernChartComponents {
             colorScheme: colorScheme,
             textTheme: textTheme,
           ),
-          SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 20)),
+          SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 20.0)),
           Row(
             children: [
               Expanded(
                 flex: 2,
                 child: SizedBox(
-                  height: ResponsiveUtils.getResponsiveSpacing(context, 250),
+                  height: ResponsiveUtils.getResponsiveSpacing(context, 200.0),
                   child: data.isEmpty
                       ? _buildEmptyState(
                           message: "No data available",
@@ -376,7 +376,7 @@ class ModernChartComponents {
                               },
                             ),
                             borderData: FlBorderData(show: false),
-                            sectionsSpace: 2,
+                            sectionsSpace: 2.0,
                             centerSpaceRadius: centerSpaceRadius,
                             sections: _buildPieChartSections(
                               data,
@@ -445,7 +445,7 @@ class ModernChartComponents {
             colorScheme: colorScheme,
             textTheme: textTheme,
           ),
-          SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 20)),
+          SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 20.0)),
           Center(
             child: Column(
               children: [
@@ -611,12 +611,12 @@ class ModernChartComponents {
         PieChartSectionData(
           color: colors[i % colors.length],
           value: (item['value'] as num).toDouble(),
-          title: showPercentage ? '${(item['percentage'] as num).toStringAsFixed(1)}%' : '',
-          radius: ResponsiveUtils.getResponsiveSpacing(context, 54),
+          title: showPercentage ? '${(item['percentage'] as num).toDouble().toStringAsFixed(1)}%' : '',
+          radius: ResponsiveUtils.getResponsiveSpacing(context, 54.0),
           titleStyle: textTheme.bodySmall?.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontSize: ResponsiveUtils.getResponsiveSpacing(context, 12),
+            fontSize: ResponsiveUtils.getResponsiveSpacing(context, 12.0),
           ) ?? const TextStyle(),
         ),
       );
@@ -636,24 +636,24 @@ class ModernChartComponents {
       final item = data[i];
       items.add(
         Padding(
-          padding: EdgeInsets.symmetric(vertical: ResponsiveUtils.getResponsiveSpacing(context, 4)),
+          padding: EdgeInsets.symmetric(vertical: ResponsiveUtils.getResponsiveSpacing(context, 4.0)),
           child: Row(
             children: [
               Container(
-                width: ResponsiveUtils.getResponsiveSpacing(context, 12),
-                height: ResponsiveUtils.getResponsiveSpacing(context, 12),
+                width: ResponsiveUtils.getResponsiveSpacing(context, 12.0),
+                height: ResponsiveUtils.getResponsiveSpacing(context, 12.0),
                 decoration: BoxDecoration(
                   color: colors[i % colors.length],
                   shape: BoxShape.circle,
                 ),
               ),
-              SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+              SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 8.0)),
               Expanded(
                 child: Text(
                   item['label']?.toString().toUpperCase() ?? '',
                   style: textTheme.bodySmall?.copyWith(
                     color: colorScheme.onSurfaceVariant,
-                    fontSize: ResponsiveUtils.getResponsiveSpacing(context, 12),
+                    fontSize: ResponsiveUtils.getResponsiveSpacing(context, 12.0),
                   ),
                   overflow: TextOverflow.ellipsis,
                 ),

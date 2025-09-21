@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import '../widgets/student_drawer.dart';
 import '../widgets/enhanced_app_bar.dart';
@@ -8,6 +7,7 @@ import '../services/auth_service.dart';
 import '../utils/responsive_utils.dart';
 import '../utils/animation_utils.dart';
 import '../utils/color_utils.dart';
+import '../utils/image_utils.dart';
 import 'semester_info_page.dart';
 import 'student_edit_profile_page.dart';
 import 'achievements_page.dart';
@@ -42,20 +42,6 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
 
-  // Method to fetch domains from student branch
-  Future<void> _fetchDomainsFromStudentBranch() async {
-    if (_userData != null) {
-      final domains = await _authService.fetchDomainsFromStudentBranch(_userData!['id']);
-      
-      if (domains['domain1']!.isNotEmpty || domains['domain2']!.isNotEmpty) {
-        setState(() {
-          _userData!['domain1'] = domains['domain1'];
-          _userData!['domain2'] = domains['domain2'];
-        });
-      } else {
-      }
-    }
-  }
 
 
 
@@ -114,6 +100,10 @@ class _DashboardPageState extends State<DashboardPage> {
         
         // Debug profile photo loading
         if (userData['profile_photo'] != null && userData['profile_photo'].toString().isNotEmpty) {
+          print('Dashboard: Profile photo found - ${userData['profile_photo'].toString().substring(0, 50)}...');
+          print('Dashboard: Profile photo type - ${userData['profile_photo'].toString().startsWith('data:') ? 'Base64 Data URL' : userData['profile_photo'].toString().startsWith('http') ? 'Network URL' : 'Base64 String'}');
+        } else {
+          print('Dashboard: No profile photo found');
         }
         
         // Enhanced domain logging
@@ -249,19 +239,15 @@ class _DashboardPageState extends State<DashboardPage> {
       appBar: EnhancedAppBar(
         title: "Dashboard",
         subtitle: "Welcome back!",
-        backgroundColor: studentPrimary,
+        backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
         enableGradient: true,
         gradientColors: [
-          studentPrimary,
-          studentPrimary.withOpacity(0.8),
+          const Color(0xFF4A90E2).withOpacity(0.8), // Blue
+          const Color(0xFF7ED321).withOpacity(0.6), // Green
         ],
+        elevation: 0,
         actions: [
-          IconButton(
-            onPressed: _fetchDomainsFromStudentBranch,
-            icon: const Icon(Icons.domain),
-            tooltip: 'Fetch Domains from Student Branch',
-          ),
           IconButton(
             onPressed: _forceRefresh,
             icon: const Icon(Icons.refresh),
@@ -292,17 +278,6 @@ class _DashboardPageState extends State<DashboardPage> {
           );
         },
       ),
-              floatingActionButton: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  FloatingActionButton(
-                    onPressed: _forceRefresh,
-                    tooltip: 'Refresh Dashboard',
-                    child: const Icon(Icons.refresh),
-                    heroTag: "refresh",
-                  ),
-                ],
-              ),
     );
   }
 
@@ -579,18 +554,8 @@ class _DashboardPageState extends State<DashboardPage> {
   }
 
   // Helper method to get appropriate image provider
-  ImageProvider _getImageProvider(String imagePath) {
-    
-    ImageProvider provider;
-    if (imagePath.startsWith('http')) {
-      provider = NetworkImage(imagePath);
-    } else if (imagePath.startsWith('/') || imagePath.startsWith('C:')) {
-      provider = FileImage(File(imagePath));
-    } else {
-      provider = NetworkImage(imagePath);
-    }
-    
-    return provider;
+  ImageProvider? _getImageProvider(String? imagePath) {
+    return ImageUtils.getImageProvider(imagePath);
   }
 
   Widget gpaCard(BuildContext context) {

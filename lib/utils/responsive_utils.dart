@@ -198,11 +198,11 @@ class ResponsiveUtils {
       case ScreenType.mobile:
         return double.infinity;
       case ScreenType.tablet:
-        return 800;
+        return 800.0;
       case ScreenType.desktop:
-        return 1200;
+        return 1200.0;
       case ScreenType.largeDesktop:
-        return 1600;
+        return 1600.0;
     }
   }
 

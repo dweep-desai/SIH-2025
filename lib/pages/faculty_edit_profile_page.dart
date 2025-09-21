@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import '../widgets/faculty_drawer.dart';
 import '../data/faculty_profile_data.dart';
 import '../services/auth_service.dart';
+import '../utils/image_utils.dart';
 import 'faculty_dashboard_page.dart';
 
 class FacultyEditProfilePage extends StatefulWidget {
@@ -30,14 +31,8 @@ class _FacultyEditProfilePageState extends State<FacultyEditProfilePage> {
   }
 
   // Helper method to get appropriate image provider
-  ImageProvider _getImageProvider(String imagePath) {
-    if (imagePath.startsWith('http')) {
-      return NetworkImage(imagePath);
-    } else if (imagePath.startsWith('/') || imagePath.startsWith('C:')) {
-      return FileImage(File(imagePath));
-    } else {
-      return NetworkImage(imagePath);
-    }
+  ImageProvider? _getImageProvider(String? imagePath) {
+    return ImageUtils.getImageProvider(imagePath);
   }
 
   Future<void> _loadUserData() async {
@@ -58,8 +53,8 @@ class _FacultyEditProfilePageState extends State<FacultyEditProfilePage> {
     try {
       final XFile? image = await _picker.pickImage(
         source: ImageSource.gallery,
-        maxWidth: 512,
-        maxHeight: 512,
+        maxWidth: 512.0,
+        maxHeight: 512.0,
         imageQuality: 85,
       );
       if (image != null) {
@@ -190,7 +185,7 @@ class _FacultyEditProfilePageState extends State<FacultyEditProfilePage> {
                               border: Border.all(color: colors.outline),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            constraints: const BoxConstraints(minHeight: 48),
+                            constraints: const BoxConstraints(minHeight: 48.0),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
                                 value: _primaryDomain,
@@ -236,7 +231,7 @@ class _FacultyEditProfilePageState extends State<FacultyEditProfilePage> {
                               border: Border.all(color: colors.outline),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            constraints: const BoxConstraints(minHeight: 48),
+                            constraints: const BoxConstraints(minHeight: 48.0),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
                                 value: _secondaryDomain,
@@ -286,7 +281,7 @@ class _FacultyEditProfilePageState extends State<FacultyEditProfilePage> {
                                 border: Border.all(color: colors.outline),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              constraints: const BoxConstraints(minHeight: 48),
+                              constraints: const BoxConstraints(minHeight: 48.0),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
                                   value: _primaryDomain,
@@ -332,7 +327,7 @@ class _FacultyEditProfilePageState extends State<FacultyEditProfilePage> {
                                 border: Border.all(color: colors.outline),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              constraints: const BoxConstraints(minHeight: 48),
+                              constraints: const BoxConstraints(minHeight: 48.0),
                               child: DropdownButtonHideUnderline(
                                 child: DropdownButton<String>(
                                   value: _secondaryDomain,

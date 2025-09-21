@@ -48,47 +48,47 @@ class ModernFormComponents {
               ? colorScheme.surfaceContainerHighest
               : colorScheme.surfaceContainerHighest.withOpacity(0.5),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16.0)),
             borderSide: BorderSide.none,
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16.0)),
             borderSide: BorderSide(
               color: colorScheme.outline.withOpacity(0.3),
               width: 1,
             ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16.0)),
             borderSide: BorderSide(
               color: colorScheme.primary,
               width: 2,
             ),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16.0)),
             borderSide: BorderSide(
               color: colorScheme.error,
               width: 1,
             ),
           ),
           focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16.0)),
             borderSide: BorderSide(
               color: colorScheme.error,
               width: 2,
             ),
           ),
           disabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16.0)),
             borderSide: BorderSide(
               color: colorScheme.outline.withOpacity(0.2),
               width: 1,
             ),
           ),
           contentPadding: EdgeInsets.symmetric(
-            horizontal: ResponsiveUtils.getResponsiveSpacing(context, 16),
-            vertical: ResponsiveUtils.getResponsiveSpacing(context, 12),
+            horizontal: ResponsiveUtils.getResponsiveSpacing(context, 16.0),
+            vertical: ResponsiveUtils.getResponsiveSpacing(context, 12.0),
           ),
           labelStyle: textTheme.bodyMedium?.copyWith(
             color: colorScheme.onSurfaceVariant,
@@ -132,47 +132,47 @@ class ModernFormComponents {
               ? colorScheme.surfaceContainerHighest
               : colorScheme.surfaceContainerHighest.withOpacity(0.5),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16.0)),
             borderSide: BorderSide.none,
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16.0)),
             borderSide: BorderSide(
               color: colorScheme.outline.withOpacity(0.3),
               width: 1,
             ),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16.0)),
             borderSide: BorderSide(
               color: colorScheme.primary,
               width: 2,
             ),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16.0)),
             borderSide: BorderSide(
               color: colorScheme.error,
               width: 1,
             ),
           ),
           focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16.0)),
             borderSide: BorderSide(
               color: colorScheme.error,
               width: 2,
             ),
           ),
           disabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16.0)),
             borderSide: BorderSide(
               color: colorScheme.outline.withOpacity(0.2),
               width: 1,
             ),
           ),
           contentPadding: EdgeInsets.symmetric(
-            horizontal: ResponsiveUtils.getResponsiveSpacing(context, 16),
-            vertical: ResponsiveUtils.getResponsiveSpacing(context, 12),
+            horizontal: ResponsiveUtils.getResponsiveSpacing(context, 16.0),
+            vertical: ResponsiveUtils.getResponsiveSpacing(context, 12.0),
           ),
           labelStyle: textTheme.bodyMedium?.copyWith(
             color: colorScheme.onSurfaceVariant,
@@ -253,11 +253,11 @@ class ModernFormComponents {
     return Container(
       margin: margin ?? ResponsiveUtils.getResponsiveMargin(context),
       child: Card(
-        elevation: elevation ?? ResponsiveUtils.getResponsiveElevation(context, 2),
+        elevation: elevation ?? ResponsiveUtils.getResponsiveElevation(context, 2.0),
         shadowColor: colorScheme.shadow.withOpacity(0.1),
         color: backgroundColor ?? colorScheme.surfaceContainerLow,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 20)),
+          borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 20.0)),
         ),
         child: Padding(
           padding: padding ?? ResponsiveUtils.getResponsivePadding(context),
@@ -287,9 +287,9 @@ class ModernFormComponents {
               Icon(
                 icon,
                 color: colorScheme.primary,
-                size: ResponsiveUtils.getResponsiveIconSize(context, 24),
+                size: ResponsiveUtils.getResponsiveIconSize(context, 24.0),
               ),
-              SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+              SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 8.0)),
             ],
             Expanded(
               child: Column(
@@ -303,7 +303,7 @@ class ModernFormComponents {
                     ),
                   ),
                   if (subtitle != null) ...[
-                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 4)),
+                    SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 4.0)),
                     Text(
                       subtitle,
                       style: textTheme.bodyMedium?.copyWith(
@@ -316,7 +316,7 @@ class ModernFormComponents {
             ),
           ],
         ),
-        SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16)),
+        SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 16.0)),
         child,
       ],
     );
@@ -361,11 +361,11 @@ class ModernFormComponents {
             width: 2,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16)),
+            borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 16.0)),
           ),
           padding: EdgeInsets.symmetric(
-            horizontal: ResponsiveUtils.getResponsiveSpacing(context, 20),
-            vertical: ResponsiveUtils.getResponsiveSpacing(context, 12),
+            horizontal: ResponsiveUtils.getResponsiveSpacing(context, 20.0),
+            vertical: ResponsiveUtils.getResponsiveSpacing(context, 12.0),
           ),
         ),
       ),
@@ -383,25 +383,25 @@ class ModernFormComponents {
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      margin: EdgeInsets.only(top: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+      margin: EdgeInsets.only(top: ResponsiveUtils.getResponsiveSpacing(context, 8.0)),
       padding: EdgeInsets.symmetric(
-        horizontal: ResponsiveUtils.getResponsiveSpacing(context, 12),
-        vertical: ResponsiveUtils.getResponsiveSpacing(context, 8),
+        horizontal: ResponsiveUtils.getResponsiveSpacing(context, 12.0),
+        vertical: ResponsiveUtils.getResponsiveSpacing(context, 8.0),
       ),
       decoration: BoxDecoration(
         color: isError 
             ? colorScheme.errorContainer
             : colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 8)),
+        borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 8.0)),
       ),
       child: Row(
         children: [
           Icon(
             isError ? Icons.error_outline : Icons.check_circle_outline,
             color: isError ? colorScheme.error : colorScheme.primary,
-            size: ResponsiveUtils.getResponsiveIconSize(context, 16),
+            size: ResponsiveUtils.getResponsiveIconSize(context, 16.0),
           ),
-          SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+          SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 8.0)),
           Expanded(
             child: Text(
               message,

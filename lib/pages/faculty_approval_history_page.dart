@@ -98,17 +98,42 @@ class _FacultyApprovalHistoryPageState extends State<FacultyApprovalHistoryPage>
   Widget build(BuildContext context) {
     
     // Faculty theme: green
-    final Color facultyPrimary = Colors.green.shade700;
+    // final Color facultyPrimary = Colors.green.shade700;
 
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Approval History'),
-          backgroundColor: facultyPrimary,
+          backgroundColor: Colors.transparent,
           foregroundColor: Colors.white,
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF4A90E2).withOpacity(0.8), // Blue
+                  const Color(0xFF7ED321).withOpacity(0.6), // Green
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
+          elevation: 0,
         ),
         drawer: MainDrawer(context: context, isFaculty: true),
-        body: const Center(child: CircularProgressIndicator()),
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                const Color(0xFF4A90E2).withOpacity(0.1), // Light blue
+                const Color(0xFF7ED321).withOpacity(0.1), // Light green
+              ],
+            ),
+          ),
+          child: const Center(child: CircularProgressIndicator()),
+        ),
       );
     }
 
@@ -116,8 +141,21 @@ class _FacultyApprovalHistoryPageState extends State<FacultyApprovalHistoryPage>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Approval History'),
-        backgroundColor: facultyPrimary,
+        backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                const Color(0xFF4A90E2).withOpacity(0.8), // Blue
+                const Color(0xFF7ED321).withOpacity(0.6), // Green
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+        elevation: 0,
         actions: [
           IconButton(
             onPressed: () {
@@ -129,35 +167,46 @@ class _FacultyApprovalHistoryPageState extends State<FacultyApprovalHistoryPage>
         ],
       ),
       drawer: MainDrawer(context: context, isFaculty: true),
-      body: _approvalHistory.isEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.history,
-                    size: 64,
-                    color: Colors.grey[400],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No approval history to display',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Colors.grey[600],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFF4A90E2).withOpacity(0.1), // Light blue
+              const Color(0xFF7ED321).withOpacity(0.1), // Light green
+            ],
+          ),
+        ),
+        child: _approvalHistory.isEmpty
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.history,
+                      size: 64,
+                      color: Colors.grey[400],
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Debug: _approvalHistory.length = ${_approvalHistory.length}',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.grey[500],
+                    const SizedBox(height: 16),
+                    Text(
+                      'No approval history to display',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.grey[600],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16.0),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Debug: _approvalHistory.length = ${_approvalHistory.length}',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.grey[500],
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : ListView.builder(
+                padding: const EdgeInsets.all(16.0),
               itemCount: _approvalHistory.length,
               itemBuilder: (context, index) {
                 final item = _approvalHistory[index];
@@ -183,7 +232,8 @@ class _FacultyApprovalHistoryPageState extends State<FacultyApprovalHistoryPage>
                 );
               },
             ),
-    );
+        ),
+      );
   }
 }
 

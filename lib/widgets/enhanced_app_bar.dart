@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../utils/responsive_utils.dart';
 
@@ -81,15 +82,29 @@ class EnhancedAppBar extends StatelessWidget implements PreferredSizeWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.2),
+            width: 1,
+          ),
           boxShadow: enableShadow ? [
             BoxShadow(
               color: shadowColor ?? colorScheme.shadow.withOpacity(0.1),
               blurRadius: shadowBlurRadius ?? 8,
               offset: const Offset(0, 2),
             ),
+            BoxShadow(
+              color: Colors.white.withOpacity(0.1),
+              blurRadius: 1,
+              offset: const Offset(0, 1),
+            ),
           ] : null,
         ),
-        child: appBarContent,
+        child: ClipRRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: appBarContent,
+          ),
+        ),
       );
     }
 
@@ -166,8 +181,8 @@ class EnhancedAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize {
-    final baseHeight = kToolbarHeight;
-    final subtitleHeight = subtitle != null ? 20.0 : 0.0;
+    final baseHeight = kToolbarHeight * 0.8; // Make it 20% smaller
+    final subtitleHeight = subtitle != null ? 16.0 : 0.0; // Smaller subtitle height
     return Size.fromHeight(baseHeight + subtitleHeight);
   }
 }

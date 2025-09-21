@@ -80,6 +80,7 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
         
         // Log each analytics field for debugging
         _approvalAnalytics.forEach((key, value) {
+          print('Analytics $key: $value (${value.runtimeType})');
         });
       } else {
         
@@ -113,19 +114,20 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
     // Faculty theme: green
-    final Color facultyPrimary = Colors.green.shade700;
+    // final Color facultyPrimary = Colors.green.shade700;
 
     if (_isLoading) {
       return Scaffold(
         appBar: EnhancedAppBar(
           title: 'Approval Analytics',
-          backgroundColor: facultyPrimary,
+          backgroundColor: Colors.transparent,
           foregroundColor: Colors.white,
           enableGradient: true,
           gradientColors: [
-            facultyPrimary,
-            facultyPrimary.withOpacity(0.8),
+            const Color(0xFF4A90E2).withOpacity(0.8), // Blue
+            const Color(0xFF7ED321).withOpacity(0.6), // Green
           ],
+          elevation: 0,
         ),
         drawer: MainDrawer(context: context, isFaculty: true),
         body: LoadingComponents.buildPulseLoading(
@@ -139,13 +141,14 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
       return Scaffold(
         appBar: EnhancedAppBar(
           title: 'Approval Analytics',
-          backgroundColor: facultyPrimary,
+          backgroundColor: Colors.transparent,
           foregroundColor: Colors.white,
           enableGradient: true,
           gradientColors: [
-            facultyPrimary,
-            facultyPrimary.withOpacity(0.8),
+            const Color(0xFF4A90E2).withOpacity(0.8), // Blue
+            const Color(0xFF7ED321).withOpacity(0.6), // Green
           ],
+          elevation: 0,
         ),
         drawer: MainDrawer(context: context, isFaculty: true),
         body: Center(
@@ -173,22 +176,25 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
       );
     }
 
-    final totalApproved = _approvalAnalytics['total_approved'] ?? 0;
-    final totalRejected = _approvalAnalytics['total_rejected'] ?? 0;
-    final approvalRate = _approvalAnalytics['approval_rate'] ?? 0.0;
-    final avgPoints = _approvalAnalytics['avg_points_awarded'] ?? 0.0;
+    final totalApproved = (_approvalAnalytics['total_approved'] ?? 0).toInt();
+    final totalRejected = (_approvalAnalytics['total_rejected'] ?? 0).toInt();
+    final approvalRate = (_approvalAnalytics['approval_rate'] ?? 0.0).toDouble();
+    final avgPoints = (_approvalAnalytics['avg_points_awarded'] ?? 0.0).toDouble();
+    
+    print('Processed values - totalApproved: $totalApproved (${totalApproved.runtimeType}), totalRejected: $totalRejected (${totalRejected.runtimeType})');
 
     return Scaffold(
       appBar: EnhancedAppBar(
         title: 'Approval Analytics',
         subtitle: 'Track your approval performance',
-        backgroundColor: facultyPrimary,
+        backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
         enableGradient: true,
         gradientColors: [
-          facultyPrimary,
-          facultyPrimary.withOpacity(0.8),
+          const Color(0xFF4A90E2).withOpacity(0.8), // Blue
+          const Color(0xFF7ED321).withOpacity(0.6), // Green
         ],
+        elevation: 0,
         actions: [
           IconButton(
             onPressed: () {
@@ -200,45 +206,89 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
         ],
       ),
       drawer: MainDrawer(context: context, isFaculty: true),
-      body: SingleChildScrollView(
-        padding: ResponsiveUtils.getResponsivePadding(context),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Overview Metrics
-            _buildMetricsGrid(context, totalApproved, totalRejected, approvalRate, avgPoints, colors),
-            SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 24)),
-            // Modern Donut Chart
-            _buildModernDonutChart(context, totalApproved, totalRejected, colors),
-          ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              const Color(0xFF4A90E2).withOpacity(0.1), // Light blue
+              const Color(0xFF7ED321).withOpacity(0.1), // Light green
+            ],
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: ResponsiveUtils.getResponsivePadding(context),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Overview Metrics
+              _buildMetricsGrid(context, totalApproved, totalRejected, approvalRate, avgPoints, colors),
+              SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 24.0)),
+              // Modern Donut Chart
+              _buildModernDonutChart(context, totalApproved, totalRejected, colors),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildMetricsGrid(BuildContext context, int totalApproved, int totalRejected, double approvalRate, double avgPoints, ColorScheme colors) {
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: _buildModernMetricTile(
-            context: context,
-            title: 'Total Approved',
-            value: '$totalApproved',
-            icon: Icons.check_circle,
-            color: Colors.green,
-            colors: colors,
-          ),
+        // First row: Total Approved and Total Rejected
+        Row(
+          children: [
+            Expanded(
+              child: _buildModernMetricTile(
+                context: context,
+                title: 'Total Approved',
+                value: '$totalApproved',
+                icon: Icons.check_circle,
+                color: Colors.green,
+                colors: colors,
+              ),
+            ),
+            SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 12.0)),
+            Expanded(
+              child: _buildModernMetricTile(
+                context: context,
+                title: 'Total Rejected',
+                value: '$totalRejected',
+                icon: Icons.cancel,
+                color: Colors.red,
+                colors: colors,
+              ),
+            ),
+          ],
         ),
-        SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 12)),
-        Expanded(
-          child: _buildModernMetricTile(
-            context: context,
-            title: 'Total Rejected',
-            value: '$totalRejected',
-            icon: Icons.cancel,
-            color: Colors.red,
-            colors: colors,
-          ),
+        SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 12.0)),
+        // Second row: Approval Rate and Avg Points Awarded
+        Row(
+          children: [
+            Expanded(
+              child: _buildModernMetricTile(
+                context: context,
+                title: 'Approval Rate',
+                value: '${(approvalRate * 100).toStringAsFixed(1)}%',
+                icon: Icons.percent,
+                color: colors.primary,
+                colors: colors,
+              ),
+            ),
+            SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 12.0)),
+            Expanded(
+              child: _buildModernMetricTile(
+                context: context,
+                title: 'Avg Points Awarded',
+                value: avgPoints.toStringAsFixed(1),
+                icon: Icons.star_rate,
+                color: colors.tertiary,
+                colors: colors,
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -249,12 +299,12 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
       {
         'value': totalApproved.toDouble(),
         'label': 'Approved',
-        'percentage': totalApproved + totalRejected > 0 ? (totalApproved / (totalApproved + totalRejected)) * 100 : 0.0,
+        'percentage': totalApproved + totalRejected > 0 ? (totalApproved.toDouble() / (totalApproved + totalRejected).toDouble()) * 100.0 : 0.0,
       },
       {
         'value': totalRejected.toDouble(),
         'label': 'Rejected',
-        'percentage': totalApproved + totalRejected > 0 ? (totalRejected / (totalApproved + totalRejected)) * 100 : 0.0,
+        'percentage': totalApproved + totalRejected > 0 ? (totalRejected.toDouble() / (totalApproved + totalRejected).toDouble()) * 100.0 : 0.0,
       },
     ];
 
@@ -265,7 +315,7 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
       icon: Icons.pie_chart_outline,
       context: context,
       colors: [Colors.green.shade600, Colors.red.shade600],
-      centerSpaceRadius: 80,
+      centerSpaceRadius: 60.0,
       showLegend: true,
       showPercentage: true,
     );
@@ -291,9 +341,9 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
               Icon(
                 icon,
                 color: color,
-                size: ResponsiveUtils.getResponsiveIconSize(context, 20),
+                size: ResponsiveUtils.getResponsiveIconSize(context, 20.0),
               ),
-              SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+              SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, 8.0)),
               Expanded(
                 child: Text(
                   title,
@@ -307,7 +357,7 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
               ),
             ],
           ),
-          SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 8)),
+          SizedBox(height: ResponsiveUtils.getResponsiveSpacing(context, 8.0)),
           Text(
             value,
             style: textTheme.titleLarge?.copyWith(

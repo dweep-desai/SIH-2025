@@ -42,6 +42,16 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
     return 'student';
   }
 
+  void _selectCategory(int index) {
+    if (selectedIndex == index) return;
+    
+    setState(() {
+      selectedIndex = index;
+    });
+    
+    HapticFeedback.lightImpact();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -393,11 +403,35 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 20)),
-        child: Row(
+        child: Stack(
           children: [
-            Expanded(child: _buildAnimatedCategoryButton(0, 'STUDENT', Icons.person_rounded, context, colorScheme, textTheme)),
-            Expanded(child: _buildAnimatedCategoryButton(1, 'FACULTY', Icons.school_rounded, context, colorScheme, textTheme)),
-            Expanded(child: _buildAnimatedCategoryButton(2, 'ADMIN', Icons.admin_panel_settings_rounded, context, colorScheme, textTheme)),
+            // Smooth sliding background
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOutCubic,
+              top: 0,
+              left: (MediaQuery.of(context).size.width - ResponsiveUtils.getResponsivePadding(context).left * 2) / 3 * selectedIndex,
+              child: Container(
+                width: (MediaQuery.of(context).size.width - ResponsiveUtils.getResponsivePadding(context).left * 2) / 3,
+                height: double.infinity, // Cover the entire height
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [colorScheme.primary, colorScheme.secondary],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveBorderRadius(context, 20)),
+                ),
+              ),
+            ),
+            // Category buttons
+            Row(
+              children: [
+                Expanded(child: _buildAnimatedCategoryButton(0, 'STUDENT', Icons.person_rounded, context, colorScheme, textTheme)),
+                Expanded(child: _buildAnimatedCategoryButton(1, 'FACULTY', Icons.school_rounded, context, colorScheme, textTheme)),
+                Expanded(child: _buildAnimatedCategoryButton(2, 'ADMIN', Icons.admin_panel_settings_rounded, context, colorScheme, textTheme)),
+              ],
+            ),
           ],
         ),
       ),
@@ -407,27 +441,12 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
   Widget _buildAnimatedCategoryButton(int index, String label, IconData icon, BuildContext context, ColorScheme colorScheme, TextTheme textTheme) {
     final isSelected = selectedIndex == index;
     
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      decoration: BoxDecoration(
-        gradient: isSelected
-            ? LinearGradient(
-                colors: [colorScheme.primary, colorScheme.secondary],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              )
-            : null,
-        color: isSelected ? null : colorScheme.surface,
-      ),
+    return Container(
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            setState(() {
-              selectedIndex = index;
-            });
-            HapticFeedback.lightImpact();
+            _selectCategory(index);
           },
           child: Container(
             padding: ResponsiveUtils.getResponsivePadding(context).copyWith(
@@ -441,16 +460,26 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOutCubic,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: isSelected 
-                        ? colorScheme.onPrimary.withOpacity(0.2)
-                        : colorScheme.primaryContainer,
+                        ? Colors.black.withOpacity(0.1)
+                        : colorScheme.primaryContainer.withOpacity(0.5),
                     shape: BoxShape.circle,
+                    boxShadow: isSelected ? [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ] : null,
                   ),
                   child: Icon(
                     icon,
-                    color: isSelected ? colorScheme.onPrimary : colorScheme.primary,
+                    color: isSelected 
+                        ? Colors.black 
+                        : colorScheme.primary.withOpacity(0.6),
                     size: ResponsiveUtils.getResponsiveIconSize(context, 24),
                   ),
                 ),
@@ -460,8 +489,10 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 Text(
                   label,
                   style: textTheme.labelLarge?.copyWith(
-                    color: isSelected ? colorScheme.onPrimary : colorScheme.primary,
-                    fontWeight: FontWeight.bold,
+                    color: isSelected 
+                        ? Colors.black 
+                        : colorScheme.primary.withOpacity(0.6),
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
                     letterSpacing: 0.5,
                   ),
                   textAlign: TextAlign.center,

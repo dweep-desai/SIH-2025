@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'base64_storage_service.dart';
 
 class AuthService {
   static final AuthService _instance = AuthService._internal();
@@ -288,17 +290,36 @@ class AuthService {
     }
   }
 
-  // Update user profile photo
-  Future<void> updateProfilePhoto(String userId, String category, String photoUrl) async {
+  // Update user profile photo - converts local files to Base64 for cross-device compatibility
+  Future<void> updateProfilePhoto(String userId, String category, String photoPathOrUrl) async {
     try {
+      String finalPhotoData = photoPathOrUrl;
+      
+      // Check if it's a local file path (needs to be converted to Base64)
+      if (photoPathOrUrl.startsWith('/') || photoPathOrUrl.startsWith('C:') || photoPathOrUrl.startsWith('D:')) {
+        final file = File(photoPathOrUrl);
+        if (await file.exists()) {
+          // Convert to Base64 for cross-device compatibility
+          final base64Service = Base64StorageService();
+          final base64String = await base64Service.imageToBase64(file);
+          if (base64String != null) {
+            finalPhotoData = base64String;
+          } else {
+            throw Exception('Failed to convert profile photo to Base64');
+          }
+        } else {
+          throw Exception('Profile photo file does not exist');
+        }
+      }
+      
       // Fix the database path - use plural form for the collection
       String collectionName = category == 'student' ? 'students' : category;
-      await _databaseRef.child(collectionName).child(userId).child('profile_photo').set(photoUrl);
+      await _databaseRef.child(collectionName).child(userId).child('profile_photo').set(finalPhotoData);
       
       if (_currentUser != null) {
-        _currentUser!['profile_photo'] = photoUrl;
-        }
-      } catch (e) {
+        _currentUser!['profile_photo'] = finalPhotoData;
+      }
+    } catch (e) {
       throw e;
     }
   }

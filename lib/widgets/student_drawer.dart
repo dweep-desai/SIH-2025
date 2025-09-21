@@ -11,6 +11,7 @@ import '../pages/approval_status_page.dart';
 import '../services/auth_service.dart';
 import '../utils/responsive_utils.dart';
 import '../utils/navigation_utils.dart';
+import '../utils/image_utils.dart';
 
 // ---------------- GLOBAL DRAWER ----------------
 class MainDrawer extends StatelessWidget {
@@ -75,18 +76,8 @@ class MainDrawer extends StatelessWidget {
   }
 
   // Helper method to get appropriate image provider
-  ImageProvider _getImageProvider(String imagePath) {
-    
-    ImageProvider provider;
-    if (imagePath.startsWith('http')) {
-      provider = NetworkImage(imagePath);
-    } else if (imagePath.startsWith('/') || imagePath.startsWith('C:')) {
-      provider = FileImage(File(imagePath));
-    } else {
-      provider = NetworkImage(imagePath);
-    }
-    
-    return provider;
+  ImageProvider? _getImageProvider(String? imagePath) {
+    return ImageUtils.getImageProvider(imagePath);
   }
 
   @override
@@ -114,8 +105,8 @@ class MainDrawer extends StatelessWidget {
             // Enhanced Header Section
             Container(
               constraints: BoxConstraints(
-                minHeight: ResponsiveUtils.getResponsiveSpacing(context, 180),
-                maxHeight: ResponsiveUtils.getResponsiveSpacing(context, 220),
+                minHeight: ResponsiveUtils.getResponsiveSpacing(context, 180.0),
+                maxHeight: ResponsiveUtils.getResponsiveSpacing(context, 220.0),
               ),
               padding: ResponsiveUtils.getResponsivePadding(context),
               child: Column(
