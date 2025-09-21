@@ -226,14 +226,19 @@ class AuthService {
       final students = <Map<String, dynamic>>[];
       
       if (snapshot.exists) {
-        Map<dynamic, dynamic> studentsData = snapshot.value as Map<dynamic, dynamic>;
-        studentsData.forEach((key, value) {
-          students.add({
-            'id': key,
-            ...Map<String, dynamic>.from(value as Map<dynamic, dynamic>),
+        final rawData = snapshot.value;
+        if (rawData is Map) {
+          rawData.forEach((key, value) {
+            if (value is Map) {
+              students.add({
+                'id': key,
+                ...Map<String, dynamic>.from(value),
+              });
+            }
           });
-        });
+        }
       }
+      print('✅ Successfully fetched ${students.length} students');
       return students;
     } catch (e) {
       print('❌ Error getting all students: $e');
@@ -248,14 +253,19 @@ class AuthService {
       final faculty = <Map<String, dynamic>>[];
       
       if (snapshot.exists) {
-        Map<dynamic, dynamic> facultyData = snapshot.value as Map<dynamic, dynamic>;
-        facultyData.forEach((key, value) {
-          faculty.add({
-            'id': key,
-            ...Map<String, dynamic>.from(value as Map<dynamic, dynamic>),
+        final rawData = snapshot.value;
+        if (rawData is Map) {
+          rawData.forEach((key, value) {
+            if (value is Map) {
+              faculty.add({
+                'id': key,
+                ...Map<String, dynamic>.from(value),
+              });
+            }
           });
-        });
+        }
       }
+      print('✅ Successfully fetched ${faculty.length} faculty');
       return faculty;
     } catch (e) {
       print('❌ Error getting all faculty: $e');
@@ -273,12 +283,20 @@ class AuthService {
     try {
       final snapshot = await _databaseRef.child('students').child(studentId).get();
       if (snapshot.exists) {
-        final data = Map<String, dynamic>.from(snapshot.value as Map<dynamic, dynamic>);
-        return data;
+        final rawData = snapshot.value;
+        if (rawData is Map) {
+          final data = Map<String, dynamic>.from(rawData);
+          print('✅ Successfully fetched student data for $studentId');
+          return data;
+        } else {
+          print('❌ Student data is not a Map for $studentId: ${rawData.runtimeType}');
+          return null;
+        }
       }
+      print('❌ No student data found for $studentId');
       return null;
     } catch (e) {
-      print('Error getting student data: $e');
+      print('❌ Error getting student data for $studentId: $e');
       return null;
     }
   }

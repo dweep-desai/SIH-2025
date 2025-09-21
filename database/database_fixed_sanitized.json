@@ -4280,26 +4280,31 @@
   },
   "admin": {
     "A20250001": {
+      "category": "admin",
       "admin_id": "A20250001",
       "email": "admin1@univ.edu",
       "password": "Admin#2025a"
     },
     "A20250002": {
+      "category": "admin",
       "admin_id": "A20250002",
       "email": "admin2@univ.edu",
       "password": "Admin#2025b"
     },
     "A20250003": {
+      "category": "admin",
       "admin_id": "A20250003",
       "email": "admin3@univ.edu",
       "password": "Admin#2025c"
     },
     "A20250004": {
+      "category": "admin",
       "admin_id": "A20250004",
       "email": "admin4@univ.edu",
       "password": "Admin#2025d"
     },
     "A20250005": {
+      "category": "admin",
       "admin_id": "A20250005",
       "email": "admin5@univ.edu",
       "password": "Admin#2025e"

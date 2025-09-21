@@ -41,14 +41,14 @@ class AdminDrawer extends StatelessWidget {
   }
 
   void _facultySearch() {
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const AdminFacultySearchPage()),
     );
   }
 
   void _studentSearch() {
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const AdminStudentSearchPage()),
     );

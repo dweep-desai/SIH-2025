@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import '../widgets/faculty_drawer.dart';
 import '../widgets/approval_donut_chart.dart';
 import 'faculty_edit_profile_page.dart';
+import 'faculty_notifications_page.dart';
 import '../services/auth_service.dart';
 
 // ---------------- FACULTY DASHBOARD PAGE ----------------
@@ -24,6 +25,7 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
   List<Map<String, dynamic>> _approvalRequests = [];
   List<Map<String, dynamic>> _approvalHistory = [];
   Map<String, dynamic> _approvalAnalytics = {};
+  int _notificationCount = 0;
 
   @override
   void initState() {
@@ -45,6 +47,7 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
         
         // Load faculty-specific data
         await _loadFacultyData();
+        await _loadNotificationCount();
       } else {
         print('❌ No faculty user data found');
         setState(() => _isLoading = false);
@@ -100,6 +103,7 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
   Future<void> _refreshApprovalRequests() async {
     print('🔄 Refreshing approval requests...');
     await _loadApprovalRequestsFromFirebase();
+    await _loadNotificationCount(); // Also refresh notification count
     setState(() {});
     
     ScaffoldMessenger.of(context).showSnackBar(
@@ -218,6 +222,51 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
         'avg_points_awarded': 0.0,
       };
     }
+  }
+
+  // Method to load notification count from approval requests
+  Future<void> _loadNotificationCount() async {
+    try {
+      if (_userData == null) return;
+      
+      final facultyId = _userData!['faculty_id'] ?? _userData!['id'];
+      print('🔔 Loading notification count for faculty: $facultyId');
+
+      final snapshot = await FirebaseDatabase.instance.ref()
+          .child('faculty')
+          .child(facultyId)
+          .child('approval_section')
+          .get();
+      
+      if (snapshot.exists) {
+        final approvalData = Map<String, dynamic>.from(snapshot.value as Map<dynamic, dynamic>);
+        setState(() {
+          _notificationCount = approvalData.length;
+        });
+        print('🔔 Notification count: $_notificationCount');
+      } else {
+        setState(() {
+          _notificationCount = 0;
+        });
+        print('🔔 No notifications found');
+      }
+    } catch (e) {
+      print('❌ Error loading notification count: $e');
+      setState(() {
+        _notificationCount = 0;
+      });
+    }
+  }
+
+  // Method to open notifications page
+  void _openNotifications() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const FacultyNotificationsPage()),
+    ).then((_) {
+      // Refresh notification count when returning from notifications page
+      _loadNotificationCount();
+    });
   }
 
   // Method to load approval requests directly from Firebase
@@ -359,25 +408,40 @@ class _FacultyDashboardPageState extends State<FacultyDashboardPage> {
         backgroundColor: facultyPrimary,
         foregroundColor: Colors.white,
         actions: [
-          IconButton(
-            onPressed: _refreshApprovalRequests,
-            icon: const Icon(Icons.approval),
-            tooltip: 'Refresh Approval Requests',
-          ),
-          IconButton(
-            onPressed: _refreshApprovalHistory,
-            icon: const Icon(Icons.history),
-            tooltip: 'Refresh Approval History',
-          ),
-          IconButton(
-            onPressed: _refreshApprovalAnalytics,
-            icon: const Icon(Icons.analytics),
-            tooltip: 'Refresh Approval Analytics',
-          ),
-          IconButton(
-            onPressed: _debugApprovalSection,
-            icon: const Icon(Icons.bug_report),
-            tooltip: 'Debug Approval Section',
+          // Notification bell with badge
+          Stack(
+            children: [
+              IconButton(
+                onPressed: _openNotifications,
+                icon: const Icon(Icons.notifications),
+                tooltip: 'Notifications',
+              ),
+              if (_notificationCount > 0)
+                Positioned(
+                  right: 8,
+                  top: 8,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 16,
+                      minHeight: 16,
+                    ),
+                    child: Text(
+                      '$_notificationCount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
           ),
           IconButton(
             onPressed: refreshData,
