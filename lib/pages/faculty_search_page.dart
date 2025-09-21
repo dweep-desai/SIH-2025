@@ -110,7 +110,11 @@ class _FacultySearchPageState extends State<FacultySearchPage> {
     
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Faculty Search')),
+        appBar: AppBar(
+          title: const Text('Faculty Search'),
+          backgroundColor: Colors.blue.shade700,
+          foregroundColor: Colors.white,
+        ),
         drawer: _getAppropriateDrawer(context),
         body: const Center(child: CircularProgressIndicator()),
       );
@@ -119,6 +123,8 @@ class _FacultySearchPageState extends State<FacultySearchPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Faculty Search'),
+        backgroundColor: Colors.blue.shade700,
+        foregroundColor: Colors.white,
       ),
       drawer: _getAppropriateDrawer(context),
       body: Padding(

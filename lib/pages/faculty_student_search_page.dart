@@ -63,6 +63,21 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final texts = Theme.of(context).textTheme;
+    
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Student Search'),
+          backgroundColor: Colors.blue.shade700,
+          foregroundColor: Colors.white,
+        ),
+        drawer: _getAppropriateDrawer(context),
+        body: const Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Student Search'),
@@ -70,16 +85,72 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
         foregroundColor: Colors.white,
       ),
       drawer: _getAppropriateDrawer(context),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
-        children: [
-                _buildSearchAndFilters(),
-                Expanded(
-                  child: _buildStudentList(),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              decoration: InputDecoration(
+                labelText: 'Search by Student Name or Branch',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0),
                 ),
-              ],
+                filled: true,
+                fillColor: colors.surfaceContainerHighest,
+              ),
+              onChanged: (value) {
+                _filterStudents();
+              },
             ),
+            const SizedBox(height: 12.0),
+            // Filters: Branch, Domain, Sort By (responsive like admin search)
+            LayoutBuilder(
+              builder: (context, constraints) {
+                if (constraints.maxWidth > 700) {
+                  return Row(
+                    children: [
+                      Expanded(child: _buildBranchFilter()),
+                      const SizedBox(width: 8),
+                      Expanded(child: _buildDomainFilter()),
+                      const SizedBox(width: 8),
+                      Expanded(child: _buildSortFilter()),
+                    ],
+                  );
+                } else if (constraints.maxWidth > 500) {
+                  return Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(child: _buildBranchFilter()),
+                          const SizedBox(width: 8),
+                          Expanded(child: _buildDomainFilter()),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      _buildSortFilter(),
+                    ],
+                  );
+                } else {
+                  return Column(
+                    children: [
+                      _buildBranchFilter(),
+                      const SizedBox(height: 8),
+                      _buildDomainFilter(),
+                      const SizedBox(height: 8),
+                      _buildSortFilter(),
+                    ],
+                  );
+                }
+              },
+            ),
+            const SizedBox(height: 16.0),
+            Expanded(
+              child: _buildStudentList(),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -88,41 +159,12 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
     return faculty_drawer.MainDrawer(context: context, isFaculty: true);
   }
 
-  Widget _buildSearchAndFilters() {
-    return Container(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                TextField(
-            decoration: const InputDecoration(
-              hintText: 'Search students...',
-              prefixIcon: Icon(Icons.search),
-              border: OutlineInputBorder(),
-            ),
-              onChanged: (value) {
-              _filterStudents();
-              },
-                ),
-                const SizedBox(height: 12),
-          Column(
-                        children: [
-                          _buildBranchFilter(),
-                          const SizedBox(height: 8),
-                          _buildDomainFilter(),
-                          const SizedBox(height: 8),
-                          _buildSortFilter(),
-                        ],
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _buildBranchFilter() {
     final branches = ['All'] + _allStudents.map((s) => s['branch'] as String? ?? '').where((b) => b.isNotEmpty).toSet().toList();
     
     return DropdownButtonFormField<String>(
-      initialValue: _branchFilter,
+      value: _branchFilter,
       decoration: const InputDecoration(
         labelText: 'Branch',
         border: OutlineInputBorder(),
@@ -171,7 +213,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
     final uniqueDomains = domains.toSet().toList();
     
     return DropdownButtonFormField<String>(
-      initialValue: _domainFilter,
+      value: _domainFilter,
       decoration: const InputDecoration(
         labelText: 'Domain',
         border: OutlineInputBorder(),
@@ -197,7 +239,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
 
   Widget _buildSortFilter() {
     return DropdownButtonFormField<String>(
-      initialValue: _sortBy,
+      value: _sortBy,
       decoration: const InputDecoration(
         labelText: 'Sort by',
         border: OutlineInputBorder(),
@@ -320,91 +362,110 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
   }
 
   void _openStudentDetail(Map<String, dynamic> student, String type) {
-    
+    switch (type) {
+      case 'dashboard':
+        _showStudentDashboard(student);
+        break;
+      case 'record':
+        _showStudentRecord(student);
+        break;
+      case 'grades':
+        _showStudentGrades(student);
+        break;
+      case 'semester':
+        _showStudentSemesterInfo(student);
+        break;
+      case 'analytics':
+        _showStudentAnalytics(student);
+        break;
+    }
+  }
+
+  void _showStudentDashboard(Map<String, dynamic> student) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (context) {
-        return DraggableScrollableSheet(
-          initialChildSize: 0.9,
-          minChildSize: 0.5,
-          maxChildSize: 0.9,
-          builder: (context, scrollController) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-              ),
-          child: Column(
-            children: [
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                children: [
-                  Expanded(
-                          child: Text(
-                            _getDetailTitle(type, student['name'] ?? 'Unknown'),
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                      icon: const Icon(Icons.close),
-                    ),
-                      ],
-                  ),
-                  ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      controller: scrollController,
-                      child: _buildDetailContent(type, student['student_id']),
-                    ),
-                  ),
-            ],
-          ),
-        );
-      },
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.9,
+        minChildSize: 0.6,
+        maxChildSize: 0.98,
+        builder: (_, controller) => _StudentDashboardView(studentId: student['student_id']),
+      ),
     );
-      },
-    ).then((value) {
-    });
   }
 
-  String _getDetailTitle(String type, String studentName) {
-    switch (type) {
-      case 'dashboard':
-        return 'Student Dashboard - $studentName';
-      case 'record':
-        return 'Student Record - $studentName';
-      case 'grades':
-        return 'Student Grades - $studentName';
-      case 'semester':
-        return 'Semester Info - $studentName';
-      case 'analytics':
-        return 'Student Analytics - $studentName';
-      default:
-        return 'Student Details - $studentName';
-    }
+  void _showStudentRecord(Map<String, dynamic> student) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.9,
+        minChildSize: 0.6,
+        maxChildSize: 0.98,
+        builder: (_, controller) => _StudentRecordView(student['student_id']),
+      ),
+    );
   }
 
-  Widget _buildDetailContent(String type, String? studentId) {
-    switch (type) {
-      case 'dashboard':
-        return _StudentDashboardView(studentId: studentId);
-      case 'record':
-        return _StudentRecordView(studentId ?? '');
-      case 'grades':
-        return _StudentGradesView(studentId ?? '');
-      case 'semester':
-        return _StudentSemesterInfoView(studentId ?? '');
-      case 'analytics':
-        return StudentAnalyticsView(studentId: studentId ?? '');
-      default:
-        return const Center(child: Text('Unknown detail type'));
-    }
+  void _showStudentGrades(Map<String, dynamic> student) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.9,
+        minChildSize: 0.6,
+        maxChildSize: 0.98,
+        builder: (_, controller) => _StudentGradesView(student['student_id']),
+      ),
+    );
   }
+
+  void _showStudentSemesterInfo(Map<String, dynamic> student) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.9,
+        minChildSize: 0.6,
+        maxChildSize: 0.98,
+        builder: (_, controller) => _StudentSemesterInfoView(student['student_id']),
+      ),
+    );
+  }
+
+  void _showStudentAnalytics(Map<String, dynamic> student) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.9,
+        minChildSize: 0.6,
+        maxChildSize: 0.98,
+        builder: (_, controller) => StudentAnalyticsView(studentId: student['student_id']),
+      ),
+    );
+  }
+
 
   Widget _StudentSemesterInfoView(String studentId) {
     return FutureBuilder<Map<String, dynamic>?>(
