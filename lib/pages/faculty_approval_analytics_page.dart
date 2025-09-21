@@ -333,9 +333,14 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
     
     return ModernFormComponents.buildModernCard(
       context: context,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: ResponsiveUtils.getResponsiveSpacing(context, 120.0).toDouble(),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
           Row(
             children: [
               Icon(
@@ -366,6 +371,7 @@ class _FacultyApprovalAnalyticsPageState extends State<FacultyApprovalAnalyticsP
             ),
           ),
         ],
+        ),
       ),
     );
   }
