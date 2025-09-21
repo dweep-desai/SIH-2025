@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../widgets/faculty_drawer.dart' as faculty_drawer;
 import '../services/auth_service.dart';
+import '../widgets/student_analytics_view.dart';
 
 class FacultyStudentSearchPage extends StatefulWidget {
   const FacultyStudentSearchPage({super.key});
@@ -277,8 +278,12 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                     const PopupMenuItem<String>(
                       value: 'semester',
                       child: Text('Semester Info'),
-                                  ),
-                                ],
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'analytics',
+                      child: Text('View Analytics'),
+                    ),
+                  ],
                               ),
               ],
             ),
@@ -377,6 +382,8 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
         return 'Student Grades - $studentName';
       case 'semester':
         return 'Semester Info - $studentName';
+      case 'analytics':
+        return 'Student Analytics - $studentName';
       default:
         return 'Student Details - $studentName';
     }
@@ -392,6 +399,8 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
         return _StudentGradesView(studentId ?? '');
       case 'semester':
         return _StudentSemesterInfoView(studentId ?? '');
+      case 'analytics':
+        return StudentAnalyticsView(studentId: studentId ?? '');
       default:
         return const Center(child: Text('Unknown detail type'));
     }

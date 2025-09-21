@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../widgets/admin_drawer.dart';
 import '../services/auth_service.dart';
+import '../widgets/student_analytics_view.dart';
 
 class AdminStudentSearchPage extends StatefulWidget {
   const AdminStudentSearchPage({super.key});
@@ -259,6 +260,10 @@ class _AdminStudentSearchPageState extends State<AdminStudentSearchPage> {
                   value: 'semester',
                   child: Text('Semester Info'),
                 ),
+                const PopupMenuItem<String>(
+                  value: 'analytics',
+                  child: Text('View Analytics'),
+                ),
               ],
             ),
           ),
@@ -288,6 +293,9 @@ class _AdminStudentSearchPageState extends State<AdminStudentSearchPage> {
         break;
       case 'semester':
         _showStudentSemesterInfo(student);
+        break;
+      case 'analytics':
+        _showStudentAnalytics(student);
         break;
     }
   }
@@ -356,6 +364,23 @@ class _AdminStudentSearchPageState extends State<AdminStudentSearchPage> {
         minChildSize: 0.6,
         maxChildSize: 0.98,
         builder: (_, controller) => _StudentSemesterInfoView(studentId: student['student_id']),
+      ),
+    );
+  }
+
+  void _showStudentAnalytics(Map<String, dynamic> student) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.9,
+        minChildSize: 0.6,
+        maxChildSize: 0.98,
+        builder: (_, controller) => StudentAnalyticsView(studentId: student['student_id']),
       ),
     );
   }

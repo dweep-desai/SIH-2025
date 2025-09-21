@@ -299,6 +299,10 @@ class _AdminFacultySearchPageState extends State<AdminFacultySearchPage> {
     final projectsRaw = facultyRecord['projects'];
     final projects = projectsRaw is List ? List<Map<String, dynamic>>.from(projectsRaw.map((item) => item is Map ? Map<String, dynamic>.from(item) : <String, dynamic>{})) : <Map<String, dynamic>>[];
     
+    // Get approval analytics data with proper type casting
+    final analyticsRaw = faculty['approval_analytics'];
+    final analytics = analyticsRaw is Map ? Map<String, dynamic>.from(analyticsRaw) : <String, dynamic>{};
+    
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -434,11 +438,111 @@ class _AdminFacultySearchPageState extends State<AdminFacultySearchPage> {
                         )),
                       ],
                     ),
+                  ),
+                ),
+              const SizedBox(height: 16),
+              
+              // Approval Analytics
+              Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.analytics, color: Colors.purple, size: 20),
+                          const SizedBox(width: 8),
+                          Text('Approval Analytics', style: texts.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                        ],
                       ),
-          ),
-        ],
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildAnalyticsCard(
+                              'Total Approved',
+                              '${analytics['total_approved'] ?? 0}',
+                              Colors.green,
+                              Icons.check_circle,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildAnalyticsCard(
+                              'Total Rejected',
+                              '${analytics['total_rejected'] ?? 0}',
+                              Colors.red,
+                              Icons.cancel,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: _buildAnalyticsCard(
+                              'Approval Rate',
+                              '${((analytics['approval_rate'] ?? 0.0) * 100).toStringAsFixed(1)}%',
+                              Colors.blue,
+                              Icons.trending_up,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: _buildAnalyticsCard(
+                              'Avg Points',
+                              '${(analytics['avg_points_awarded'] ?? 0.0).toStringAsFixed(1)}',
+                              Colors.orange,
+                              Icons.star,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildAnalyticsCard(String title, String value, Color color, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withOpacity(0.3)),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 24),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[600],
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
