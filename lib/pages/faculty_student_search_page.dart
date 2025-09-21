@@ -105,13 +105,13 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
             },
           ),
           const SizedBox(height: 12),
-          Row(
+          Column(
             children: [
-              Expanded(flex: 2, child: _buildBranchFilter()),
-              const SizedBox(width: 4),
-              Expanded(flex: 2, child: _buildDomainFilter()),
-              const SizedBox(width: 4),
-              Expanded(flex: 1, child: _buildSortFilter()),
+              _buildBranchFilter(),
+              const SizedBox(height: 8),
+              _buildDomainFilter(),
+              const SizedBox(height: 8),
+              _buildSortFilter(),
             ],
           ),
         ],
@@ -122,25 +122,19 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
   Widget _buildBranchFilter() {
     final branches = ['All'] + _allStudents.map((s) => s['branch'] as String? ?? '').where((b) => b.isNotEmpty).toSet().toList();
     
-    return SizedBox(
-      height: 40,
-      child: DropdownButtonFormField<String>(
-        initialValue: _branchFilter,
-        isDense: true,
-        decoration: const InputDecoration(
-          hintText: 'Branch',
-          border: OutlineInputBorder(),
-          contentPadding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-          isDense: true,
-        ),
+    return DropdownButtonFormField<String>(
+      initialValue: _branchFilter,
+      decoration: const InputDecoration(
+        labelText: 'Branch',
+        border: OutlineInputBorder(),
+        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
       items: branches.map((String branch) {
         return DropdownMenuItem<String>(
           value: branch,
           child: Text(
             branch,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 10),
-            maxLines: 1,
           ),
         );
       }).toList(),
@@ -150,7 +144,6 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
         });
         _filterStudents();
       },
-      ),
     );
   }
 
@@ -178,25 +171,19 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
     }
     final uniqueDomains = domains.toSet().toList();
     
-    return SizedBox(
-      height: 40,
-      child: DropdownButtonFormField<String>(
-        initialValue: _domainFilter,
-        isDense: true,
-        decoration: const InputDecoration(
-          hintText: 'Domain',
-          border: OutlineInputBorder(),
-          contentPadding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-          isDense: true,
-        ),
+    return DropdownButtonFormField<String>(
+      initialValue: _domainFilter,
+      decoration: const InputDecoration(
+        labelText: 'Domain',
+        border: OutlineInputBorder(),
+        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
       items: uniqueDomains.map((String domain) {
         return DropdownMenuItem<String>(
           value: domain,
           child: Text(
             domain,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 10),
-            maxLines: 1,
           ),
         );
       }).toList(),
@@ -206,30 +193,23 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
         });
         _filterStudents();
       },
-      ),
     );
   }
 
   Widget _buildSortFilter() {
-    return SizedBox(
-      height: 40,
-      child: DropdownButtonFormField<String>(
-        initialValue: _sortBy,
-        isDense: true,
-        decoration: const InputDecoration(
-          hintText: 'Sort by',
-          border: OutlineInputBorder(),
-          contentPadding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-          isDense: true,
-        ),
+    return DropdownButtonFormField<String>(
+      initialValue: _sortBy,
+      decoration: const InputDecoration(
+        labelText: 'Sort by',
+        border: OutlineInputBorder(),
+        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      ),
       items: ['Name', 'Branch'].map((String sort) {
         return DropdownMenuItem<String>(
           value: sort,
           child: Text(
             sort,
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 10),
-            maxLines: 1,
           ),
         );
       }).toList(),
@@ -239,7 +219,6 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
         });
         _filterStudents();
       },
-      ),
     );
   }
 
