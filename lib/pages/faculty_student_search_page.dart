@@ -2,8 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../widgets/faculty_drawer.dart' as faculty_drawer;
-import '../widgets/student_drawer.dart' as student_drawer;
-import '../widgets/admin_drawer.dart';
 import '../services/auth_service.dart';
 
 class FacultyStudentSearchPage extends StatefulWidget {
@@ -87,17 +85,8 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
   }
 
   Widget _getAppropriateDrawer(BuildContext context) {
-    final userCategory = _authService.getUserCategory();
-    switch (userCategory) {
-      case 'student':
-        return student_drawer.MainDrawer(context: context);
-      case 'faculty':
-        return faculty_drawer.MainDrawer(context: context);
-      case 'admin':
-        return AdminDrawer(context: context);
-      default:
-        return faculty_drawer.MainDrawer(context: context);
-    }
+    // Always use faculty drawer for faculty student search page
+    return faculty_drawer.MainDrawer(context: context, isFaculty: true);
   }
 
   Widget _buildSearchAndFilters() {
@@ -118,11 +107,11 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _buildBranchFilter()),
-              const SizedBox(width: 8),
-              Expanded(child: _buildDomainFilter()),
-              const SizedBox(width: 8),
-              Expanded(child: _buildSortFilter()),
+              Expanded(flex: 2, child: _buildBranchFilter()),
+              const SizedBox(width: 4),
+              Expanded(flex: 2, child: _buildDomainFilter()),
+              const SizedBox(width: 4),
+              Expanded(flex: 1, child: _buildSortFilter()),
             ],
           ),
         ],
@@ -133,17 +122,26 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
   Widget _buildBranchFilter() {
     final branches = ['All'] + _allStudents.map((s) => s['branch'] as String? ?? '').where((b) => b.isNotEmpty).toSet().toList();
     
-    return DropdownButtonFormField<String>(
-      initialValue: _branchFilter,
-      decoration: const InputDecoration(
-        labelText: 'Branch',
-        border: OutlineInputBorder(),
-        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      ),
+    return SizedBox(
+      height: 40,
+      child: DropdownButtonFormField<String>(
+        initialValue: _branchFilter,
+        isDense: true,
+        decoration: const InputDecoration(
+          hintText: 'Branch',
+          border: OutlineInputBorder(),
+          contentPadding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          isDense: true,
+        ),
       items: branches.map((String branch) {
         return DropdownMenuItem<String>(
           value: branch,
-          child: Text(branch),
+          child: Text(
+            branch,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 10),
+            maxLines: 1,
+          ),
         );
       }).toList(),
       onChanged: (String? value) {
@@ -152,30 +150,54 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
         });
         _filterStudents();
       },
+      ),
     );
   }
 
   Widget _buildDomainFilter() {
-    final domains = ['All'];
+    // Predefined domain options
+    const List<String> predefinedDomains = [
+      'AI/ML',
+      'Data Science', 
+      'Cybersecurity',
+      'Web Development',
+    ];
+    
+    final domains = ['All', ...predefinedDomains];
+    
+    // Add domains from student data
     for (var student in _allStudents) {
       final domain1 = student['domain1'] as String?;
       final domain2 = student['domain2'] as String?;
-      if (domain1 != null && domain1.isNotEmpty) domains.add(domain1);
-      if (domain2 != null && domain2.isNotEmpty) domains.add(domain2);
+      if (domain1 != null && domain1.isNotEmpty && !domains.contains(domain1)) {
+        domains.add(domain1);
+      }
+      if (domain2 != null && domain2.isNotEmpty && !domains.contains(domain2)) {
+        domains.add(domain2);
+      }
     }
     final uniqueDomains = domains.toSet().toList();
     
-    return DropdownButtonFormField<String>(
-      initialValue: _domainFilter,
-      decoration: const InputDecoration(
-        labelText: 'Domain',
-        border: OutlineInputBorder(),
-        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      ),
+    return SizedBox(
+      height: 40,
+      child: DropdownButtonFormField<String>(
+        initialValue: _domainFilter,
+        isDense: true,
+        decoration: const InputDecoration(
+          hintText: 'Domain',
+          border: OutlineInputBorder(),
+          contentPadding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          isDense: true,
+        ),
       items: uniqueDomains.map((String domain) {
         return DropdownMenuItem<String>(
           value: domain,
-          child: Text(domain),
+          child: Text(
+            domain,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 10),
+            maxLines: 1,
+          ),
         );
       }).toList(),
       onChanged: (String? value) {
@@ -184,21 +206,31 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
         });
         _filterStudents();
       },
+      ),
     );
   }
 
   Widget _buildSortFilter() {
-    return DropdownButtonFormField<String>(
-      initialValue: _sortBy,
-      decoration: const InputDecoration(
-        labelText: 'Sort by',
-        border: OutlineInputBorder(),
-        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      ),
+    return SizedBox(
+      height: 40,
+      child: DropdownButtonFormField<String>(
+        initialValue: _sortBy,
+        isDense: true,
+        decoration: const InputDecoration(
+          hintText: 'Sort by',
+          border: OutlineInputBorder(),
+          contentPadding: EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          isDense: true,
+        ),
       items: ['Name', 'Branch'].map((String sort) {
         return DropdownMenuItem<String>(
           value: sort,
-          child: Text(sort),
+          child: Text(
+            sort,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 10),
+            maxLines: 1,
+          ),
         );
       }).toList(),
       onChanged: (String? value) {
@@ -207,6 +239,7 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
         });
         _filterStudents();
       },
+      ),
     );
   }
 
@@ -247,23 +280,27 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
                   icon: const Icon(Icons.visibility),
                   onPressed: () => _showStudentQuickView(student),
                 ),
-                PopupMenuButton(
+                PopupMenuButton<String>(
+                  onSelected: (String value) {
+                    print('🔍 Faculty Search - Menu item selected: $value for student: ${student['name']}');
+                    _openStudentDetail(student, value);
+                  },
                   itemBuilder: (context) => [
-                    PopupMenuItem(
-                      child: const Text('Student Dashboard'),
-                      onTap: () => _openStudentDetail(student, 'dashboard'),
+                    const PopupMenuItem<String>(
+                      value: 'dashboard',
+                      child: Text('Student Dashboard'),
                     ),
-                    PopupMenuItem(
-                      child: const Text('Student Record'),
-                      onTap: () => _openStudentDetail(student, 'record'),
+                    const PopupMenuItem<String>(
+                      value: 'record',
+                      child: Text('Student Record'),
                     ),
-                    PopupMenuItem(
-                      child: const Text('View Grades'),
-                      onTap: () => _openStudentDetail(student, 'grades'),
+                    const PopupMenuItem<String>(
+                      value: 'grades',
+                      child: Text('View Grades'),
                     ),
-                    PopupMenuItem(
-                      child: const Text('Semester Info'),
-                      onTap: () => _openStudentDetail(student, 'semester'),
+                    const PopupMenuItem<String>(
+                      value: 'semester',
+                      child: Text('Semester Info'),
                     ),
                   ],
                 ),
@@ -302,48 +339,61 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
   }
 
   void _openStudentDetail(Map<String, dynamic> student, String type) {
+    print('🔍 Faculty Search - Opening student detail for type: $type, student: ${student['name']}');
+    
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.9,
-        minChildSize: 0.5,
-        maxChildSize: 0.9,
-        builder: (context, scrollController) => Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-          ),
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        _getDetailTitle(type, student['name'] ?? 'Unknown'),
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close),
-                    ),
-                  ],
-                ),
+      builder: (context) {
+        print('🔍 Faculty Search - Modal builder called for type: $type');
+        return DraggableScrollableSheet(
+          initialChildSize: 0.9,
+          minChildSize: 0.5,
+          maxChildSize: 0.9,
+          builder: (context, scrollController) {
+            print('🔍 Faculty Search - DraggableScrollableSheet builder called');
+            return Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
               ),
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  child: _buildDetailContent(type, student['student_id']),
-                ),
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            _getDetailTitle(type, student['name'] ?? 'Unknown'),
+                            style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            print('🔍 Faculty Search - Close button pressed');
+                            Navigator.pop(context);
+                          },
+                          icon: const Icon(Icons.close),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      child: _buildDetailContent(type, student['student_id']),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-      ),
-    );
+            );
+          },
+        );
+      },
+    ).then((value) {
+      print('🔍 Faculty Search - Modal closed');
+    });
   }
 
   String _getDetailTitle(String type, String studentName) {
@@ -362,14 +412,19 @@ class _FacultyStudentSearchPageState extends State<FacultyStudentSearchPage> {
   }
 
   Widget _buildDetailContent(String type, String? studentId) {
+    print('🔍 Faculty Search - Building detail content for type: $type, studentId: $studentId');
     switch (type) {
       case 'dashboard':
+        print('🔍 Faculty Search - Creating _StudentDashboardView with studentId: $studentId');
         return _StudentDashboardView(studentId: studentId);
       case 'record':
+        print('🔍 Faculty Search - Creating _StudentRecordView with studentId: ${studentId ?? ''}');
         return _StudentRecordView(studentId ?? '');
       case 'grades':
+        print('🔍 Faculty Search - Creating _StudentGradesView with studentId: ${studentId ?? ''}');
         return _StudentGradesView(studentId ?? '');
       case 'semester':
+        print('🔍 Faculty Search - Creating _StudentSemesterInfoView with studentId: ${studentId ?? ''}');
         return _StudentSemesterInfoView(studentId ?? '');
       default:
         return const Center(child: Text('Unknown detail type'));
@@ -1663,7 +1718,10 @@ class _StudentDashboardView extends StatefulWidget {
   const _StudentDashboardView({required this.studentId});
 
   @override
-  State<_StudentDashboardView> createState() => _StudentDashboardViewState();
+  State<_StudentDashboardView> createState() {
+    print('🔍 Faculty Search - _StudentDashboardView created with studentId: $studentId');
+    return _StudentDashboardViewState();
+  }
 }
 
 class _StudentDashboardViewState extends State<_StudentDashboardView> {
@@ -1696,6 +1754,8 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
 
   @override
   Widget build(BuildContext context) {
+    print('🔍 Faculty Search - _StudentDashboardView build called, isLoading: $_isLoading, studentData: ${_studentData != null}');
+    
     if (_isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -1704,6 +1764,7 @@ class _StudentDashboardViewState extends State<_StudentDashboardView> {
       return const Center(child: Text('Student data not found'));
     }
 
+    print('🔍 Faculty Search - Building student dashboard content for: ${_studentData!['name']}');
     return _buildStudentDashboardContent(_studentData!);
   }
 

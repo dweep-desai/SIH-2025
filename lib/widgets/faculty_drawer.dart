@@ -49,7 +49,7 @@ class MainDrawer extends StatelessWidget {
   }
 
   void _studentSearch() {
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
       MaterialPageRoute(builder: (_) => const FacultyStudentSearchPage()),
     );
