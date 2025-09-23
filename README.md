@@ -23,7 +23,7 @@ Smart Student Hub is a cross-platform Flutter application designed to streamline
 ### Installation
 1. Clone this repository:
 	```sh
-	git clone <your-repo-url>
+	git clone https://github.com/dweep-desai/SIH-2025
 	cd SIH-2025
 	```
 2. Install dependencies:
